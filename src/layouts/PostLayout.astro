@@ -25,7 +25,7 @@ const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-US', 
   <Header />
 
   <div class="back-link">
-    <a href="/">← All posts</a>
+    <a href={import.meta.env.BASE_URL}>← All posts</a>
   </div>
 
   <article>
@@ -61,7 +61,7 @@ const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-US', 
     </div>
 
     <footer class="post-footer">
-      <a href="/" class="back-btn">← Back to all posts</a>
+      <a href={import.meta.env.BASE_URL} class="back-btn">← Back to all posts</a>
     </footer>
   </article>
 </Base>
