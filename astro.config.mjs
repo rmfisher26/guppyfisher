@@ -3,7 +3,8 @@ import mdx from '@astrojs/mdx';
 
 export default defineConfig({
   integrations: [mdx()],
-  site: 'https://guppyfisher.dev', // update to your domain
+  site: 'https://rmfisher26.github.io',
+  base: '/guppyfisher',
   markdown: {
     shikiConfig: {
       theme: 'catppuccin-mocha',
