@@ -1,16 +1,17 @@
 ---
+const base = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
 ---
 <header>
-  <a href="/" class="site-logo">
+  <a href={base} class="site-logo">
     <span class="logo-fish">🐟</span>
     GuppyFisher
   </a>
   <nav>
-    <a href="/" class={currentPath === '/' ? 'active' : ''}>Posts</a>
-    <a href="/series" class={currentPath.startsWith('/series') ? 'active' : ''}>Deep Dives</a>
-    <a href="/series" class={currentPath.startsWith('/series') ? 'active' : ''}>Series</a>
-    <a href="/about" class={currentPath === '/about' ? 'active' : ''}>About</a>
+    <a href={base} class={currentPath === base || currentPath === base.slice(0,-1) ? 'active' : ''}>Posts</a>
+    <a href={`${base}/series`} class={currentPath.startsWith(`${base}/series`) ? 'active' : ''}>Deep Dives</a>
+    <a href={`${base}/series`} class={currentPath.startsWith(`${base}/series`) ? 'active' : ''}>Series</a>
+    <a href={`${base}/about`} class={currentPath === `${base}/about` ? 'active' : ''}>About</a>
   </nav>
   <div class="header-right">
     <span class="tag-badge">Learning in Public</span>

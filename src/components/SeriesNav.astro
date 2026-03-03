@@ -22,7 +22,7 @@ const sorted = [...posts].sort((a, b) => a.data.seriesNumber - b.data.seriesNumb
       <li class={p.slug === currentSlug ? 'current' : ''}>
         {p.slug === currentSlug
           ? <span>{p.data.title} <em>← you are here</em></span>
-          : <a href={`/posts/${p.slug}`}>{p.data.title}</a>
+          : <a href={`${import.meta.env.BASE_URL}/posts/${p.slug}`}>{p.data.title}</a>
         }
       </li>
     ))}
