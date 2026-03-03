@@ -1,5 +1,6 @@
 ---
 import Footer from '../components/Footer.astro';
+import '../styles/global.css';
 
 interface Props {
   title: string;
@@ -16,7 +17,6 @@ const { title, description = 'Learning Guppylang compiler internals in public.' 
   <meta name="description" content={description} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;1,400;1,600&display=swap" />
-  <link rel="stylesheet" href="/styles/global.css" />
 </head>
 <body>
   <slot />
