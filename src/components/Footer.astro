@@ -1,0 +1,77 @@
+---
+---
+<footer>
+  <div class="footer-col">
+    <h4>Series</h4>
+    <a href="/series">1 · Core Concepts</a>
+    <a href="/series">2 · Compiler Internals</a>
+    <a href="/series">3 · Source Deep Dives</a>
+  </div>
+  <div class="footer-col">
+    <h4>On GitHub</h4>
+    <a href="https://github.com/CQCL/guppylang/pull/1497" target="_blank" rel="noopener">PR #1497 — Linearity errors</a>
+    <a href="https://github.com/CQCL/guppylang/pull/1459" target="_blank" rel="noopener">PR #1459 — Array swap</a>
+    <a href="https://github.com/CQCL/guppylang" target="_blank" rel="noopener">guppylang repo ↗</a>
+    <a href="https://github.com/CQCL/hugr" target="_blank" rel="noopener">HUGR repo ↗</a>
+  </div>
+  <div class="footer-col">
+    <h4>About</h4>
+    <a href="/about">Robert's open source work</a>
+    <a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <a href="/rss.xml">RSS feed</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span>GuppyFisher — learning in public</span>
+  <span>made with curiosity &amp; JetBrains Mono</span>
+</div>
+
+<style>
+  footer {
+    border-top: 2px solid var(--ink);
+    padding: 2.5rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    font-size: 0.85rem;
+  }
+
+  .footer-col h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-col a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 2;
+    transition: color 0.2s;
+  }
+
+  .footer-col a:hover { color: var(--accent); }
+
+  .footer-bottom {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem 2rem 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 700px) {
+    footer { grid-template-columns: 1fr; }
+  }
+</style>

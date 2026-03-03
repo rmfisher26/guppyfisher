@@ -1,0 +1,48 @@
+---
+// SourceRef.astro — used inside MDX as:
+// <SourceRef file="guppylang/checker/linearity.py" lines="42-67" />
+interface Props {
+  file: string;
+  lines?: string;
+  repo?: 'guppylang' | 'hugr';
+}
+
+const { file, lines, repo = 'guppylang' } = Astro.props;
+
+const repoUrls: Record<string, string> = {
+  guppylang: 'https://github.com/CQCL/guppylang/blob/main',
+  hugr: 'https://github.com/CQCL/hugr/blob/main',
+};
+
+const base = repoUrls[repo];
+const lineHash = lines ? `#L${lines.replace('-', '-L')}` : '';
+const href = `${base}/${file}${lineHash}`;
+---
+
+<a href={href} target="_blank" rel="noopener" class="source-ref">
+  <span class="source-icon">⌥</span>
+  <span class="source-file">{file}</span>
+  {lines && <span class="source-lines">:{lines}</span>}
+  <span class="source-arrow">↗</span>
+</a>
+
+<style>
+  .source-ref {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: var(--code-bg);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    text-decoration: none;
+    margin: 0.25rem 0;
+    transition: color 0.2s;
+  }
+
+  .source-ref:hover { color: var(--accent); }
+  .source-icon { color: var(--accent); font-style: normal; }
+  .source-arrow { font-size: 0.65rem; }
+</style>

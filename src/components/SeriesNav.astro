@@ -1,0 +1,61 @@
+---
+// SeriesNav.astro — pass all posts in same series + current slug
+interface Post {
+  slug: string;
+  data: { title: string; seriesNumber: number; };
+}
+
+interface Props {
+  posts: Post[];
+  currentSlug: string;
+  seriesName: string;
+}
+
+const { posts, currentSlug, seriesName } = Astro.props;
+const sorted = [...posts].sort((a, b) => a.data.seriesNumber - b.data.seriesNumber);
+---
+
+<nav class="series-nav">
+  <div class="series-nav-title">{seriesName}</div>
+  <ol>
+    {sorted.map((p) => (
+      <li class={p.slug === currentSlug ? 'current' : ''}>
+        {p.slug === currentSlug
+          ? <span>{p.data.title} <em>← you are here</em></span>
+          : <a href={`/posts/${p.slug}`}>{p.data.title}</a>
+        }
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .series-nav {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+
+  .series-nav-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  ol { padding-left: 1.2rem; line-height: 2.2; }
+
+  li { color: #8a9abb; }
+  li a { color: #8a9abb; text-decoration: none; transition: color 0.2s; }
+  li a:hover { color: var(--paper); }
+
+  li.current { color: var(--paper); font-weight: 600; }
+  li.current em { color: var(--accent); font-style: normal; font-size: 0.7rem; }
+</style>

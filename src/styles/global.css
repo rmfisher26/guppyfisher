@@ -1,0 +1,74 @@
+:root {
+  --ink: #0d0f14;
+  --paper: #f4f0e8;
+  --accent: #00c896;
+  --accent2: #ff5c3a;
+  --muted: #8a8070;
+  --card: #ffffff;
+  --border: #d8d0c0;
+  --code-bg: #1a1d27;
+  --code-fg: #a8d8b0;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Lora', serif;
+  font-size: 18px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.5;
+}
+
+/* Code blocks (Shiki output) */
+.astro-code {
+  border-radius: 6px;
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  border-left: 3px solid var(--accent);
+}
+
+/* Prose in MDX articles */
+.prose p { margin-bottom: 1.4rem; }
+.prose h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  margin: 2.5rem 0 0.75rem;
+}
+.prose h3 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  margin: 2rem 0 0.6rem;
+}
+.prose a { color: var(--accent); }
+.prose strong { font-weight: 700; }
+.prose em { font-style: italic; }
+.prose code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82em;
+  background: rgba(0,200,150,0.1);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}

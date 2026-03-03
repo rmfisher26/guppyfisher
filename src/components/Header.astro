@@ -1,0 +1,104 @@
+---
+const currentPath = Astro.url.pathname;
+---
+<header>
+  <a href="/" class="site-logo">
+    <span class="logo-fish">🐟</span>
+    GuppyFisher
+  </a>
+  <nav>
+    <a href="/" class={currentPath === '/' ? 'active' : ''}>Posts</a>
+    <a href="/series" class={currentPath.startsWith('/series') ? 'active' : ''}>Deep Dives</a>
+    <a href="/series" class={currentPath.startsWith('/series') ? 'active' : ''}>Series</a>
+    <a href="/about" class={currentPath === '/about' ? 'active' : ''}>About</a>
+  </nav>
+  <div class="header-right">
+    <span class="tag-badge">Learning in Public</span>
+  </div>
+</header>
+
+<style>
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    min-height: 80px;
+  }
+
+  .site-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo-fish {
+    display: inline-block;
+    font-size: 1.8rem;
+    animation: swim 3s ease-in-out infinite;
+  }
+
+  @keyframes swim {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50%       { transform: translateY(-4px) rotate(5deg); }
+  }
+
+  nav {
+    display: flex;
+    gap: 2rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  nav a {
+    color: var(--ink);
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 2px;
+  }
+
+  nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 100%;
+    height: 2px;
+    background: var(--accent);
+    transition: right 0.25s ease;
+  }
+
+  nav a:hover::after,
+  nav a.active::after { right: 0; }
+
+  .header-right {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .tag-badge {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 700px) {
+    header { grid-template-columns: 1fr auto; }
+    .header-right { display: none; }
+    nav { gap: 1rem; }
+  }
+</style>

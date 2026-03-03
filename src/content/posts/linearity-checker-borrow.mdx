@@ -1,0 +1,116 @@
+---
+title: "How the Linearity Checker Knows Your Qubit Was Borrowed Twice"
+description: "Tracing the path from a @guppy function to a 'qubit used after borrow' error — and the aliasing detection that makes it possible."
+series: compiler
+seriesNumber: 3
+pubDate: 2025-02-10
+readingTime: "12 min"
+prRef: "PR #1497"
+sourceFile: "guppylang/checker/linearity.py"
+---
+
+import Callout from '../../components/Callout.astro';
+import SourceRef from '../../components/SourceRef.astro';
+
+When I first ran into the linearity checker, I couldn't find where the error I was
+looking at was actually *generated*. The message said something about a qubit being
+"used after move" — but the code doing the using looked perfectly fine to me.
+Turns out the error was coming from the wrong place, which is exactly what PR #1497 was about.
+
+To understand the fix, I had to understand how the linearity checker actually works.
+This post is my attempt to explain it clearly — partly to help you, and partly because
+writing it forced me to read the source until it clicked.
+
+## What is linearity, and why does the compiler need to check it?
+
+In classical programming, you can use a variable as many times as you like. Assign it,
+read it, pass it to a function, read it again — no problem. Quantum computing breaks this
+rule for qubits. Once a qubit is "consumed" by an operation that entangles or measures it,
+you can't use it again. This is the no-cloning theorem at the type system level.
+
+<Callout type="warning" label="The Rule">
+A linear value must be used **exactly once** — no more, no fewer. If you use it twice,
+you've violated linearity. If you never use it, you've "dropped" it, which is equally forbidden.
+</Callout>
+
+Guppy enforces this at compile time in `guppylang/checker/linearity.py`. The checker walks
+the typed AST and tracks which variables have been "consumed" at each point in the program.
+If it sees a variable used after it's been consumed, it raises an error.
+
+<SourceRef file="guppylang/checker/linearity.py" lines="1-40" />
+
+## What does "borrowing" add to the picture?
+
+Beyond simple use-and-consume, Guppy has a notion of **borrowing** — temporarily lending
+a qubit to a function without consuming it. The function can operate on the qubit but must
+return it. After the borrow, the caller still owns the qubit.
+
+This is where aliasing detection becomes critical. If you borrow the same qubit through
+two different paths simultaneously, the compiler needs to catch it:
+
+```python
+@guppy
+def bad_borrow(q: qubit) -> qubit:
+    # This should fail — q is borrowed twice in the same call
+    entangle(q, q)   # ERROR: aliased borrow
+    return q
+```
+
+The checker needs to see that `q` appears twice in the same call, figure out both
+arguments are borrows (not moves), and then detect that they alias.
+That's a surprising amount of work for what looks like a simple expression.
+
+## How the checker tracks this
+
+The key data structure is `LinearityVisitor` — an AST visitor that carries two sets:
+`consumed` (variables that have been moved/used up) and `borrowed` (variables currently
+on loan). When it enters a function call, it walks each argument and for borrow-typed
+parameters it registers the variable in `borrowed`. If it sees the same variable again
+before the call completes, it raises an aliasing error.
+
+<SourceRef file="guppylang/checker/linearity.py" lines="85-130" />
+
+```python
+class LinearityVisitor(ASTVisitor):
+    borrowed: set[str]   # vars currently borrowed
+    consumed: set[str]   # vars already consumed
+
+    def visit_Call(self, node: ast.Call) -> None:
+        for arg, param in zip(node.args, node.func_type.params):
+            if param.is_borrowed:
+                self.check_borrow(arg)
+            else:
+                self.check_consume(arg)
+
+    def check_borrow(self, node: ast.expr) -> None:
+        name = self.extract_name(node)
+        if name in self.borrowed:
+            raise GuppyError("Qubit borrowed while already borrowed", node)
+        self.borrowed.add(name)
+```
+
+<Callout type="note" label="Robert's note">
+I'm simplifying the actual source here — the real checker is more nuanced about how it
+handles nested expressions and array subscripts. But this is the core idea. Look at
+`LinearityVisitor.visit_Name` in the actual file for the full picture.
+</Callout>
+
+## Where PR #1497 came in
+
+The bug was that in certain cases, the error was raised at the *wrong node* — the checker
+was pointing to the function call itself rather than the specific argument that caused the
+aliasing. You'd see "qubit used after borrow" and the red underline would land on the function
+name, not on the repeated variable. Opaque and frustrating.
+
+The fix was to propagate error tracking down to the argument level, so the squiggle lands
+on exactly the expression that's problematic. Small change, measurable improvement in
+compiler usability.
+
+## What I still don't fully understand
+
+<Callout type="question" label="Open question">
+How the checker handles **conditional borrows** — when a qubit might be borrowed inside an
+`if` branch but not another. I know the checker has to be conservative here, but I haven't
+traced through exactly how it joins the borrow sets at branch merge points. That'll be its
+own post.
+</Callout>

@@ -1,0 +1,107 @@
+---
+title: "Why Can't You Copy a Qubit? The No-Cloning Theorem for Programmers"
+description: "Physics meets type theory. Why qubits are fundamentally different from bits, and how Guppy encodes that constraint at the language level."
+series: concepts
+seriesNumber: 2
+pubDate: 2025-01-20
+readingTime: "8 min"
+---
+
+import Callout from '../../components/Callout.astro';
+
+In classical programming, copying a value is free. You assign a variable,
+pass it to a function, and the original is still there. We take this completely
+for granted.
+
+Quantum computing breaks this assumption. And once you understand *why*, the
+entire design of Guppy's type system starts to make sense.
+
+## The no-cloning theorem, as briefly as possible
+
+The theorem says: **it is physically impossible to create an identical copy of an
+arbitrary unknown quantum state.**
+
+Here's the intuition without the physics. A classical bit is either `0` or `1` —
+a definite value you can read and copy. A qubit can be in a *superposition* of both
+states simultaneously. The moment you try to "read" a qubit to copy its state, you
+*collapse* the superposition and destroy the very thing you were trying to copy.
+
+There's no operation you can perform on a qubit that produces two qubits in the same
+unknown state. This isn't a limitation of our engineering — it's a fundamental property
+of quantum mechanics.
+
+<Callout type="warning" label="The consequence">
+If you could clone qubits, you could violate the laws of thermodynamics, break quantum
+cryptography, and enable faster-than-light communication. The theorem isn't a bug —
+it's what makes quantum computing interesting and quantum encryption secure.
+</Callout>
+
+## So why does this affect a programming language?
+
+Because if your language lets you write this:
+
+```python
+# Classical Python — perfectly fine
+x = some_value()
+use(x)
+use(x)  # x is still x, no problem
+```
+
+Then a quantum programming language that *doesn't* track linearity would let you write
+the equivalent for qubits — and produce code that's **physically unimplementable** on
+real hardware.
+
+The quantum circuit you generate would ask the hardware to do something that violates
+the no-cloning theorem. The hardware would either crash, produce garbage, or silently
+give you wrong results.
+
+## How Guppy solves this with types
+
+Guppy's answer is **linear types**. A qubit in Guppy is a *linear value* — one that
+must be used exactly once. The type checker enforces this at compile time:
+
+```python
+@guppy
+def use_qubit(q: qubit) -> None:
+    h(q)   # q is consumed here (H gate)
+    h(q)   # ERROR: q already consumed
+```
+
+The compiler refuses to compile this. Not as a runtime check — it catches it before
+your code ever runs, before you ever talk to hardware. This is the no-cloning theorem
+as a type system rule.
+
+## The "use exactly once" constraint
+
+Linear types actually impose two constraints, not one:
+
+**You can't use a linear value twice** — that would be cloning. The type checker tracks
+every variable and marks it "consumed" when it's passed to a function or operation.
+If it sees the same variable again, it raises an error.
+
+**You can't drop a linear value without using it** — that would be "discarding" a qubit
+without measuring it first, which is also physically problematic. If your function receives
+a qubit but never touches it, Guppy will complain about that too.
+
+<Callout type="note">
+The "must be used" constraint is why Guppy has explicit discard and measure operations.
+If you're done with a qubit, you have to *say* you're done with it — you can't just
+let it go out of scope.
+</Callout>
+
+## Why this is better than a runtime check
+
+Languages like Qiskit don't enforce this statically — you build a circuit description and
+errors show up at execution time, or not at all if the hardware quietly handles it wrong.
+
+Guppy's compile-time enforcement means:
+- You catch errors before touching hardware (which is slow and expensive)
+- The type signature of a function tells you whether it consumes or borrows its qubits
+- Refactoring is safer — the compiler will tell you if you've broken linearity
+
+## What's next
+
+Now that you understand *why* linear types exist, the next post in this series gets into
+what it looks like in practice — specifically, the distinction between **consuming** a qubit
+(moving it into an operation) and **borrowing** it (temporarily lending it to a function
+that promises to give it back).

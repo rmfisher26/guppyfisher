@@ -1,0 +1,57 @@
+---
+// Callout.astro — used inside MDX as <Callout type="note">...</Callout>
+interface Props {
+  type?: 'warning' | 'note' | 'question';
+  label?: string;
+}
+
+const icons: Record<string, string> = {
+  warning: '⚠',
+  note: '📝',
+  question: '🤔',
+};
+
+const { type = 'note', label } = Astro.props;
+const displayLabel = label ?? type.charAt(0).toUpperCase() + type.slice(1);
+---
+
+<div class={`callout callout--${type}`}>
+  <div class="callout-label">{icons[type]} {displayLabel}</div>
+  <div class="callout-body"><slot /></div>
+</div>
+
+<style>
+  .callout {
+    border-left: 3px solid var(--accent2);
+    background: rgba(255, 92, 58, 0.06);
+    padding: 1rem 1.5rem;
+    border-radius: 0 4px 4px 0;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+  }
+
+  .callout--note {
+    border-color: var(--accent);
+    background: rgba(0, 200, 150, 0.06);
+  }
+
+  .callout--question {
+    border-color: #a78bfa;
+    background: rgba(167, 139, 250, 0.06);
+  }
+
+  .callout-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    color: var(--accent2);
+  }
+
+  .callout--note .callout-label  { color: var(--accent); }
+  .callout--question .callout-label { color: #a78bfa; }
+
+  .callout-body :global(p:last-child) { margin-bottom: 0; }
+</style>

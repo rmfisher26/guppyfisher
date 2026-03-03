@@ -1,0 +1,516 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const sorted = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const featured = sorted[0];
+
+const conceptsPosts  = sorted.filter(p => p.data.series === 'concepts');
+const compilerPosts  = sorted.filter(p => p.data.series === 'compiler');
+const deepDivesPosts = sorted.filter(p => p.data.series === 'deep-dives');
+
+const seriesLabel: Record<string, string> = {
+  concepts:    'Series 1 · Concepts',
+  compiler:    'Series 2 · Compiler Internals',
+  'deep-dives': 'Series 3 · Deep Dives',
+};
+
+const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
+  month: 'short', year: 'numeric',
+});
+---
+
+<Base title="GuppyFisher">
+  <Header />
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">quantum compiler internals</div>
+    <h1>Casting a line into <em>Guppy's</em> depths</h1>
+    <p class="hero-desc">
+      A working log of everything I'm discovering about Guppylang —
+      a quantum programming language built on HUGR.
+      Written as I go. No pretending to know it all.
+    </p>
+
+    <div class="hero-pipeline">
+      <span class="pipe-step">@guppy</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step">Python AST</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-active">type checker</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step">linearity</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step">HUGR nodes</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step">validation</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step">hardware</span>
+    </div>
+  </section>
+
+  <hr class="section-rule" />
+
+  <!-- FEATURED POST -->
+  {featured && (
+    <>
+      <div class="section-heading">
+        <h2>Featured</h2>
+        <div class="rule"></div>
+      </div>
+
+      <div class="featured">
+        <a href={`/posts/${featured.slug}`} class="featured-card">
+          <div class="featured-visual">
+            <div class="hugr-viz">
+              <svg aria-hidden="true">
+                <line x1="18%" y1="20%" x2="42%" y2="20%" stroke="#00c896" stroke-width="1" stroke-opacity="0.4"/>
+                <line x1="55%" y1="20%" x2="70%" y2="20%" stroke="#00c896" stroke-width="1" stroke-opacity="0.4"/>
+                <line x1="25%" y1="28%" x2="25%" y2="58%" stroke="#00c896" stroke-width="1" stroke-opacity="0.3"/>
+                <line x1="65%" y1="28%" x2="65%" y2="58%" stroke="#00c896" stroke-width="1" stroke-opacity="0.3"/>
+                <line x1="35%" y1="68%" x2="43%" y2="82%" stroke="#ff5c3a" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="4,3"/>
+                <line x1="72%" y1="68%" x2="58%" y2="82%" stroke="#ff5c3a" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="4,3"/>
+              </svg>
+              <div class="hugr-node">DFG root</div>
+              <div class="hugr-node">FuncDef</div>
+              <div class="hugr-node">BasicBlock</div>
+              <div class="hugr-node">Call</div>
+              <div class="hugr-node">Return</div>
+              <div class="hugr-node">Output</div>
+            </div>
+            <div class="hugr-comment">// HUGR hierarchical graph — live nodes</div>
+          </div>
+          <div class="featured-content">
+            <div>
+              <div class="feat-series">{seriesLabel[featured.data.series]} · Post #{featured.data.seriesNumber}</div>
+              <div class="feat-title">{featured.data.title}</div>
+              <div class="feat-excerpt">{featured.data.description}</div>
+            </div>
+            <div>
+              <div class="feat-meta">
+                <span>{featuredDate}</span>
+                <span>~{featured.data.readingTime} read</span>
+                {featured.data.prRef && <span>{featured.data.prRef}</span>}
+              </div>
+              <span class="read-btn">Read post →</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </>
+  )}
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab active" data-tab="all">All Posts</button>
+    <button class="tab" data-tab="series1">Series 1: Concepts</button>
+    <button class="tab" data-tab="series2">Series 2: Compiler</button>
+    <button class="tab" data-tab="series3">Series 3: Deep Dives</button>
+  </div>
+
+  <!-- POST GRIDS -->
+  <div class="tab-content active" id="tab-all">
+    <div class="post-grid">
+      {sorted.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          series={post.data.series}
+          seriesNumber={post.data.seriesNumber}
+          pubDate={post.data.pubDate}
+          readingTime={post.data.readingTime}
+          prRef={post.data.prRef}
+          slug={post.slug}
+        />
+      ))}
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-series1">
+    <div class="post-grid">
+      {conceptsPosts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          series={post.data.series}
+          seriesNumber={post.data.seriesNumber}
+          pubDate={post.data.pubDate}
+          readingTime={post.data.readingTime}
+          prRef={post.data.prRef}
+          slug={post.slug}
+        />
+      ))}
+      {conceptsPosts.length === 0 && <p class="empty-tab">No posts yet in this series.</p>}
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-series2">
+    <div class="post-grid">
+      {compilerPosts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          series={post.data.series}
+          seriesNumber={post.data.seriesNumber}
+          pubDate={post.data.pubDate}
+          readingTime={post.data.readingTime}
+          prRef={post.data.prRef}
+          slug={post.slug}
+        />
+      ))}
+      {compilerPosts.length === 0 && <p class="empty-tab">No posts yet in this series.</p>}
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-series3">
+    <div class="post-grid">
+      {deepDivesPosts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          series={post.data.series}
+          seriesNumber={post.data.seriesNumber}
+          pubDate={post.data.pubDate}
+          readingTime={post.data.readingTime}
+          prRef={post.data.prRef}
+          slug={post.slug}
+        />
+      ))}
+      {deepDivesPosts.length === 0 && <p class="empty-tab">No posts yet in this series.</p>}
+    </div>
+  </div>
+</Base>
+
+<style>
+  /* HERO */
+  .hero {
+    padding: 5rem 2rem 4rem;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 2rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 2rem;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    color: var(--accent2);
+  }
+
+  .hero-desc {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 3rem;
+    font-style: italic;
+  }
+
+  .hero-pipeline {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    background: var(--code-bg);
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    border-left: 3px solid var(--accent);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .pipe-step  { color: var(--code-fg); }
+  .pipe-arrow { color: var(--accent2); margin: 0 0.5rem; opacity: 0.7; }
+  .pipe-active {
+    color: var(--ink);
+    background: var(--accent);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  .section-rule {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 3rem auto;
+    max-width: 900px;
+  }
+
+  /* SECTION HEADING */
+  .section-heading {
+    max-width: 900px;
+    margin: 0 auto 2.5rem;
+    padding: 0 2rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  .section-heading h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .rule { flex: 1; height: 1px; background: var(--border); }
+
+  /* FEATURED CARD */
+  .featured {
+    max-width: 900px;
+    margin: 0 auto 4rem;
+    padding: 0 2rem;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+
+  .featured-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .featured-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .featured-visual {
+    background: var(--code-bg);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 320px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hugr-viz {
+    position: relative;
+    width: 100%;
+    height: 200px;
+  }
+
+  .hugr-viz svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hugr-node {
+    position: absolute;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    background: rgba(0,200,150,0.08);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    padding: 0.3rem 0.6rem;
+    white-space: nowrap;
+    animation: nodepulse 2.5s ease-in-out infinite;
+  }
+
+  .hugr-node:nth-child(2) { top: 10%; left: 5%;   animation-delay: 0s; }
+  .hugr-node:nth-child(3) { top: 10%; left: 38%;  animation-delay: 0.3s; }
+  .hugr-node:nth-child(4) { top: 10%; left: 68%;  animation-delay: 0.6s; }
+  .hugr-node:nth-child(5) { top: 55%; left: 20%;  animation-delay: 0.9s; }
+  .hugr-node:nth-child(6) { top: 55%; left: 58%;  animation-delay: 1.2s; }
+  .hugr-node:nth-child(7) { top: 78%; left: 38%;  animation-delay: 1.5s; }
+
+  @keyframes nodepulse {
+    0%, 100% { border-color: var(--accent); box-shadow: 0 0 0 0 rgba(0,200,150,0); }
+    50%       { border-color: #00ffbb; box-shadow: 0 0 8px 2px rgba(0,200,150,0.25); }
+  }
+
+  .hugr-comment {
+    margin-top: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #585b70;
+  }
+
+  .featured-content {
+    background: var(--card);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .feat-series {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+
+  .feat-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .feat-excerpt {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .feat-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .read-btn {
+    margin-top: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.7rem 1.4rem;
+    border-radius: 2px;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .featured-card:hover .read-btn {
+    background: var(--accent);
+    color: var(--ink);
+  }
+
+  /* TAB BAR */
+  .tab-bar {
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .tab {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.2s;
+  }
+
+  .tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+  }
+
+  /* TAB CONTENT */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* POST GRID */
+  .post-grid {
+    max-width: 900px;
+    margin: 0 auto 5rem;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+
+  .empty-tab {
+    max-width: 900px;
+    margin: 0 auto 5rem;
+    padding: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 700px) {
+    .featured-card { grid-template-columns: 1fr; }
+    .post-grid { grid-template-columns: 1fr; }
+    .tab { padding: 0.75rem 0.75rem; font-size: 0.7rem; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabId = tab.dataset.tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`tab-${tabId}`)?.classList.add('active');
+    });
+  });
+</script>
