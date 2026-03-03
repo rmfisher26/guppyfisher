@@ -1,0 +1,320 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+---
+
+<Base title="About" description="About Robert Fisher and the GuppyFisher blog.">
+  <Header />
+
+  <main class="about">
+
+    <div class="about-header">
+      <div class="eyebrow">about this site</div>
+      <h1>Learning in <em>public</em></h1>
+      <p class="subtitle">
+        I'm Robert Fisher — a software engineer with over a decade of experience, learning the internals
+        of <a href="https://github.com/CQCL/guppylang" target="_blank" rel="noopener">Guppylang</a>
+        by reading source code, tracing PRs, and writing about what I find.
+      </p>
+    </div>
+
+    <hr class="rule" />
+
+    <div class="two-col">
+
+      <div class="col-text">
+        <h2>Why this blog?</h2>
+        <p>
+          Guppy is a quantum programming language embedded in Python, compiled to
+          <a href="https://github.com/CQCL/hugr" target="_blank" rel="noopener">HUGR</a>
+          — a hierarchical graph IR built for quantum hardware. The compiler is genuinely
+          interesting, and the documentation for its internals is sparse.
+        </p>
+        <p>
+          So I'm writing the documentation I wish existed — one PR and one source file at a time.
+          No pretending to know it all up front. This is a working log.
+        </p>
+
+        <h2>What you'll find here</h2>
+        <ul>
+          <li><strong>Series 1 — Core Concepts:</strong> The ideas behind linear types, the no-cloning theorem, and why Guppy's type system is shaped the way it is.</li>
+          <li><strong>Series 2 — Compiler Internals:</strong> How the compilation pipeline works, from the <code>@guppy</code> decorator to HUGR output.</li>
+          <li><strong>Series 3 — Source Deep Dives:</strong> Full walkthroughs of specific PRs — what broke, how it was fixed, and what the fix reveals about the architecture.</li>
+        </ul>
+      </div>
+
+      <div class="col-stack">
+        <div class="stack-card">
+          <div class="stack-label">Language</div>
+          <div class="stack-value">Python + Guppylang</div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-label">IR</div>
+          <div class="stack-value">HUGR</div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-label">This site</div>
+          <div class="stack-value">Astro + MDX</div>
+        </div>
+        <div class="stack-card">
+          <div class="stack-label">Employer</div>
+          <div class="stack-value">Quantinuum</div>
+        </div>
+        <div class="stack-card accent">
+          <div class="stack-label">Status</div>
+          <div class="stack-value">Learning in public</div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="rule" />
+
+    <div class="links-section">
+      <h2>Find me elsewhere</h2>
+      <div class="link-grid">
+        <a href="https://github.com/rmfisher26" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">⌥</div>
+          <div>
+            <div class="link-title">GitHub</div>
+            <div class="link-sub">rmfisher26</div>
+          </div>
+        </a>
+        <a href="https://github.com/CQCL/guppylang" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">⬡</div>
+          <div>
+            <div class="link-title">guppylang</div>
+            <div class="link-sub">CQCL/guppylang</div>
+          </div>
+        </a>
+        <a href="https://github.com/CQCL/hugr" target="_blank" rel="noopener" class="link-card">
+          <div class="link-icon">◈</div>
+          <div>
+            <div class="link-title">HUGR</div>
+            <div class="link-sub">CQCL/hugr</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+  </main>
+</Base>
+
+<style>
+  .about {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem 5rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .about-header {
+    padding: 5rem 0 3rem;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 2rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    color: var(--accent2);
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 580px;
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .subtitle a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .subtitle a:hover { text-decoration: underline; }
+
+  .rule {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0 3rem;
+  }
+
+  /* Two-column layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 4rem;
+    margin-bottom: 3rem;
+  }
+
+  .col-text h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+    margin: 2rem 0 0.75rem;
+  }
+
+  .col-text h2:first-child { margin-top: 0; }
+
+  .col-text p {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+  }
+
+  .col-text p a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .col-text p a:hover { text-decoration: underline; }
+
+  .col-text ul {
+    padding-left: 1.2rem;
+    line-height: 1.9;
+    font-size: 0.95rem;
+  }
+
+  .col-text li { margin-bottom: 0.4rem; }
+
+  .col-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82em;
+    background: rgba(0,200,150,0.1);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+
+  /* Stack cards */
+  .col-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.25rem;
+  }
+
+  .stack-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.85rem 1rem;
+    background: var(--card);
+  }
+
+  .stack-card.accent {
+    border-color: var(--accent);
+    background: rgba(0,200,150,0.05);
+  }
+
+  .stack-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .stack-value {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .stack-card.accent .stack-value { color: var(--accent); }
+
+  /* Links section */
+  .links-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  .link-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .link-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+    background: var(--card);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .link-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+    border-color: var(--ink);
+  }
+
+  .link-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--muted);
+  }
+
+  .link-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .link-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 700px) {
+    .two-col { grid-template-columns: 1fr; gap: 2rem; }
+    .col-stack { flex-direction: row; flex-wrap: wrap; }
+    .stack-card { flex: 1; min-width: 120px; }
+    .link-grid { grid-template-columns: 1fr; }
+  }
+</style>
