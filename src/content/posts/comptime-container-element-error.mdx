@@ -1,0 +1,176 @@
+---
+title: "Blaming the Right Thing: Container vs Element in comptime() Errors"
+description: "PR #1484 fixes an error that pointed at the list when the real problem was inside it. A numpy integer hidden in a comptime() list used to blame the container — now it blames the element."
+series: deep-dives
+seriesNumber: 4
+pubDate: 2026-02-09
+readingTime: "7 min"
+prRef: "PR #1484"
+sourceFile: "guppylang/checker/expr_checker.py"
+---
+
+import Callout from '../../components/Callout.astro';
+
+When you pass a value to `comptime()`, Guppy evaluates it at compile time and lifts the
+result into the program as a constant. That means it needs to understand the type of
+whatever comes back. For basic Python types — `int`, `float`, `bool` — this is
+straightforward. For containers, it recurses into the elements.
+
+The bug: when an element type was unsupported, the error message blamed the container
+instead of the element. A list of numpy integers would produce:
+
+```
+GuppyError: Expression of type <class 'list'> is not supported
+```
+
+But the list isn't the problem. `list` is fine. The problem is `numpy.int64` inside it.
+
+PR #1484 fixes this so the error says what it means.
+
+## The scenario
+
+Say you have some numpy array and you want to pass its values into a Guppy function
+at compile time:
+
+```python
+import numpy as np
+
+angles = np.array([0.25, 0.5, 0.75])
+
+@guppy
+def apply_rotations(module: GuppyModule) -> None:
+    indices = comptime(list(np.arange(3)))   # np.arange returns np.int64 elements
+    ...
+```
+
+`np.arange(3)` produces `array([0, 1, 2], dtype=int64)`. Converting it to a list gives
+`[np.int64(0), np.int64(1), np.int64(2)]` — not Python `int`s. Guppy's comptime
+evaluation doesn't support `numpy.int64`, so this should fail with a clear message.
+
+Before PR #1484, the error was:
+
+```
+GuppyError: Expression of type <class 'list'> is not supported
+```
+
+The user stares at this wondering what's wrong with their list. The list looks fine to them.
+The actual culprit — the numpy type lurking inside — is invisible.
+
+## How comptime type conversion worked
+
+Guppy's `_eval_comptime()` method evaluates the expression and then calls a conversion
+function to map the Python value to a Guppy type. For lists, that function is
+`_python_list_to_guppy_type()`.
+
+The old implementation deferred errors. It would try to convert all elements, and if
+any conversion failed, it fell back to returning `None` — signaling "I don't know the
+type." The caller would then emit a generic error blaming the list:
+
+```python
+def _python_list_to_guppy_type(self, lst: list) -> GuppyType | None:
+    if not lst:
+        return None  # can't infer type of empty list
+
+    elem_types = [self._python_value_to_guppy_type(e) for e in lst]
+    if any(t is None for t in elem_types):
+        return None  # silently fail; caller will emit error on the list
+    ...
+```
+
+The problem is that `None` loses information. By the time the caller emits an error,
+there's no record of *which element* failed or *what type* it had.
+
+<Callout type="note" label="Why the list got blamed">
+The error was generated at the point where conversion returned `None`. That point is
+after the recursive call into element conversion — so the nearest value in scope was
+the list, not the element. The error was accurate about *where the failure surfaced*,
+just not about *what caused it*.
+</Callout>
+
+## The fix: fail immediately with context
+
+PR #1484 changes `_python_list_to_guppy_type()` (and the equivalent tuple path) to
+raise immediately when an element conversion fails, carrying information about both the
+unsupported value and the fact that it was found inside a container:
+
+```python
+def _python_list_to_guppy_type(self, lst: list) -> GuppyType:
+    if not lst:
+        raise GuppyError(IllegalComptimeExpressionError(expr, type(lst)))
+
+    elem_ty = self._python_value_to_guppy_type(lst[0])
+    for elem in lst[1:]:
+        # Check for unsupported element types immediately
+        if elem_ty is None:
+            raise GuppyError(
+                IllegalComptimeExpressionError(
+                    expr,
+                    type(elem),
+                    in_container=InContainer(container_type=list),
+                )
+            )
+    ...
+```
+
+Instead of collecting `None` results and handling them later, the function raises as
+soon as it hits an unsupported element. The raised error includes:
+
+- The unsupported type (`numpy.int64`)
+- A note that it was found inside a container (`list`)
+
+## The `InContainer` diagnostic note
+
+The PR adds a new sub-diagnostic to `comptime_errors.py`:
+
+```python
+@dataclass
+class InContainer:
+    """Attached to IllegalComptimeExpressionError when the bad value is inside a container."""
+    container_type: type   # list, tuple, etc.
+```
+
+This gets rendered as a `note:` line beneath the main error:
+
+```
+GuppyError: Expression of type <class 'numpy.int64'> is not supported
+  --> my_file.py:6
+  |
+6 |     indices = comptime(list(np.arange(3)))
+  |                        ^^^^^^^^^^^^^^^^^^
+  |
+note: Unsupported value was found inside a list
+```
+
+The structure mirrors how other Guppy sub-diagnostics work — a dataclass attached to
+the main error that gets rendered separately. It's the same pattern used by
+`MemberPrevUse` in the linearity checker: the main error identifies the problem,
+the sub-diagnostic explains where to look.
+
+## Tuples get the same treatment
+
+The same deferred-failure bug existed for tuples. A tuple containing a numpy integer
+would also blame the tuple rather than the element. The PR refactors both code paths
+together, so tuples now emit the same contextual error:
+
+```
+note: Unsupported value was found inside a tuple
+```
+
+The container type in `InContainer` is generic enough to cover both cases without
+duplicating logic.
+
+## What I found interesting
+
+The root cause here is a common pattern in error handling: using `None` (or another
+sentinel) to propagate failure silently, then reporting the error at a higher level
+where context has been lost. It's tempting because it keeps the conversion functions
+simple — they just return `None` on failure. But by the time the caller emits the
+error, it only knows what *it* was processing, not what went wrong internally.
+
+The fix inverts the approach: raise at the point of failure, where the context is
+richest. The cost is that the conversion functions are no longer `None`-returning — they
+can raise — but the tradeoff is worth it when the alternative is misleading errors.
+
+This is a small PR in terms of lines changed, but the user-facing improvement is
+significant. "Expression of type list is not supported" sends you looking at the wrong
+thing entirely.
