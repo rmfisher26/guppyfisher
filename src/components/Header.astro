@@ -1,5 +1,5 @@
 ---
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const base = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
 ---
 
@@ -11,8 +11,8 @@ const currentPath = Astro.url.pathname;
 
   <nav id="main-nav" aria-label="Main navigation">
     <a href={base} class={currentPath === base || currentPath === `${base}/` ? 'active' : ''}>Posts</a>
-    <a href={`${base}/series`} class={currentPath.startsWith(`${base}/series`) ? 'active' : ''}>Series</a>
-    <a href={`${base}/about`} class={currentPath === `${base}/about` ? 'active' : ''}>About</a>
+    <a href={`${base}series`} class={currentPath.startsWith(`${base}series`) ? 'active' : ''}>Series</a>
+    <a href={`${base}about`} class={currentPath === `${base}about` ? 'active' : ''}>About</a>
   </nav>
 
   <div class="header-right">
