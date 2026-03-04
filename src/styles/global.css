@@ -50,7 +50,7 @@ body::before {
 .prose p { margin-bottom: 1.4rem; }
 .prose h2 {
   font-family: 'Syne', sans-serif;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 1.5rem;
   letter-spacing: -0.02em;
   margin: 2.5rem 0 0.75rem;

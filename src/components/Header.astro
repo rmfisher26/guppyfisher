@@ -6,7 +6,7 @@ const currentPath = Astro.url.pathname;
 <header id="site-header">
   <a href={base} class="site-logo">
     <span class="logo-fish">🐟</span>
-    GuppyFisher
+    <span class="logo-guppy">Guppy</span><span class="logo-fisher">fisher</span>
   </a>
 
   <nav id="main-nav" aria-label="Main navigation">
@@ -60,15 +60,18 @@ const currentPath = Astro.url.pathname;
   /* ── LOGO ── */
   .site-logo {
     font-family: 'Syne', sans-serif;
-    font-weight: 800;
+    font-weight: 600;
     font-size: 1.4rem;
     letter-spacing: -0.03em;
     text-decoration: none;
     color: var(--ink);
     display: flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.1rem;
   }
+
+  .logo-guppy { color: var(--ink); }
+  .logo-fisher { color: var(--accent); }
 
   .logo-fish {
     display: inline-block;
