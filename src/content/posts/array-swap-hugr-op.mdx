@@ -1,0 +1,143 @@
+---
+title: "Adding Array Swap: From Standard Library to HUGR Primitive"
+description: "PR #1459 adds a swap function for array elements that compiles directly to HUGR's swap op. The interesting part is how the custom compiler wires two array operations into one clean primitive."
+series: deep-dives
+seriesNumber: 5
+pubDate: 2026-02-10
+readingTime: "8 min"
+prRef: "PR #1459"
+sourceFile: "guppylang/std/array.py"
+---
+
+import Callout from '../../components/Callout.astro';
+
+Swapping two elements in an array sounds trivial. In most languages it's three lines
+with a temporary variable. In Guppy it's more interesting, because Guppy's linear type
+system means you can't just read a qubit out and hold it in a variable while you shuffle
+things around — each value has to be used exactly once.
+
+PR #1459 adds a `swap` function to the standard library array module. The user-facing
+API is simple, but underneath it maps to HUGR's swap primitive — a single graph node
+that atomically exchanges two array elements. This post traces from the API down to
+the lowering.
+
+## Why swapping is non-trivial for linear types
+
+In classical programming you swap array elements like this:
+
+```python
+tmp = arr[i]
+arr[i] = arr[j]
+arr[j] = tmp
+```
+
+In Guppy, `arr[i]` moves the element out of the array. The array now has a hole —
+you've consumed `arr[i]` and haven't put anything back. You'd need to also put
+something at index `i` before you could use the array again.
+
+The swap function handles this correctly: it reads both elements, returns both to
+their swapped positions, and gives you back a valid array. Implemented naively, that's
+two `take` calls and two `put` calls. But HUGR has a dedicated swap primitive that
+does this atomically.
+
+<Callout type="note" label="Why a primitive?">
+HUGR's swap op exists because swapping array elements is a common operation in quantum
+circuits — it corresponds to the SWAP gate on two wires. Having a dedicated IR node
+makes it easier for backends to recognize and optimize the pattern rather than having
+to reconstruct it from four separate array operations.
+</Callout>
+
+## The public API
+
+The new function in `std/array.py`:
+
+```python
+@guppy.hugr_op(ArraySwapCompiler())
+def swap(arr: array[L, n], i: int, j: int) -> array[L, n]:
+    """Swap elements at indices i and j in the array."""
+    ...
+```
+
+The type signature is worth reading carefully. It takes an `array[L, n]` — an array of
+some linear type `L` with size `n` — and returns an `array[L, n]`. The array goes in,
+the array comes out (with two elements exchanged). The indices `i` and `j` are plain
+Python `int`s.
+
+The `@guppy.hugr_op` decorator signals that this function's implementation is handled
+entirely by a custom compiler class, not by compiling the body.
+
+## The `ArraySwapCompiler`
+
+The compiler lives in `guppylang_internals/std/_internal/compiler/array.py`. Its job
+is to translate a call to `swap(arr, i, j)` into HUGR graph nodes.
+
+```python
+class ArraySwapCompiler(CustomCallCompiler):
+    def compile(self, args: list[Wire], type_args: ..., node: ...) -> list[Wire]:
+        arr, i, j = args
+
+        # Emit the HUGR swap op
+        swap_node = self.builder.add_op(
+            ops.ArrayOp.swap(self.elem_ty, self.array_size),
+            arr, i, j,
+        )
+
+        # The swap op returns Either[array, array]:
+        # - Left = failure (index out of bounds)
+        # - Right = success (swapped array)
+        result = swap_node.out(0)
+
+        # Unwrap the right (success) case
+        return self.builder.unwrap_right(result)
+```
+
+The `ArrayOp.swap` node takes the array and two indices, and returns an `Either` type.
+The left case represents an out-of-bounds failure; the right case is the successfully
+swapped array. The compiler unwraps the right case — effectively asserting success —
+which produces the final array wire.
+
+## The Either return type
+
+HUGR's swap op returns `Either[error, array]` rather than just an array. This is
+HUGR being explicit about fallibility: swapping at out-of-bounds indices is a
+definable operation that produces an error value rather than undefined behavior.
+
+In the Guppy implementation, the `Either` is unwrapped immediately. If the indices
+are in bounds (which at the Guppy level they are assumed to be, since Guppy does its
+own bounds checking), the right value is the swapped array. If not, the `unwrap_right`
+terminates with a runtime panic.
+
+<Callout type="warning" label="Compile-time vs runtime bounds">
+Literal indices get bounds-checked at compile time (see PR #1448). Variable indices
+don't — those are checked at runtime via the Either unwrap. So `swap(arr, 0, 4)` on a
+size-4 array is a compile-time error; `swap(arr, i, j)` where `i` and `j` are
+runtime values fails at runtime if they're out of bounds.
+</Callout>
+
+## The test
+
+The integration test validates the swap works correctly end-to-end:
+
+```python
+@guppy
+def test_swap(arr: array[int, 4]) -> array[int, 4]:
+    return swap(arr, 1, 3)
+```
+
+Running this on `[10, 20, 30, 40]` should produce `[10, 40, 30, 20]`. The test
+constructs the HUGR, compiles it, runs it, and checks the output — validating that
+the swap op is wired correctly through the entire pipeline.
+
+## What I found interesting
+
+The shape of this PR is a clean example of how Guppy's standard library works: a thin
+public API in `std/array.py` that defers to a compiler class, which emits a
+primitive HUGR operation. The user sees a normal function call; the IR sees a single
+swap node.
+
+The `Either` return type from the HUGR op is also interesting — it's a sign that HUGR
+treats operations as total functions that return explicit error values rather than having
+undefined behavior for out-of-bounds cases. The Guppy layer hides this with an
+immediate unwrap, but the underlying IR is explicit about the possibility of failure.
+The pattern makes the IR easier to reason about for optimization passes that need to
+know what can and can't go wrong.
