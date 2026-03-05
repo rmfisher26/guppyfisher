@@ -1,0 +1,150 @@
+---
+title: "Better Borrow Errors: Reporting the Parent, Not the Leaf"
+description: "When a struct field is moved, the error used to point at the field. PR #1501 makes it point at the variable the user actually wrote — and explains why."
+series: compiler
+seriesNumber: 4
+pubDate: 2026-02-18
+readingTime: "9 min"
+prRef: "PR #1501"
+sourceFile: "guppylang/checker/linearity_checker.py"
+---
+
+import Callout from '../../components/Callout.astro';
+
+Error messages are a user interface. This PR is about making one particular class of error
+message substantially less confusing — and the fix reveals something interesting about how
+the linearity checker represents places internally.
+
+## The problem: the error pointed at the wrong thing
+
+Say you have a struct with a qubit field:
+
+```python
+@guppy.struct
+class State:
+    q: qubit
+
+@guppy
+def bad(s: State) -> State:
+    use_qubit(s.q)   # moves the qubit out of s
+    return s          # ERROR: s.q was already used
+```
+
+Before PR #1501, the error message would say something like:
+
+```
+GuppyError: Linear field `s.q` was already used
+```
+
+That's technically accurate — `s.q` was used. But the user wrote `return s`, not `return s.q`.
+The error pointing at `s.q` makes it feel like the problem is with the field access, when
+the real issue is that `s` itself is now partially consumed and can't be returned.
+
+## How places work in the linearity checker
+
+The linearity checker tracks "places" — paths through the program's value graph. A simple
+variable `s` is a place. `s.q` is also a place — specifically a child of `s`.
+
+When you use `s.q` in a move context, the checker marks the leaf place `s.q` as consumed.
+Later, when you try to use `s`, the checker finds that one of `s`'s children has already
+been consumed — and generates an error.
+
+Before this PR, the error was emitted on the leaf (`s.q`). But the expression the user
+actually wrote was `s`. There's a mismatch between where the checker *found* the problem
+and what the user *wrote*.
+
+<Callout type="note" label="Place vs expression">
+In the checker's internal representation, a "place" is a path from a root variable through
+zero or more field accesses. `s` is the root; `s.q` is `s` plus a field access for `q`.
+The checker can detect violations at any level of this hierarchy.
+</Callout>
+
+## The fix: distinguish parent-differs-from-leaf
+
+The key change is in `visit_PlaceNode` in `linearity_checker.py`. The checker now looks at
+whether the place being used (the "parent") is the same as the place where the violation
+was detected (the "leaf"):
+
+```python
+def visit_PlaceNode(self, node: PlaceNode) -> None:
+    place = node.place
+    # Walk up to find the consumed ancestor
+    consumed_leaf = self._find_consumed_ancestor(place)
+
+    if consumed_leaf is not None:
+        if consumed_leaf != place:
+            # Parent differs from leaf: report on the parent expression,
+            # with a note pointing to the specific moved member
+            raise AlreadyUsedError(
+                node,
+                place,
+                sub_diagnostic=MemberPrevUse(consumed_leaf)
+            )
+        else:
+            # Direct re-use: existing behavior
+            raise AlreadyUsedError(node, place, sub_diagnostic=PrevUse(...))
+```
+
+The parent case now emits the error on the user's expression (`s`) with a sub-diagnostic
+note explaining which member was the problem (`s.q` was moved here).
+
+## The new `MemberPrevUse` diagnostic
+
+PR #1501 adds a new sub-diagnostic class to `checker/errors/linearity.py`:
+
+```python
+@dataclass
+class MemberPrevUse:
+    """Points to the member that was previously moved."""
+    member: Place        # The leaf place (e.g. s.q)
+    ty: GuppyType        # Its type
+    prev_use: ast.expr   # The expression where it was used
+```
+
+This gets rendered as a `note:` line below the main error, so the user sees both pieces of
+information:
+
+```
+GuppyError: Linear variable `s` was already used
+  --> my_file.py:5
+  |
+5 |     return s
+  |            ^
+  |
+note: field `s.q` (type `qubit`) was moved here
+  --> my_file.py:4
+  |
+4 |     use_qubit(s.q)
+  |               ^^^
+```
+
+Now the error says what the user actually wrote, and the note explains *why* the variable
+is considered used.
+
+## The tuple case
+
+The same logic applies to tuples. If you unpack `(a, b) = pair` and then try to use `pair`
+again, the error now points at your use of `pair` with a note about which element was
+already extracted.
+
+```python
+@guppy
+def bad(pair: tuple[qubit, qubit]) -> tuple[qubit, qubit]:
+    a, b = pair        # unpacks both elements
+    use(a)
+    return pair        # ERROR: pair was already destructured
+```
+
+The PR includes new test cases for both field access and tuple unpacking to cover these
+scenarios.
+
+## What I found interesting
+
+The fix is small — a conditional in `visit_PlaceNode` and a new diagnostic class — but the
+reasoning requires understanding the internal place representation. The key insight is that
+"the place where the violation was detected" and "the place the user expressed" are
+different levels of the same hierarchy, and the error should speak the user's language.
+
+This is a recurring theme in compiler error message work: the checker operates on an
+internal representation that's more detailed than what the user wrote, and good error
+messages require mapping back from that internal detail to the user's source.

@@ -1,8 +1,8 @@
 :root {
   --ink: #0d0f14;
   --paper: #f4f0e8;
-  --accent: #00c896;
-  --accent2: #ff5c3a;
+  --accent: #469d9b;
+  --accent2: #114c8b;
   --muted: #8a8070;
   --card: #ffffff;
   --border: #d8d0c0;
@@ -50,7 +50,7 @@ body::before {
 .prose p { margin-bottom: 1.4rem; }
 .prose h2 {
   font-family: 'Syne', sans-serif;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 1.5rem;
   letter-spacing: -0.02em;
   margin: 2.5rem 0 0.75rem;

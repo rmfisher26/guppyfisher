@@ -1,0 +1,178 @@
+---
+title: "Compile-Time Array Bounds Checking for Literal Indices"
+description: "PR #1448 adds ArrayIndexChecker, catching out-of-bounds accesses on arrays at compile time when the index is a literal. It found two bugs in Guppy's own test suite on the first run."
+series: compiler
+seriesNumber: 5
+pubDate: 2026-01-28
+readingTime: "9 min"
+prRef: "PR #1448"
+sourceFile: "guppylang/checker/expr_checker.py"
+---
+
+import Callout from '../../components/Callout.astro';
+
+There's a category of bugs that should never reach runtime: accessing `arr[5]` on an
+array of size 5. If the index is a literal and the array size is known at compile time,
+the compiler has everything it needs to catch this. Before PR #1448, Guppy didn't.
+
+The fix is `ArrayIndexChecker` — a custom call checker that validates literal integer
+indices against the array's known size during compilation. When it first ran on the
+codebase, it immediately caught two out-of-bounds accesses in Guppy's own test suite.
+
+## What "known at compile time" means in Guppy
+
+Guppy arrays have their size encoded in their type: `array[qubit, 4]` is an array of
+exactly 4 qubits. This is different from Python lists, which have runtime-dynamic
+sizes. The size `n` in `array[T, n]` is a compile-time constant — a type-level integer.
+
+This means the compiler always knows the legal range of indices. For an `array[T, 4]`,
+valid indices are `0`, `1`, `2`, `3`. Index `4` is out of bounds. If you write
+`arr[4]` and the compiler can see it, it can reject it immediately.
+
+The missing piece was: the compiler wasn't checking. Index accesses compiled fine even
+when the index was obviously wrong.
+
+## How array subscripts compile
+
+In Guppy, `arr[i]` isn't direct memory access — it's a function call. The compiler
+desugars `arr[i]` into a call to one of several array operations depending on context:
+
+- `get(arr, i)` — copies an element (for copyable types)
+- `take(arr, i)` — moves an element out (for linear types)
+- `put(arr, i, val)` — replaces an element
+- `is_borrowed(arr, i)` — borrows an element without consuming it
+
+Each of these is a HUGR-level operation. They all take an index argument, and none of
+them did bounds validation before this PR.
+
+## The `ArrayIndexChecker` class
+
+PR #1448 introduces `ArrayIndexChecker` as a custom call checker that hooks into the
+compilation of these four array operations:
+
+```python
+class ArrayIndexChecker(CustomCallChecker):
+    """Validates literal integer indices against the known array size."""
+
+    def check(self, args: list[ast.expr], ty: GuppyType) -> ...:
+        # Extract the array size from the type
+        array_size = self._get_array_size(ty)
+        if array_size is None:
+            return  # Size not statically known, skip
+
+        # Try to extract a constant integer from the index argument
+        idx = self._get_literal_index(args[1])
+        if idx is None:
+            return  # Variable index, can't check at compile time
+
+        # Bounds check
+        if not (0 <= idx < array_size):
+            raise GuppyError(
+                ArrayIndexOutOfBoundsError(args[1], idx, array_size)
+            )
+```
+
+The checker is registered with each of the four array operations. When the compiler
+processes a subscript expression, it calls `ArrayIndexChecker.check()`. If the index
+is a literal integer and the array size is known, the check runs. Otherwise it skips —
+no false positives, no blocking of valid code.
+
+## Extracting a constant index
+
+The trickier part is `_get_literal_index()`. Array index arguments can come in two
+forms in the AST:
+
+**Direct constants** — the user wrote `arr[3]`:
+```python
+ast.Constant(value=3)
+```
+
+**PlaceNode constants** — the user wrote a name that resolves to a known integer:
+```python
+PlaceNode(place=..., value=3)   # e.g., a const-folded variable
+```
+
+The checker handles both cases:
+
+```python
+def _get_literal_index(self, node: ast.expr) -> int | None:
+    if isinstance(node, ast.Constant) and isinstance(node.value, int):
+        return node.value
+    if isinstance(node, PlaceNode) and isinstance(node.place.value, int):
+        return node.place.value
+    return None
+```
+
+Using `isinstance` rather than `hasattr` is deliberate — it's safer and more explicit
+about what types are expected. The PR notes this in a comment, as it was a point
+of feedback during review.
+
+<Callout type="note" label="Why PlaceNode matters">
+A `PlaceNode` wraps an expression that the checker knows the value of — usually a
+variable that's been determined to hold a constant. If you write `const N = 4` and then
+`arr[N]`, the index expression is a `PlaceNode`, not a raw `ast.Constant`. Without
+handling this case, the bounds check would silently skip such accesses.
+</Callout>
+
+## The error message
+
+When the check fails, the error points directly at the index expression:
+
+```
+GuppyError: Array index 5 is out of bounds for array of size 5
+  --> my_file.py:3
+  |
+3 |     q = qs[5]
+  |            ^
+```
+
+The message says both the index that was used and the size of the array — both pieces
+of information the user needs to understand and fix the mistake.
+
+## The two bugs it found
+
+On the first run, `ArrayIndexChecker` flagged two existing tests as invalid. Both tests
+were written to test some other aspect of array behavior and accidentally used
+out-of-bounds indices:
+
+```python
+# Example: size-4 array, accessing index 4
+qs: array[qubit, 4]
+cx(qs[3], qs[4])   # index 4 is one past the end
+```
+
+These had compiled and run without error because the HUGR backends happened to handle
+them in a way that didn't panic. With the new checker, they're caught at compile time
+and the tests were fixed to use valid indices.
+
+This is the kind of validation that earns its keep immediately.
+
+<Callout type="warning" label="Scope: literals only">
+Like the duplicate subscript check in PR #1469, this only applies to literal indices.
+`arr[i]` where `i` is a runtime value is still not checked at compile time — that
+requires alias analysis or abstract interpretation. The checker is explicit about
+skipping non-literal indices rather than attempting a partial check.
+</Callout>
+
+## Supported operations
+
+The checker is applied to all four array access operations: `get`, `put`, `take`, and
+`is_borrowed`. Each is a distinct code path in the compiler, so each needed the
+checker registered separately. The PR registers `ArrayIndexChecker` as the call checker
+for all four, ensuring the validation is consistent regardless of how the subscript
+is used — whether you're reading, writing, moving, or borrowing.
+
+## What I found interesting
+
+The most striking part of this PR is the immediate payoff: bounds checking found real
+bugs in the existing test suite on the first run. That's a good sign that the check
+is doing something useful rather than catching only theoretical mistakes.
+
+The structure of the checker also shows how Guppy's custom checker system is designed
+for incremental improvement. Array operations already existed; the `ArrayIndexChecker`
+is a new validation layer that hooks in at the call-checking stage without touching
+the underlying compilation logic. The compiler gets smarter without the core IR
+pipeline changing.
+
+Each of these incremental improvements — duplicate subscripts in PR #1469, bounds
+checks here — narrows the gap between "compiled successfully" and "actually correct."
