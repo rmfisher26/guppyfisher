@@ -23,14 +23,10 @@ const currentPath = Astro.url.pathname;
       aria-expanded="false"
       aria-controls="main-nav"
     >
-      <svg class="icon-menu" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-        <line x1="3" y1="6"  x2="19" y2="6"  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <line x1="3" y1="11" x2="19" y2="11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <line x1="3" y1="16" x2="19" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <svg class="icon-close" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-        <line x1="4" y1="4"  x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <line x1="18" y1="4" x2="4"  y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <svg class="burger-icon" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <line class="bar bar-top"    x1="3" y1="6"  x2="19" y2="6"  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line class="bar bar-mid"    x1="3" y1="11" x2="19" y2="11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line class="bar bar-bottom" x1="3" y1="16" x2="19" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
     </button>
   </div>
@@ -158,10 +154,18 @@ const currentPath = Astro.url.pathname;
     background: rgba(13, 15, 20, 0.04);
   }
 
-  .icon-close { display: none; }
+  /* ── BURGER ANIMATION ── */
+  .bar {
+    transform-box: fill-box;       /* rotate around each line's own center */
+    transform-origin: center;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity   0.2s ease;
+  }
 
-  .menu-toggle[aria-expanded="true"] .icon-menu  { display: none; }
-  .menu-toggle[aria-expanded="true"] .icon-close { display: block; }
+  /* Closed → open: bars converge at center then rotate into X */
+  .menu-toggle[aria-expanded="true"] .bar-top    { transform: translateY(5px)  rotate(45deg); }
+  .menu-toggle[aria-expanded="true"] .bar-mid    { opacity: 0; transform: scaleX(0.2); }
+  .menu-toggle[aria-expanded="true"] .bar-bottom { transform: translateY(-5px) rotate(-45deg); }
 
   /* ── MOBILE ── */
   @media (max-width: 680px) {
