@@ -10,7 +10,7 @@ import Header from '../components/Header.astro';
 
     <div class="about-header">
       <div class="eyebrow">about this site</div>
-      <h1>Learning in <em>public</em></h1>
+      <h1>Continuously Learning</em></h1>
       <p class="subtitle">
         I'm Robert Fisher — a software engineer with over a decade of experience, learning the internals
         of <a href="https://github.com/CQCL/guppylang" target="_blank" rel="noopener">Guppylang</a>
@@ -25,15 +25,13 @@ import Header from '../components/Header.astro';
       <div class="col-text">
         <h2>Why this blog?</h2>
         <p>
-          Guppy is a quantum programming language embedded in Python, compiled to
-          <a href="https://github.com/CQCL/hugr" target="_blank" rel="noopener">HUGR</a>
-          — a hierarchical graph IR built for quantum hardware. The compiler is genuinely
-          interesting, and the documentation for its internals is sparse.
+          In late 2025 I discovered Guppy while watching a Quantinuum webinar. I was fascinated by the opportunity to contribute to a quantum computing programming language. 
         </p>
         <p>
-          So I'm writing the documentation I wish existed — one PR and one source file at a time.
-          No pretending to know it all up front. This is a working log.
+          With that goal in mind, I cloned the Guppylang repository, explored some open issues, and successfully merged some pull requests.
+          So that’s where I am today, continuing to learn about Guppy and helping out wherever I can. Still, there's a lot for me to learn about quantum computing, but I'm looking forward to the journey. 
         </p>
+  
 
         <h2>What you'll find here</h2>
         <ul>
@@ -56,13 +54,9 @@ import Header from '../components/Header.astro';
           <div class="stack-label">This site</div>
           <div class="stack-value">Astro + MDX</div>
         </div>
-        <div class="stack-card">
-          <div class="stack-label">Employer</div>
-          <div class="stack-value">Quantinuum</div>
-        </div>
         <div class="stack-card accent">
           <div class="stack-label">Status</div>
-          <div class="stack-value">Learning in public</div>
+          <div class="stack-value">Learning</div>
         </div>
       </div>
 
@@ -274,8 +268,8 @@ import Header from '../components/Header.astro';
   }
 
   .link-card {
-    border: 1px solid var(--border);
-    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 14px;
     padding: 1.25rem;
     display: flex;
     align-items: center;
@@ -283,13 +277,18 @@ import Header from '../components/Header.astro';
     text-decoration: none;
     color: inherit;
     background: var(--card);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.05),
+      0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
 
   .link-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 4px 4px 0 var(--ink);
-    border-color: var(--ink);
+    transform: translateY(-5px);
+    box-shadow:
+      0 16px 40px rgba(0, 0, 0, 0.10),
+      0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.12);
   }
 
   .link-icon {
