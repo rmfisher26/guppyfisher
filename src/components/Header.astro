@@ -145,16 +145,15 @@ const currentPath = Astro.url.pathname;
     width: 40px;
     height: 40px;
     background: none;
-    border: 1.5px solid var(--border);
+    border: none;
     border-radius: 4px;
     cursor: pointer;
     color: var(--ink);
-    transition: border-color 0.2s, background 0.2s;
+    transition: background 0.2s;
     flex-shrink: 0;
   }
 
   .menu-toggle:hover {
-    border-color: var(--ink);
     background: rgba(13, 15, 20, 0.04);
   }
 
@@ -194,11 +193,11 @@ const currentPath = Astro.url.pathname;
 
     nav.open {
       display: flex;
-      animation: slideDown 0.2s ease both;
+      animation: menuSlide 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
     }
 
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-8px); }
+    @keyframes menuSlide {
+      from { opacity: 0; transform: translateY(-6px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
@@ -208,6 +207,22 @@ const currentPath = Astro.url.pathname;
       font-size: 0.95rem;
       letter-spacing: 0.06em;
       color: rgba(255, 255, 255, 0.85);
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    nav.open a {
+      animation: itemSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    nav.open a:nth-child(1) { animation-delay: 0.06s; }
+    nav.open a:nth-child(2) { animation-delay: 0.12s; }
+    nav.open a:nth-child(3) { animation-delay: 0.18s; }
+
+    @keyframes itemSlide {
+      from { opacity: 0; transform: translateX(-8px); }
+      to   { opacity: 1; transform: translateX(0); }
     }
 
     nav a::after { display: none; }
