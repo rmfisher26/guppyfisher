@@ -32,7 +32,7 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
   <!-- HERO -->
   <section class="hero">
     <div class="hero-eyebrow">quantum compiler internals</div>
-    <h1>Casting a line into <em>Guppy's</em> depths</h1>
+    <h1>Casting a line into <em><span class="hero-guppy">Guppy's</span></em> depths</h1>
     <p class="hero-desc">
       A working log of everything I'm discovering about Guppylang —
       a quantum programming language built on HUGR.
@@ -228,6 +228,12 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     line-height: 0.95;
     letter-spacing: -0.04em;
     margin-bottom: 2rem;
+  }
+
+  .hero-guppy {
+    font-family: 'Object Sans', sans-serif;
+    font-style: normal;
+    color: var(--accent);
   }
 
   h1 em {
