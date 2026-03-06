@@ -1,0 +1,340 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+
+const entries = [
+  {
+    week: 'Week of Mar 3, 2026',
+    days: [
+      {
+        date: 'Thu Mar 5',
+        items: [
+          {
+            type: 'reading',
+            label: 'Reading',
+            title: 'Diving into HUGR\'s value vs control flow distinction',
+            body: 'Spent a couple of hours reading through the HUGR spec. The split between dataflow and control flow graphs is clicking more — DataflowBlocks and BasicBlocks are fundamentally different containers. Still fuzzy on how the CFG node relates to the outer DFG.',
+          },
+          {
+            type: 'pr',
+            label: 'PR',
+            title: 'Opened PR #1532 — fix: improve error span for mismatched return types',
+            body: 'Noticed the error was pointing at the function definition rather than the bad return expression. One-line fix in type_checker.py but took a while to trace where the span was being set.',
+            link: '#',
+          },
+        ],
+      },
+      {
+        date: 'Wed Mar 4',
+        items: [
+          {
+            type: 'exploration',
+            label: 'Exploration',
+            title: 'Tracing how @guppy.function lowers to HUGR ops',
+            body: 'Followed the call from decorator.py → func_checker.py → hugr_builder.py. Each function body becomes a FuncDefn node with a DataflowBlock inside. The output port wiring is done in compile_statements().',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Feb 24, 2026',
+    days: [
+      {
+        date: 'Fri Feb 28',
+        items: [
+          {
+            type: 'merged',
+            label: 'Merged',
+            title: 'PR #1527 merged — ComptimeGuppyObjectError and saved_exception_hook()',
+            body: 'PR got merged after addressing feedback on the exception hook teardown order. Wrote a blog post about it. The saved_exception_hook pattern turned out to be more interesting than the fix itself.',
+            link: '#',
+          },
+        ],
+      },
+      {
+        date: 'Wed Feb 26',
+        items: [
+          {
+            type: 'reading',
+            label: 'Reading',
+            title: 'Reading about Python\'s sys.excepthook and how test frameworks intercept it',
+            body: 'Rabbit hole from the comptime PR. pytest, IPython, and rich all monkey-patch sys.excepthook at startup. The save/restore pattern is essential for test isolation — each framework assumes it owns the hook.',
+          },
+          {
+            type: 'pr',
+            label: 'PR',
+            title: 'Opened PR #1527 — fix: ComptimeGuppyObjectError diagnostic',
+            body: null,
+            link: '#',
+          },
+        ],
+      },
+      {
+        date: 'Tue Feb 25',
+        items: [
+          {
+            type: 'exploration',
+            label: 'Exploration',
+            title: 'Reproducing the comptime exception hook bug locally',
+            body: 'Managed to reproduce the sys.excepthook not being restored after a comptime error. The issue is that pretty_errors installs its hook and the comptime path raises before the teardown runs.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Feb 17, 2026',
+    days: [
+      {
+        date: 'Tue Feb 18',
+        items: [
+          {
+            type: 'merged',
+            label: 'Merged',
+            title: 'PR #1496 merged — fix: resolve relative wasm file paths from calling file',
+            body: 'Merged by maximilianruesch. The frame-skipping logic to handle @pretty_errors wrapping was the key insight. Wrote up the blog post on stack inspection patterns.',
+            link: '#',
+          },
+          {
+            type: 'reading',
+            label: 'Reading',
+            title: 'Reading through Python\'s frame inspection docs (sys._getframe, f_code, f_back)',
+            body: 'The wasm path fix required understanding the call stack deeply. f_code.co_filename is the key field — it gives you the source file for any frame, which is how you find the user\'s file vs internal guppylang frames.',
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const typeColors: Record<string, string> = {
+  pr:          'var(--accent2)',
+  merged:      'var(--accent)',
+  reading:     '#7c5cbf',
+  exploration: '#b06d2a',
+};
+---
+
+<Base title="Log">
+  <Header />
+
+  <main class="log-main">
+    <div class="log-header">
+      <div class="log-eyebrow">working in public</div>
+      <h1>Log</h1>
+      <p class="log-desc">
+        A running record of what I'm reading, building, and figuring out — day by day.
+      </p>
+    </div>
+
+    <div class="timeline">
+      {entries.map((week) => (
+        <section class="week-block">
+          <div class="week-label">{week.week}</div>
+
+          <div class="week-entries">
+            {week.days.map((day) => (
+              <div class="day-group">
+                <div class="day-date">{day.date}</div>
+
+                <div class="day-items">
+                  {day.items.map((item) => (
+                    <div class="log-entry" style={`--entry-color: ${typeColors[item.type] ?? 'var(--muted)'}`}>
+                      <div class="entry-dot" />
+                      <div class="entry-body">
+                        <div class="entry-meta">
+                          <span class="entry-type">{item.label}</span>
+                          {item.link && (
+                            <a class="entry-link" href={item.link}>view PR</a>
+                          )}
+                        </div>
+                        <div class="entry-title">{item.title}</div>
+                        {item.body && <p class="entry-text">{item.body}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </main>
+</Base>
+
+<style>
+  .log-main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+  }
+
+  /* ── HEADER ── */
+  .log-header {
+    margin-bottom: 4rem;
+  }
+
+  .log-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 1rem;
+  }
+
+  .log-desc {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  /* ── WEEK BLOCK ── */
+  .week-block {
+    margin-bottom: 3.5rem;
+  }
+
+  .week-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.75rem;
+  }
+
+  /* ── DAY GROUP ── */
+  .day-group {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 0 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .day-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    padding-top: 0.35rem;
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  /* ── ENTRIES ── */
+  .day-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-left: 2px solid var(--border);
+    padding-left: 1.5rem;
+  }
+
+  .log-entry {
+    position: relative;
+    display: flex;
+    gap: 0;
+  }
+
+  /* Dot on the timeline rail */
+  .entry-dot {
+    position: absolute;
+    left: -1.5rem;
+    top: 0.45rem;
+    transform: translateX(calc(-50% + 1px));
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--entry-color);
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1.5px var(--entry-color);
+    flex-shrink: 0;
+  }
+
+  .entry-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .entry-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--entry-color);
+    background: color-mix(in srgb, var(--entry-color) 10%, transparent);
+    padding: 0.2rem 0.55rem;
+    border-radius: 99px;
+  }
+
+  .entry-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--border);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .entry-link:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .entry-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+
+  .entry-text {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    .day-group {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .day-date {
+      text-align: left;
+      padding-top: 0;
+    }
+
+    .day-items {
+      border-left-width: 2px;
+    }
+  }
+</style>
