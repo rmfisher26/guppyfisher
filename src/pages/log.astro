@@ -124,8 +124,8 @@ const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
   <Header />
 
   <main class="log-main">
-    <div class="log-header">
-      <div class="log-eyebrow">working in public</div>
+    <div class="page-header">
+      <div class="log-eyebrow">status update</div>
       <h1>Log</h1>
       <p class="log-desc">
         A running record of what I'm reading, building, and figuring out — day by day.
@@ -196,16 +196,43 @@ const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
     padding: 4rem 2rem 6rem;
   }
 
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   /* ── HEADER ── */
+  .page-header {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .timeline {
+    animation: fadeUp 0.5s ease 0.15s both;
+  }
+
+  .pagination {
+    animation: fadeUp 0.5s ease 0.25s both;
+  }
+
   .log-header { margin-bottom: 2.5rem; }
 
   .log-eyebrow {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.75rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .log-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--accent);
   }
 
   h1 {
@@ -410,12 +437,11 @@ const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
   const prevBtn   = document.getElementById('prev-btn') as HTMLButtonElement;
   const nextBtn   = document.getElementById('next-btn') as HTMLButtonElement;
   const indicator = document.getElementById('page-indicator')!;
-  const timeline  = document.getElementById('timeline')!;
 
   const totalPages = Math.ceil(weeks.length / WEEKS_PER_PAGE);
   let currentPage  = 0;
 
-  function goToPage(page: number, scrollToWeekIndex?: number) {
+  function goToPage(page: number) {
     currentPage = Math.max(0, Math.min(page, totalPages - 1));
 
     // Show/hide weeks
@@ -429,12 +455,6 @@ const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
     nextBtn.disabled = currentPage === totalPages - 1;
     indicator.textContent = `Page ${currentPage + 1} of ${totalPages}`;
 
-    // Scroll
-    if (scrollToWeekIndex !== undefined) {
-      document.getElementById(`week-${scrollToWeekIndex}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      timeline.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
   }
 
 
@@ -444,4 +464,5 @@ const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
 
   // Init
   goToPage(0);
+
 </script>
