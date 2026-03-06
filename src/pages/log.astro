@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 
+const WEEKS_PER_PAGE = 2;
+
 const entries = [
   {
     week: 'Week of Mar 3, 2026',
@@ -12,8 +14,8 @@ const entries = [
           {
             type: 'reading',
             label: 'Reading',
-            title: 'Diving into HUGR\'s value vs control flow distinction',
-            body: 'Spent a couple of hours reading through the HUGR spec. The split between dataflow and control flow graphs is clicking more — DataflowBlocks and BasicBlocks are fundamentally different containers. Still fuzzy on how the CFG node relates to the outer DFG.',
+            title: "Diving into HUGR's value vs control flow distinction",
+            body: "Spent a couple of hours reading through the HUGR spec. The split between dataflow and control flow graphs is clicking more — DataflowBlocks and BasicBlocks are fundamentally different containers. Still fuzzy on how the CFG node relates to the outer DFG.",
           },
           {
             type: 'pr',
@@ -58,7 +60,7 @@ const entries = [
           {
             type: 'reading',
             label: 'Reading',
-            title: 'Reading about Python\'s sys.excepthook and how test frameworks intercept it',
+            title: "Reading about Python's sys.excepthook and how test frameworks intercept it",
             body: 'Rabbit hole from the comptime PR. pytest, IPython, and rich all monkey-patch sys.excepthook at startup. The save/restore pattern is essential for test isolation — each framework assumes it owns the hook.',
           },
           {
@@ -77,7 +79,7 @@ const entries = [
             type: 'exploration',
             label: 'Exploration',
             title: 'Reproducing the comptime exception hook bug locally',
-            body: 'Managed to reproduce the sys.excepthook not being restored after a comptime error. The issue is that pretty_errors installs its hook and the comptime path raises before the teardown runs.',
+            body: "Managed to reproduce the sys.excepthook not being restored after a comptime error. The issue is that pretty_errors installs its hook and the comptime path raises before the teardown runs.",
           },
         ],
       },
@@ -99,8 +101,8 @@ const entries = [
           {
             type: 'reading',
             label: 'Reading',
-            title: 'Reading through Python\'s frame inspection docs (sys._getframe, f_code, f_back)',
-            body: 'The wasm path fix required understanding the call stack deeply. f_code.co_filename is the key field — it gives you the source file for any frame, which is how you find the user\'s file vs internal guppylang frames.',
+            title: "Reading through Python's frame inspection docs (sys._getframe, f_code, f_back)",
+            body: "The wasm path fix required understanding the call stack deeply. f_code.co_filename is the key field — it gives you the source file for any frame, which is how you find the user's file vs internal guppylang frames.",
           },
         ],
       },
@@ -114,6 +116,8 @@ const typeColors: Record<string, string> = {
   reading:     '#7c5cbf',
   exploration: '#b06d2a',
 };
+
+const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
 ---
 
 <Base title="Log">
@@ -128,16 +132,20 @@ const typeColors: Record<string, string> = {
       </p>
     </div>
 
-    <div class="timeline">
-      {entries.map((week) => (
-        <section class="week-block">
+    <!-- Timeline -->
+    <div class="timeline" id="timeline">
+      {entries.map((week, i) => (
+        <section
+          class="week-block"
+          data-week-index={i}
+          data-page={Math.floor(i / WEEKS_PER_PAGE)}
+          id={`week-${i}`}
+        >
           <div class="week-label">{week.week}</div>
-
           <div class="week-entries">
             {week.days.map((day) => (
               <div class="day-group">
                 <div class="day-date">{day.date}</div>
-
                 <div class="day-items">
                   {day.items.map((item) => (
                     <div class="log-entry" style={`--entry-color: ${typeColors[item.type] ?? 'var(--muted)'}`}>
@@ -161,6 +169,23 @@ const typeColors: Record<string, string> = {
         </section>
       ))}
     </div>
+
+    <!-- Pagination controls -->
+    <div class="pagination" id="pagination">
+      <button class="page-btn" id="prev-btn" aria-label="Previous page" disabled>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Prev
+      </button>
+      <span class="page-indicator" id="page-indicator">Page 1 of {totalPages}</span>
+      <button class="page-btn" id="next-btn" aria-label="Next page">
+        Next
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
   </main>
 </Base>
 
@@ -172,9 +197,7 @@ const typeColors: Record<string, string> = {
   }
 
   /* ── HEADER ── */
-  .log-header {
-    margin-bottom: 4rem;
-  }
+  .log-header { margin-bottom: 2.5rem; }
 
   .log-eyebrow {
     font-family: 'JetBrains Mono', monospace;
@@ -206,6 +229,8 @@ const typeColors: Record<string, string> = {
   .week-block {
     margin-bottom: 3.5rem;
   }
+
+  .week-block[hidden] { display: none; }
 
   .week-label {
     font-family: 'Syne', sans-serif;
@@ -248,10 +273,8 @@ const typeColors: Record<string, string> = {
   .log-entry {
     position: relative;
     display: flex;
-    gap: 0;
   }
 
-  /* Dot on the timeline rail */
   .entry-dot {
     position: absolute;
     left: -1.5rem;
@@ -321,6 +344,52 @@ const typeColors: Record<string, string> = {
     margin: 0;
   }
 
+  /* ── PAGINATION ── */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  .page-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+
+  .page-btn:hover:not(:disabled) {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .page-indicator {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
   /* ── MOBILE ── */
   @media (max-width: 600px) {
     .day-group {
@@ -332,9 +401,47 @@ const typeColors: Record<string, string> = {
       text-align: left;
       padding-top: 0;
     }
-
-    .day-items {
-      border-left-width: 2px;
-    }
   }
 </style>
+
+<script>
+  const WEEKS_PER_PAGE = 2;
+  const weeks     = Array.from(document.querySelectorAll<HTMLElement>('.week-block'));
+  const prevBtn   = document.getElementById('prev-btn') as HTMLButtonElement;
+  const nextBtn   = document.getElementById('next-btn') as HTMLButtonElement;
+  const indicator = document.getElementById('page-indicator')!;
+  const timeline  = document.getElementById('timeline')!;
+
+  const totalPages = Math.ceil(weeks.length / WEEKS_PER_PAGE);
+  let currentPage  = 0;
+
+  function goToPage(page: number, scrollToWeekIndex?: number) {
+    currentPage = Math.max(0, Math.min(page, totalPages - 1));
+
+    // Show/hide weeks
+    weeks.forEach((w, i) => {
+      const onPage = Math.floor(i / WEEKS_PER_PAGE) === currentPage;
+      w.hidden = !onPage;
+    });
+
+    // Update pagination controls
+    prevBtn.disabled = currentPage === 0;
+    nextBtn.disabled = currentPage === totalPages - 1;
+    indicator.textContent = `Page ${currentPage + 1} of ${totalPages}`;
+
+    // Scroll
+    if (scrollToWeekIndex !== undefined) {
+      document.getElementById(`week-${scrollToWeekIndex}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      timeline.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+
+  // Prev / next
+  prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
+  nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+
+  // Init
+  goToPage(0);
+</script>
