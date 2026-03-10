@@ -2,108 +2,126 @@
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 
-const WEEKS_PER_PAGE = 2;
-
 const entries = [
   {
-    week: 'Week of Mar 3, 2026',
+    week: 'Week of Mar 9, 2026',
+    days: [
+      {
+        date: 'Fri Mar 13',
+        items: [
+          { type: 'community', label: 'Q-Net', title: 'Q-Net Connect 2026: Day 2: TBD', body: null, link: null, linkLabel: null },
+        ],
+      },
+      {
+        date: 'Thu Mar 12',
+        items: [
+          { type: 'community', label: 'Q-Net', title: 'Q-Net Connect 2026: Day 1 — From Qubits to Code: Quantinuum for Developers (Dr. Seyon Sivarajah)', body: null, link: null, linkLabel: null },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Mar 2, 2026',
     days: [
       {
         date: 'Thu Mar 5',
         items: [
-          {
-            type: 'reading',
-            label: 'Reading',
-            title: "Diving into HUGR's value vs control flow distinction",
-            body: "Spent a couple of hours reading through the HUGR spec. The split between dataflow and control flow graphs is clicking more — DataflowBlocks and BasicBlocks are fundamentally different containers. Still fuzzy on how the CFG node relates to the outer DFG.",
-          },
-          {
-            type: 'pr',
-            label: 'PR',
-            title: 'Opened PR #1532 — fix: improve error span for mismatched return types',
-            body: 'Noticed the error was pointing at the function definition rather than the bad return expression. One-line fix in type_checker.py but took a while to trace where the span was being set.',
-            link: '#',
-          },
-        ],
-      },
-      {
-        date: 'Wed Mar 4',
-        items: [
-          {
-            type: 'exploration',
-            label: 'Exploration',
-            title: 'Tracing how @guppy.function lowers to HUGR ops',
-            body: 'Followed the call from decorator.py → func_checker.py → hugr_builder.py. Each function body becomes a FuncDefn node with a DataflowBlock inside. The output port wiring is done in compile_statements().',
-          },
+          { type: 'community', label: 'Q-Net', title: 'Joined Q-Net Community', body: null, link: 'https://www.quantinuum.com/q-net', linkLabel: 'learn more' },
+          { type: 'webinar',   label: 'Webinar', title: 'Helios Unlocks a New Frontier in Superconductivity', body: null, link: 'https://www.quantinuum.com/webinar/helios-unlocks-a-new-frontier-in-superconductivity', linkLabel: 'watch' },
         ],
       },
     ],
   },
   {
-    week: 'Week of Feb 24, 2026',
+    week: 'Week of Feb 23, 2026',
     days: [
       {
-        date: 'Fri Feb 28',
+        date: 'Fri Feb 27',
         items: [
-          {
-            type: 'merged',
-            label: 'Merged',
-            title: 'PR #1527 merged — ComptimeGuppyObjectError and saved_exception_hook()',
-            body: 'PR got merged after addressing feedback on the exception hook teardown order. Wrote a blog post about it. The saved_exception_hook pattern turned out to be more interesting than the fix itself.',
-            link: '#',
-          },
-        ],
-      },
-      {
-        date: 'Wed Feb 26',
-        items: [
-          {
-            type: 'reading',
-            label: 'Reading',
-            title: "Reading about Python's sys.excepthook and how test frameworks intercept it",
-            body: 'Rabbit hole from the comptime PR. pytest, IPython, and rich all monkey-patch sys.excepthook at startup. The save/restore pattern is essential for test isolation — each framework assumes it owns the hook.',
-          },
-          {
-            type: 'pr',
-            label: 'PR',
-            title: 'Opened PR #1527 — fix: ComptimeGuppyObjectError diagnostic',
-            body: null,
-            link: '#',
-          },
-        ],
-      },
-      {
-        date: 'Tue Feb 25',
-        items: [
-          {
-            type: 'exploration',
-            label: 'Exploration',
-            title: 'Reproducing the comptime exception hook bug locally',
-            body: "Managed to reproduce the sys.excepthook not being restored after a comptime error. The issue is that pretty_errors installs its hook and the comptime path raises before the teardown runs.",
-          },
+          { type: 'pr', label: 'PR', title: 'feat: Improve error message for passing non-comptime values into comptime', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1527', linkLabel: 'view PR' },
         ],
       },
     ],
   },
   {
-    week: 'Week of Feb 17, 2026',
+    week: 'Week of Feb 16, 2026',
     days: [
       {
-        date: 'Tue Feb 18',
+        date: 'Wed Feb 18',
         items: [
-          {
-            type: 'merged',
-            label: 'Merged',
-            title: 'PR #1496 merged — fix: resolve relative wasm file paths from calling file',
-            body: 'Merged by maximilianruesch. The frame-skipping logic to handle @pretty_errors wrapping was the key insight. Wrote up the blog post on stack inspection patterns.',
-            link: '#',
-          },
-          {
-            type: 'reading',
-            label: 'Reading',
-            title: "Reading through Python's frame inspection docs (sys._getframe, f_code, f_back)",
-            body: "The wasm path fix required understanding the call stack deeply. f_code.co_filename is the key field — it gives you the source file for any frame, which is how you find the user's file vs internal guppylang frames.",
-          },
+          { type: 'pr', label: 'PR', title: 'fix: Resolve relative wasm file paths from calling file', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1496', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'feat: Improve error message for failed borrows due to failed leaf borrows', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1501', linkLabel: 'view PR' },
+        ],
+      },
+      {
+        date: 'Tue Feb 17',
+        items: [
+          { type: 'pr', label: 'PR', title: 'fix: Misleading error message for leaked qubits', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1497', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'feat: Add missing bool methods (__rxor__, __rand__, __ror__)', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1498', linkLabel: 'view PR' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Feb 9, 2026',
+    days: [
+      {
+        date: 'Tue Feb 10',
+        items: [
+          { type: 'pr', label: 'PR', title: 'feat: Add function to swap two array elements that lowers to hugr swap op', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1459', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'feat: Compile time array indexing linearity check for literal indices', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1469', linkLabel: 'view PR' },
+        ],
+      },
+      {
+        date: 'Mon Feb 9',
+        items: [
+          { type: 'pr', label: 'PR', title: 'fix: Misleading error message when trying to load a list of numpy integers using comptime', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1484', linkLabel: 'view PR' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Jan 26, 2026',
+    days: [
+      {
+        date: 'Wed Jan 28',
+        items: [
+          { type: 'pr', label: 'PR', title: 'feat: Compile time array bounds check for literal indices', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1448', linkLabel: 'view PR' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Jan 19, 2026',
+    days: [
+      {
+        date: 'Wed Jan 21',
+        items: [
+          { type: 'video', label: 'Video', title: 'Introducing Guppy: Our Quantum-first Programming Language', body: null, link: 'https://www.youtube.com/watch?v=0o-NlN5y1hY', linkLabel: 'watch' },
+          { type: 'video', label: 'Video', title: 'How Guppy Got Its Name', body: null, link: 'https://www.youtube.com/watch?v=Amm3QJbpKFA', linkLabel: 'watch' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Jan 5, 2026',
+    days: [
+      {
+        date: 'Sat Jan 10',
+        items: [
+          { type: 'pr', label: 'PR', title: 'docs: Added documentation for Issue #1213 — Add API docs for std modules', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1428', linkLabel: 'view PR' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Dec 15, 2025',
+    days: [
+      {
+        date: 'Tue Dec 16',
+        items: [
+          { type: 'webinar', label: 'Webinar', title: 'Quantum Computing With Real-World Impact', body: null, link: 'https://www.quantinuum.com/webinar/an-overview-of-our-helios-quantum-computer', linkLabel: 'watch' },
+          { type: 'webinar', label: 'Webinar', title: "Unpack the Stack: An Introduction to Quantinuum's Next-Generation Software Stack", body: null, link: 'https://www.quantinuum.com/webinar/unpack-the-stack', linkLabel: 'watch' },
         ],
       },
     ],
@@ -111,13 +129,42 @@ const entries = [
 ];
 
 const typeColors: Record<string, string> = {
-  pr:          'var(--accent2)',
-  merged:      'var(--accent)',
-  reading:     '#7c5cbf',
-  exploration: '#b06d2a',
+  pr:        'var(--accent2)',
+  video:     '#7c5cbf',
+  webinar:   '#b06d2a',
+  community: 'var(--accent)',
 };
 
-const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
+const ITEMS_PER_PAGE = 10;
+
+// Flatten all items preserving week/day context
+const flat = entries.flatMap(w =>
+  w.days.flatMap(d =>
+    d.items.map(item => ({ weekLabel: w.week, date: d.date, ...item }))
+  )
+);
+
+// Chunk into pages of ITEMS_PER_PAGE
+const chunks: (typeof flat)[] = [];
+for (let i = 0; i < flat.length; i += ITEMS_PER_PAGE) {
+  chunks.push(flat.slice(i, i + ITEMS_PER_PAGE));
+}
+
+// Reconstruct week/day grouping per page
+type ReconPage = { week: string; days: { date: string; items: typeof flat }[] }[];
+const pages: ReconPage[] = chunks.map(chunk => {
+  const result: ReconPage = [];
+  for (const item of chunk) {
+    let weekEntry = result.find(w => w.week === item.weekLabel);
+    if (!weekEntry) { weekEntry = { week: item.weekLabel, days: [] }; result.push(weekEntry); }
+    let dayEntry = weekEntry.days.find(d => d.date === item.date);
+    if (!dayEntry) { dayEntry = { date: item.date, items: [] }; weekEntry.days.push(dayEntry); }
+    dayEntry.items.push(item);
+  }
+  return result;
+});
+
+const totalPages = pages.length;
 ---
 
 <Base title="Log">
@@ -134,39 +181,38 @@ const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
 
     <!-- Timeline -->
     <div class="timeline" id="timeline">
-      {entries.map((week, i) => (
-        <section
-          class="week-block"
-          data-week-index={i}
-          data-page={Math.floor(i / WEEKS_PER_PAGE)}
-          id={`week-${i}`}
-        >
-          <div class="week-label">{week.week}</div>
-          <div class="week-entries">
-            {week.days.map((day) => (
-              <div class="day-group">
-                <div class="day-date">{day.date}</div>
-                <div class="day-items">
-                  {day.items.map((item) => (
-                    <div class="log-entry" style={`--entry-color: ${typeColors[item.type] ?? 'var(--muted)'}`}>
-                      <div class="entry-dot" />
-                      <div class="entry-body">
-                        <div class="entry-meta">
-                          <span class="entry-type">{item.label}</span>
-                          {item.link && (
-                            <a class="entry-link" href={item.link}>view PR</a>
-                          )}
+      {pages.map((pageWeeks, pageIndex) => (
+        <div class="log-page" data-page={pageIndex}>
+          {pageWeeks.map((week) => (
+            <section class="week-block">
+              <div class="week-label">{week.week}</div>
+              <div class="week-entries">
+                {week.days.map((day) => (
+                  <div class="day-group">
+                    <div class="day-date">{day.date}</div>
+                    <div class="day-items">
+                      {day.items.map((item) => (
+                        <div class="log-entry" style={`--entry-color: ${typeColors[item.type] ?? 'var(--muted)'}`}>
+                          <div class="entry-dot" />
+                          <div class="entry-body">
+                            <div class="entry-meta">
+                              <span class="entry-type">{item.label}</span>
+                              {item.link && (
+                                <a class="entry-link" href={item.link}>{item.linkLabel ?? 'view'}</a>
+                              )}
+                            </div>
+                            <div class="entry-title">{item.title}</div>
+                            {item.body && <p class="entry-text">{item.body}</p>}
+                          </div>
                         </div>
-                        <div class="entry-title">{item.title}</div>
-                        {item.body && <p class="entry-text">{item.body}</p>}
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
+          ))}
+        </div>
       ))}
     </div>
 
@@ -257,6 +303,7 @@ const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
     margin-bottom: 3.5rem;
   }
 
+  .log-page[hidden] { display: none; }
   .week-block[hidden] { display: none; }
 
   .week-label {
@@ -304,7 +351,7 @@ const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
 
   .entry-dot {
     position: absolute;
-    left: -1.5rem;
+    left: -1.6rem;
     top: 0.45rem;
     transform: translateX(calc(-50% + 1px));
     width: 8px;
@@ -432,37 +479,28 @@ const totalPages = Math.ceil(entries.length / WEEKS_PER_PAGE);
 </style>
 
 <script>
-  const WEEKS_PER_PAGE = 2;
-  const weeks     = Array.from(document.querySelectorAll<HTMLElement>('.week-block'));
+  const logPages  = Array.from(document.querySelectorAll<HTMLElement>('.log-page'));
   const prevBtn   = document.getElementById('prev-btn') as HTMLButtonElement;
   const nextBtn   = document.getElementById('next-btn') as HTMLButtonElement;
   const indicator = document.getElementById('page-indicator')!;
 
-  const totalPages = Math.ceil(weeks.length / WEEKS_PER_PAGE);
+  const totalPages = logPages.length;
   let currentPage  = 0;
 
   function goToPage(page: number) {
     currentPage = Math.max(0, Math.min(page, totalPages - 1));
 
-    // Show/hide weeks
-    weeks.forEach((w, i) => {
-      const onPage = Math.floor(i / WEEKS_PER_PAGE) === currentPage;
-      w.hidden = !onPage;
-    });
+    logPages.forEach((p, i) => { p.hidden = i !== currentPage; });
 
-    // Update pagination controls
     prevBtn.disabled = currentPage === 0;
     nextBtn.disabled = currentPage === totalPages - 1;
     indicator.textContent = `Page ${currentPage + 1} of ${totalPages}`;
-
   }
 
+  const pageHeader = document.querySelector<HTMLElement>('.page-header')!;
 
-  // Prev / next
-  prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
-  nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+  prevBtn.addEventListener('click', () => { goToPage(currentPage - 1); pageHeader.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  nextBtn.addEventListener('click', () => { goToPage(currentPage + 1); pageHeader.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 
-  // Init
   goToPage(0);
-
 </script>
