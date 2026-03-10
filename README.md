@@ -51,8 +51,9 @@ def example(q: qubit) -> qubit:
 ```
 ```
 
+```
 ## Components
-
+```
 | Component | Usage | Props |
 |-----------|-------|-------|
 | `<Callout>` | Highlighted aside | `type`: `note` \| `warning` \| `question`, `label` |
