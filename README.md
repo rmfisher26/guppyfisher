@@ -1,4 +1,4 @@
-# GuppyFisher 🐟
+# Guppyfisher 
 
 > Learning Guppylang compiler internals in public.
 
@@ -57,7 +57,7 @@ def example(q: qubit) -> qubit:
 |-----------|-------|-------|
 | `<Callout>` | Highlighted aside | `type`: `note` \| `warning` \| `question`, `label` |
 | `<SourceRef>` | Link to GitHub source | `file`, `lines`, `repo`: `guppylang` \| `hugr` |
-
+```
 ## Deploy to GitHub Pages
 
 Push to `main`. The workflow in `.github/workflows/deploy.yml` builds and deploys automatically.
