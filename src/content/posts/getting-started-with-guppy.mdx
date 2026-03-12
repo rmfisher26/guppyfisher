@@ -3,14 +3,20 @@ title: "Getting Started with Guppy"
 description: "A beginner's introduction to Guppy — the quantum programming language embedded in Python. What it is, why it exists, and how to write your first program."
 series: concepts
 seriesNumber: 1
-pubDate: 2025-01-10
+pubDate: 2026-03-12
 readingTime: "6 min"
 ---
 ## What is Guppy?
-Guppy is a quantum-first programming language built by the quantum computing company, Quantinuum. The language is embedded into Python which makes reading and writing code simple to learn.
-This hybrid approach makes is possible to combine both classical and quantum programming logic.
+Guppy is a quantum-first programming language that runs on real quantum computers. The language is open source and built by the quantum computing company, Quantinuum. 
 
-When writing a Python function, using the `@guppy` decorator can make function run quantum circuits.
+Features:
+- **Embedded in Python**: integration with existing Python workflows makes adoption smoother.
+- **Familiar syntax**: learning is simpler, since writing Guppy programs is familiar to those who understand Python.
+- **Compiler and Qubit Safety**: the compiler can detect potential runtime errors that would be expensive if they ran on quantum hardware.
+- **Hybrid Compute**: real-time classical compute and quantum programming logic can exist in the same program.
+- **Quantum Emulation**: Guppy can run simulations through an emulator known as "Selene" without needing to use real (and expensive) quantum computers.
+
+When writing a Python function, using the `@guppy` decorator can make a function run as a quantum circuit.
 
 ```python
 # An example of a Guppy Function
@@ -21,12 +27,38 @@ def circuit() -> qubit:
     return q
 ```
 
+Here's a more complete example — a Bell state circuit:
+```python
+#python host
+from guppylang import guppy
+
+#quantum kernel
+@guppy
+def bell() -> tuple[qubit, qubit]:
+    q0, q1 = qubit(), qubit()
+    h(q0)
+    cx(q0,q1)
+    return q0, q1
+
+@guppy
+def main() -> None:
+    q0, q1 = bell()
+    c0 = measure(q0)
+    c1 = measure(q1)
+
+#compile
+hugr = main.compile()
+
+#run
+main.emulator(n_qubits=2).run()
+```
+
 
 ## The Guppy Compiler  
 Guppy is strongly-typed, which makes it possible to catch and report compilation errors during development. This helps developers find bugs early and can save time and avoid costly quantum resources.
-In addition, the compiler can recognize linearity violoations on qubits. Linearity is an critical part of quantum computing, so just know that this is an essential concept that make quantum algorithms work.
+In addition, the compiler can recognize linearity violations on qubits. Linearity is a critical part of quantum computing, so just know that this is an essential concept that makes quantum algorithms work.
 
-The compiler goes through a series of steps to translate Guppy code into runnable code on quantum hardware, so my goal is to explain how this works for the benefit of future Guppy developers.
+The compiler goes through a series of steps to translate Guppy code into runnable code on quantum hardware. The goal of this series is to explain how this works for the benefit of future Guppy developers.
 
 In the next parts of the series, I will explain more about why linearity matters and how the Guppy compiler works to enforce this.
 
