@@ -1,11 +1,11 @@
 :root {
   --ink: #0d0f14;
-  --paper: #f4f0e8;
-  --accent: #469d9b;
-  --accent2: #114c8b;
-  --muted: #8a8070;
+  --paper: #ffffff;
+  --accent: #30a08e;
+  --accent2: #0a2d54;
+  --muted: #989898;
   --card: #ffffff;
-  --border: #d8d0c0;
+  --border: #dfdddb;
   --code-bg: #1a1d27;
   --code-fg: #a8d8b0;
 }
@@ -17,7 +17,7 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--paper);
   color: var(--ink);
-  font-family: 'Lora', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 18px;
   line-height: 1.7;
   overflow-x: hidden;
@@ -40,7 +40,7 @@ body::before {
   padding: 1.2rem 1.5rem;
   margin: 1.5rem 0;
   overflow-x: auto;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Roboto Mono', monospace;
   font-size: 0.82rem;
   line-height: 1.6;
   border-left: 3px solid var(--accent);
@@ -66,7 +66,7 @@ body::before {
 .prose strong { font-weight: 700; }
 .prose em { font-style: italic; }
 .prose code {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Roboto Mono', monospace;
   font-size: 0.82em;
   background: rgba(0,200,150,0.1);
   padding: 0.1em 0.35em;

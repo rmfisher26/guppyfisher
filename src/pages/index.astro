@@ -31,12 +31,11 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-eyebrow">quantum compiler internals</div>
-    <h1>Casting a line into <em>Guppy's</em> depths</h1>
+    <div class="hero-eyebrow">welcome</div>
+    <h1>Casting a line into <em><span class="hero-guppy">Guppy's</span></em> depths</h1>
     <p class="hero-desc">
-      A working log of everything I'm discovering about Guppylang —
-      a quantum programming language built on HUGR.
-      Written as I go. No pretending to know it all.
+      An ongoing log of everything I'm discovering about Guppy —
+      a quantum programming language built by Quantinuum. Status: compiling.
     </p>
 
     <div class="hero-pipeline">
@@ -230,6 +229,12 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     margin-bottom: 2rem;
   }
 
+  .hero-guppy {
+    font-family: 'Object Sans', sans-serif;
+    font-style: normal;
+    color: var(--accent);
+  }
+
   h1 em {
     font-style: italic;
     font-family: 'Lora', serif;
@@ -240,7 +245,6 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
   .hero-desc {
     font-size: 1.15rem;
     color: var(--muted);
-    max-width: 520px;
     margin-bottom: 3rem;
     font-style: italic;
   }
@@ -308,17 +312,23 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0;
-    border: 2px solid var(--ink);
-    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 14px;
     overflow: hidden;
     text-decoration: none;
     color: inherit;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.05),
+      0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
 
   .featured-card:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 6px 6px 0 var(--ink);
+    transform: translateY(-5px);
+    box-shadow:
+      0 16px 40px rgba(0, 0, 0, 0.10),
+      0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.12);
   }
 
   .featured-visual {

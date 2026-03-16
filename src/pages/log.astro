@@ -1,0 +1,506 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+
+const entries = [
+  {
+    week: 'Week of Mar 9, 2026',
+    days: [
+      {
+        date: 'Fri Mar 13',
+        items: [
+          { type: 'community', label: 'Q-Net', title: 'Q-Net Connect 2026: Day 2: TBD', body: null, link: null, linkLabel: null },
+        ],
+      },
+      {
+        date: 'Thu Mar 12',
+        items: [
+          { type: 'community', label: 'Q-Net', title: 'Q-Net Connect 2026: Day 1 — From Qubits to Code: Quantinuum for Developers (Dr. Seyon Sivarajah)', body: null, link: null, linkLabel: null },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Mar 2, 2026',
+    days: [
+      {
+        date: 'Thu Mar 5',
+        items: [
+          { type: 'community', label: 'Q-Net', title: 'Joined Q-Net Community', body: null, link: 'https://www.quantinuum.com/q-net', linkLabel: 'learn more' },
+          { type: 'webinar',   label: 'Webinar', title: 'Helios Unlocks a New Frontier in Superconductivity', body: null, link: 'https://www.quantinuum.com/webinar/helios-unlocks-a-new-frontier-in-superconductivity', linkLabel: 'watch' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Feb 23, 2026',
+    days: [
+      {
+        date: 'Fri Feb 27',
+        items: [
+          { type: 'pr', label: 'PR', title: 'feat: Improve error message for passing non-comptime values into comptime', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1527', linkLabel: 'view PR' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Feb 16, 2026',
+    days: [
+      {
+        date: 'Wed Feb 18',
+        items: [
+          { type: 'pr', label: 'PR', title: 'fix: Resolve relative wasm file paths from calling file', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1496', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'feat: Improve error message for failed borrows due to failed leaf borrows', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1501', linkLabel: 'view PR' },
+        ],
+      },
+      {
+        date: 'Tue Feb 17',
+        items: [
+          { type: 'pr', label: 'PR', title: 'fix: Misleading error message for leaked qubits', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1497', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'feat: Add missing bool methods (__rxor__, __rand__, __ror__)', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1498', linkLabel: 'view PR' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Feb 9, 2026',
+    days: [
+      {
+        date: 'Tue Feb 10',
+        items: [
+          { type: 'pr', label: 'PR', title: 'feat: Add function to swap two array elements that lowers to hugr swap op', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1459', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'feat: Compile time array indexing linearity check for literal indices', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1469', linkLabel: 'view PR' },
+        ],
+      },
+      {
+        date: 'Mon Feb 9',
+        items: [
+          { type: 'pr', label: 'PR', title: 'fix: Misleading error message when trying to load a list of numpy integers using comptime', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1484', linkLabel: 'view PR' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Jan 26, 2026',
+    days: [
+      {
+        date: 'Wed Jan 28',
+        items: [
+          { type: 'pr', label: 'PR', title: 'feat: Compile time array bounds check for literal indices', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1448', linkLabel: 'view PR' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Jan 19, 2026',
+    days: [
+      {
+        date: 'Wed Jan 21',
+        items: [
+          { type: 'video', label: 'Video', title: 'Introducing Guppy: Our Quantum-first Programming Language', body: null, link: 'https://www.youtube.com/watch?v=0o-NlN5y1hY', linkLabel: 'watch' },
+          { type: 'video', label: 'Video', title: 'How Guppy Got Its Name', body: null, link: 'https://www.youtube.com/watch?v=Amm3QJbpKFA', linkLabel: 'watch' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Jan 5, 2026',
+    days: [
+      {
+        date: 'Sat Jan 10',
+        items: [
+          { type: 'pr', label: 'PR', title: 'docs: Added documentation for Issue #1213 — Add API docs for std modules', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1428', linkLabel: 'view PR' },
+        ],
+      },
+    ],
+  },
+  {
+    week: 'Week of Dec 15, 2025',
+    days: [
+      {
+        date: 'Tue Dec 16',
+        items: [
+          { type: 'webinar', label: 'Webinar', title: 'Quantum Computing With Real-World Impact', body: null, link: 'https://www.quantinuum.com/webinar/an-overview-of-our-helios-quantum-computer', linkLabel: 'watch' },
+          { type: 'webinar', label: 'Webinar', title: "Unpack the Stack: An Introduction to Quantinuum's Next-Generation Software Stack", body: null, link: 'https://www.quantinuum.com/webinar/unpack-the-stack', linkLabel: 'watch' },
+        ],
+      },
+    ],
+  },
+];
+
+const typeColors: Record<string, string> = {
+  pr:        'var(--accent2)',
+  video:     '#7c5cbf',
+  webinar:   '#b06d2a',
+  community: 'var(--accent)',
+};
+
+const ITEMS_PER_PAGE = 10;
+
+// Flatten all items preserving week/day context
+const flat = entries.flatMap(w =>
+  w.days.flatMap(d =>
+    d.items.map(item => ({ weekLabel: w.week, date: d.date, ...item }))
+  )
+);
+
+// Chunk into pages of ITEMS_PER_PAGE
+const chunks: (typeof flat)[] = [];
+for (let i = 0; i < flat.length; i += ITEMS_PER_PAGE) {
+  chunks.push(flat.slice(i, i + ITEMS_PER_PAGE));
+}
+
+// Reconstruct week/day grouping per page
+type ReconPage = { week: string; days: { date: string; items: typeof flat }[] }[];
+const pages: ReconPage[] = chunks.map(chunk => {
+  const result: ReconPage = [];
+  for (const item of chunk) {
+    let weekEntry = result.find(w => w.week === item.weekLabel);
+    if (!weekEntry) { weekEntry = { week: item.weekLabel, days: [] }; result.push(weekEntry); }
+    let dayEntry = weekEntry.days.find(d => d.date === item.date);
+    if (!dayEntry) { dayEntry = { date: item.date, items: [] }; weekEntry.days.push(dayEntry); }
+    dayEntry.items.push(item);
+  }
+  return result;
+});
+
+const totalPages = pages.length;
+---
+
+<Base title="Log">
+  <Header />
+
+  <main class="log-main">
+    <div class="page-header">
+      <div class="log-eyebrow">status update</div>
+      <h1>Log</h1>
+      <p class="log-desc">
+        A running record of what I'm reading, building, and figuring out — day by day.
+      </p>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline" id="timeline">
+      {pages.map((pageWeeks, pageIndex) => (
+        <div class="log-page" data-page={pageIndex}>
+          {pageWeeks.map((week) => (
+            <section class="week-block">
+              <div class="week-label">{week.week}</div>
+              <div class="week-entries">
+                {week.days.map((day) => (
+                  <div class="day-group">
+                    <div class="day-date">{day.date}</div>
+                    <div class="day-items">
+                      {day.items.map((item) => (
+                        <div class="log-entry" style={`--entry-color: ${typeColors[item.type] ?? 'var(--muted)'}`}>
+                          <div class="entry-dot" />
+                          <div class="entry-body">
+                            <div class="entry-meta">
+                              <span class="entry-type">{item.label}</span>
+                              {item.link && (
+                                <a class="entry-link" href={item.link}>{item.linkLabel ?? 'view'}</a>
+                              )}
+                            </div>
+                            <div class="entry-title">{item.title}</div>
+                            {item.body && <p class="entry-text">{item.body}</p>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      ))}
+    </div>
+
+    <!-- Pagination controls -->
+    <div class="pagination" id="pagination">
+      <button class="page-btn" id="prev-btn" aria-label="Previous page" disabled>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Prev
+      </button>
+      <span class="page-indicator" id="page-indicator">Page 1 of {totalPages}</span>
+      <button class="page-btn" id="next-btn" aria-label="Next page">
+        Next
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .log-main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HEADER ── */
+  .page-header {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .timeline {
+    animation: fadeUp 0.5s ease 0.15s both;
+  }
+
+  .pagination {
+    animation: fadeUp 0.5s ease 0.25s both;
+  }
+
+  .log-header { margin-bottom: 2.5rem; }
+
+  .log-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .log-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 1rem;
+  }
+
+  .log-desc {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  /* ── WEEK BLOCK ── */
+  .week-block {
+    margin-bottom: 3.5rem;
+  }
+
+  .log-page[hidden] { display: none; }
+  .week-block[hidden] { display: none; }
+
+  .week-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.75rem;
+  }
+
+  /* ── DAY GROUP ── */
+  .day-group {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 0 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .day-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    padding-top: 0.35rem;
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  /* ── ENTRIES ── */
+  .day-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-left: 2px solid var(--border);
+    padding-left: 1.5rem;
+  }
+
+  .log-entry {
+    position: relative;
+    display: flex;
+  }
+
+  .entry-dot {
+    position: absolute;
+    left: -1.6rem;
+    top: 0.45rem;
+    transform: translateX(calc(-50% + 1px));
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--entry-color);
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1.5px var(--entry-color);
+    flex-shrink: 0;
+  }
+
+  .entry-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .entry-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--entry-color);
+    background: color-mix(in srgb, var(--entry-color) 10%, transparent);
+    padding: 0.2rem 0.55rem;
+    border-radius: 99px;
+  }
+
+  .entry-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--border);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .entry-link:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .entry-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+
+  .entry-text {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* ── PAGINATION ── */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  .page-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+
+  .page-btn:hover:not(:disabled) {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .page-indicator {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    .day-group {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .day-date {
+      text-align: left;
+      padding-top: 0;
+    }
+  }
+</style>
+
+<script>
+  const logPages  = Array.from(document.querySelectorAll<HTMLElement>('.log-page'));
+  const prevBtn   = document.getElementById('prev-btn') as HTMLButtonElement;
+  const nextBtn   = document.getElementById('next-btn') as HTMLButtonElement;
+  const indicator = document.getElementById('page-indicator')!;
+
+  const totalPages = logPages.length;
+  let currentPage  = 0;
+
+  function goToPage(page: number) {
+    currentPage = Math.max(0, Math.min(page, totalPages - 1));
+
+    logPages.forEach((p, i) => { p.hidden = i !== currentPage; });
+
+    prevBtn.disabled = currentPage === 0;
+    nextBtn.disabled = currentPage === totalPages - 1;
+    indicator.textContent = `Page ${currentPage + 1} of ${totalPages}`;
+  }
+
+  const pageHeader = document.querySelector<HTMLElement>('.page-header')!;
+
+  prevBtn.addEventListener('click', () => { goToPage(currentPage - 1); pageHeader.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  nextBtn.addEventListener('click', () => { goToPage(currentPage + 1); pageHeader.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+
+  goToPage(0);
+</script>
