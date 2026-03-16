@@ -7,10 +7,17 @@ interface Props {
   pubDate: Date;
   readingTime: string;
   prRef?: string;
+  prType?: 'feature' | 'fix' | 'documentation';
   slug: string;
 }
 
-const { title, description, series, seriesNumber, pubDate, readingTime, prRef, slug } = Astro.props;
+const { title, description, series, seriesNumber, pubDate, readingTime, prRef, prType, slug } = Astro.props;
+
+const prTypeLabel: Record<string, string> = {
+  feature: 'feature',
+  fix: 'fix',
+  doc: 'documentation',
+};
 
 const seriesLabel: Record<string, string> = {
   concepts: 'Series 1 · Concepts',
@@ -34,8 +41,10 @@ const formattedDate = pubDate.toLocaleDateString('en-US', { month: 'short', year
     <div class="card-title">{title}</div>
     <div class="card-excerpt">{description}</div>
     <div class="card-footer">
-      <span>{formattedDate} · {readingTime}</span>
-      {prRef && <span class="pr-ref">{prRef}</span>}
+      <div class="card-footer-left">
+        <span>{formattedDate} · {readingTime}</span>
+        {prType && <span class={`pr-type pr-type--${prType}`}>{prTypeLabel[prType]}</span>}
+      </div>
       <span class="card-arrow">↗</span>
     </div>
   </div>
@@ -117,12 +126,30 @@ const formattedDate = pubDate.toLocaleDateString('en-US', { month: 'short', year
     gap: 0.5rem;
   }
 
+  .card-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .pr-ref {
     background: rgba(0,200,150,0.12);
     color: var(--accent);
     padding: 0.1rem 0.4rem;
     border-radius: 3px;
   }
+
+  .pr-type {
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .pr-type--feature { background: rgba(0,200,150,0.15);  color: var(--accent); }
+  .pr-type--fix     { background: rgba(255,92,58,0.15);  color: #ff5c3a; }
+  .pr-type--doc     { background: rgba(250,204,21,0.15); color: #d4a800; }
 
   .card-arrow { transition: transform 0.2s; }
   .post-card:hover .card-arrow { transform: translate(3px, -3px); }

@@ -153,7 +153,7 @@ const recentActivity = flatEntries.slice(0, 3);
               <div class="feat-meta">
                 <span>{featuredDate}</span>
                 <span>~{featured.data.readingTime} read</span>
-                {featured.data.prRef && <span>{featured.data.prRef}</span>}
+                {featured.data.prType && <span class={`feat-pr-type feat-pr-type--${featured.data.prType}`}>{featured.data.prType === 'documentation' ? 'documentation' : featured.data.prType}</span>}
               </div>
               <span class="read-btn">Read post →</span>
             </div>
@@ -181,6 +181,7 @@ const recentActivity = flatEntries.slice(0, 3);
             pubDate={post.data.pubDate}
             readingTime={post.data.readingTime}
             prRef={post.data.prRef}
+            prType={post.data.prType}
             slug={post.slug}
           />
         ))}
@@ -478,6 +479,18 @@ const recentActivity = flatEntries.slice(0, 3);
     font-size: 0.7rem;
     color: var(--muted);
   }
+
+  .feat-pr-type {
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .feat-pr-type--feature { background: rgba(0,200,150,0.15);  color: var(--accent); }
+  .feat-pr-type--fix     { background: rgba(255,92,58,0.15);  color: #ff5c3a; }
+  .feat-pr-type--doc     { background: rgba(250,204,21,0.15); color: #d4a800; }
 
   .read-btn {
     margin-top: 1.5rem;

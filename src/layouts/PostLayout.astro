@@ -39,7 +39,11 @@ const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-US', 
       <div class="post-meta">
         <span>{formattedDate}</span>
         <span>~{frontmatter.readingTime} read</span>
-        {frontmatter.prRef && <span class="pr-chip">{frontmatter.prRef}</span>}
+        {frontmatter.prType && (
+          <span class={`pr-type-chip pr-type-chip--${frontmatter.prType}`}>
+            {frontmatter.prType === 'documentation' ? 'documentation' : frontmatter.prType}
+          </span>
+        )}
         {frontmatter.sourceFile && (
           <span class="source-chip">
             <code>{frontmatter.sourceFile}</code>
@@ -128,6 +132,18 @@ const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-US', 
     padding: 0.15rem 0.5rem;
     border-radius: 3px;
   }
+
+  .pr-type-chip {
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .pr-type-chip--feature { background: rgba(0,200,150,0.15);  color: var(--accent); }
+  .pr-type-chip--fix     { background: rgba(255,92,58,0.15);  color: #ff5c3a; }
+  .pr-type-chip--doc     { background: rgba(250,204,21,0.15); color: #d4a800; }
 
   .source-chip code {
     font-size: 0.72rem;
