@@ -2,12 +2,7 @@
 const base = import.meta.env.BASE_URL;
 ---
 <footer>
-  <div class="footer-col">
-    <h4>Series</h4>
-    <a href={`${base}series`}>1 · Core Concepts</a>
-    <a href={`${base}series`}>2 · Pull Requests</a>
-    <a href={`${base}series`}>3 · Source Deep Dives</a>
-  </div>
+
   <div class="footer-col">
     <h4>On GitHub</h4>
     <a href="https://github.com/rmfisher26" target="_blank" rel="noopener">@rmfisher26 ↗</a>
@@ -28,9 +23,9 @@ const base = import.meta.env.BASE_URL;
   footer {
     border-top: 2px solid var(--ink);
     padding: 2.5rem 2rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 6rem;
     max-width: 900px;
     margin: 0 auto;
     font-size: 0.85rem;
@@ -70,6 +65,6 @@ const base = import.meta.env.BASE_URL;
   }
 
   @media (max-width: 700px) {
-    footer { grid-template-columns: 1fr; }
+    footer { gap: 3rem; }
   }
 </style>
