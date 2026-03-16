@@ -13,8 +13,8 @@ import Header from '../components/Header.astro';
       <h1>Continuously Learning</em></h1>
       <p class="subtitle">
         I'm Robert Fisher — a software engineer with over a decade of experience, learning the internals
-        of <a href="https://github.com/CQCL/guppylang" target="_blank" rel="noopener">Guppylang</a>
-        by reading source code, tracing PRs, and writing about what I find.
+        of <a href="https://github.com/CQCL/guppylang" target="_blank" rel="noopener">Guppy</a>
+        by reading the source code, adding new features, and fixing bugs.
       </p>
     </div>
 
@@ -36,8 +36,9 @@ import Header from '../components/Header.astro';
         <h2>What you'll find here</h2>
         <ul>
           <li><strong>Posts:</strong> The main page highlights a featured post alongside recent activity from the log and the latest pull request write-ups — a snapshot of what I'm currently working on and writing about.</li>
-          <li><strong>Series:</strong> Posts organized into two tracks — Core Concepts for the foundational ideas behind Guppy, and Pull Requests for summaries of every merged contribution.</li>
-          <li><strong>Log:</strong> A timeline of my journey as learn more about quantum computing, Quantinuum, Guppy, and more.</li>
+          <li><strong>Series:</strong> Posts organized into two reading tracks — Core Concepts covers the foundational ideas behind Guppy's type system and quantum semantics, while Source Deep Dives walk through specific parts of the compiler in detail.</li>
+          <li><strong>Pull Requests:</strong> A dedicated collection of every merged contribution to Guppy — what the problem was, what the fix looked like, and why it matters.</li>
+          <li><strong>Log:</strong> A timeline of my journey as I learn more about quantum computing, Quantinuum, Guppy, and more.</li>
         </ul>
       </div>
 
@@ -132,7 +133,6 @@ import Header from '../components/Header.astro';
   .subtitle {
     font-size: 1.1rem;
     color: var(--muted);
-    max-width: 580px;
     line-height: 1.7;
     font-style: italic;
   }
@@ -152,9 +152,7 @@ import Header from '../components/Header.astro';
 
   /* Two-column layout */
   .two-col {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 4rem;
+    display: block;
     margin-bottom: 3rem;
   }
 
