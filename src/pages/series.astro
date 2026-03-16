@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
+import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 
 const base = import.meta.env.BASE_URL;
@@ -16,11 +17,11 @@ const seriesMeta = [
     color: 'var(--accent)',
   },
   {
-    key: 'compiler',
+    key: 'pull-requests',
     number: '02',
-    label: 'Compiler Internals',
-    description: 'How the compilation pipeline works end to end — from the @guppy decorator through type checking, linearity analysis, and HUGR output.',
-    color: '#a78bfa',
+    label: 'Pull Requests',
+    description: 'A summary of every merged pull request — the problem, the fix, and why it matters.',
+    color: 'var(--accent2)',
   },
   {
     key: 'deep-dives',
@@ -34,7 +35,10 @@ const seriesMeta = [
 function postsForSeries(key: string) {
   return allPosts
     .filter(p => p.data.series === key)
-    .sort((a, b) => a.data.seriesNumber - b.data.seriesNumber);
+    .sort((a, b) => key === 'pull-requests'
+      ? b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+      : a.data.seriesNumber - b.data.seriesNumber
+    );
 }
 ---
 
@@ -61,30 +65,54 @@ function postsForSeries(key: string) {
             </div>
           </div>
 
-          <div class="post-list">
-            {posts.length === 0 ? (
+          {s.key === 'pull-requests' ? (
+            posts.length === 0 ? (
               <div class="empty">
                 <span class="empty-icon">⟳</span>
                 <span>Posts coming soon</span>
               </div>
             ) : (
-              posts.map((post) => (
-                <a href={`${base}posts/${post.slug}`} class="post-row">
-                  <span class="post-num">#{post.data.seriesNumber}</span>
-                  <div class="post-info">
-                    <div class="post-title">{post.data.title}</div>
-                    <div class="post-excerpt">{post.data.description}</div>
-                  </div>
-                  <div class="post-meta">
-                    <span>{post.data.pubDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-                    <span>{post.data.readingTime}</span>
-                    {post.data.prRef && <span class="pr-chip">{post.data.prRef}</span>}
-                  </div>
-                  <span class="post-arrow">↗</span>
-                </a>
-              ))
-            )}
-          </div>
+              <div class="post-card-grid">
+                {posts.map((post) => (
+                  <PostCard
+                    title={post.data.title}
+                    description={post.data.description}
+                    series={post.data.series}
+                    seriesNumber={post.data.seriesNumber}
+                    pubDate={post.data.pubDate}
+                    readingTime={post.data.readingTime}
+                    prRef={post.data.prRef}
+                    slug={post.slug}
+                  />
+                ))}
+              </div>
+            )
+          ) : (
+            <div class="post-list">
+              {posts.length === 0 ? (
+                <div class="empty">
+                  <span class="empty-icon">⟳</span>
+                  <span>Posts coming soon</span>
+                </div>
+              ) : (
+                posts.map((post) => (
+                  <a href={`${base}posts/${post.slug}`} class="post-row">
+                    <span class="post-num">#{post.data.seriesNumber}</span>
+                    <div class="post-info">
+                      <div class="post-title">{post.data.title}</div>
+                      <div class="post-excerpt">{post.data.description}</div>
+                    </div>
+                    <div class="post-meta">
+                      <span>{post.data.pubDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                      <span>{post.data.readingTime}</span>
+                      {post.data.prRef && <span class="pr-chip">{post.data.prRef}</span>}
+                    </div>
+                    <span class="post-arrow">↗</span>
+                  </a>
+                ))
+              )}
+            </div>
+          )}
         </section>
       );
     })}
@@ -276,6 +304,18 @@ function postsForSeries(key: string) {
     color: var(--muted);
     transition: transform 0.2s ease, color 0.2s ease;
     text-align: center;
+  }
+
+  /* ── PULL REQUEST CARD GRID ── */
+  .post-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .post-card-grid { grid-template-columns: 1fr; }
   }
 
   /* ── EMPTY STATE ── */

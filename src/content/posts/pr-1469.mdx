@@ -1,0 +1,19 @@
+---
+title: "PR #1469: Compile-Time Linearity Check for Array Indexing"
+description: "Added a compile-time linearity check that catches duplicate array index usage in function calls before the program runs, preventing runtime panics for linear types like qubits."
+series: pull-requests
+seriesNumber: 2
+pubDate: 2026-02-16
+readingTime: "2 min"
+prRef: "PR #1469"
+---
+
+Building upon my previous contribution to Quantinuum's Guppy, I'm pleased to share that another pull request was merged this week.
+
+In quantum computing, qubits follow strict linearity rules - they can't be copied or used more than once. When the same array element was passed twice in a function call (e.g. `cx(qubits[0], qubits[0])`), Guppy would previously compile but panic at runtime.
+
+In PR #1469, I implemented a compile-time linearity check for array indexing that catches these violations before the program runs, giving developers immediate feedback and potentially preventing costly re-runs on simulators or hardware.
+
+Thanks again to the Guppy maintainers at Quantinuum for the thorough code reviews and support.
+
+For more technical details, refer to [PR #1469](https://github.com/Quantinuum/guppylang/pull/1469).

@@ -1,0 +1,21 @@
+---
+title: "PR #1498: Completing Support for Boolean Reverse Operators"
+description: "Added the missing reverse boolean operator methods (__rand__, __ror__, __rxor__) so boolean operations work correctly regardless of operand order, matching standard Python behavior."
+series: pull-requests
+seriesNumber: 7
+pubDate: 2026-03-18
+readingTime: "2 min"
+prRef: "PR #1498"
+---
+
+Today, I wanted to share another Quantinuum Guppy contribution: completing support for boolean operations.
+
+**The problem:** Guppy's boolean type was missing reverse operator methods (`__rand__`, `__ror__`, `__rxor__`). This meant expressions like `True & my_bool` wouldn't work as expected when the left operand wasn't a Guppy boolean.
+
+**The fix:** In PR #1498, I added the missing reverse boolean operators to match Python's behavior. Now boolean operations work correctly regardless of operand order, bringing Guppy's `bool` type in line with standard Python expectations.
+
+**Why this matters:** Language completeness removes friction. When developers write `True & result` or `False | condition`, they expect it to work — small gaps like missing operators create unnecessary debugging moments. Filling these gaps makes Guppy feel more natural to Python developers transitioning to quantum programming.
+
+As always, I appreciate the Guppy contributors at Quantinuum for their help and collaboration.
+
+For more technical details, refer to [PR #1498](https://github.com/Quantinuum/guppylang/pull/1498).

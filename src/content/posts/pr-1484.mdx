@@ -1,0 +1,21 @@
+---
+title: "PR #1484: Fixing Misleading Error Messages for NumPy Arrays in comptime()"
+description: "Fixed an error that blamed the list container when the real problem was an unsupported NumPy integer inside it — errors now identify the actual element type causing the issue."
+series: pull-requests
+seriesNumber: 8
+pubDate: 2026-03-25
+readingTime: "2 min"
+prRef: "PR #1484"
+---
+
+Today, I wanted to share another Quantinuum Guppy contribution: fixing a misleading error message when using NumPy arrays.
+
+**The problem:** When developers passed a list containing NumPy integers to `comptime()`, Guppy's error message blamed the list itself rather than the unsupported NumPy integer type inside it. The error said "Expression of type `list` is not supported" — which was confusing because lists are supported, it's the NumPy integers that aren't.
+
+**The fix:** In PR #1484, I updated the error reporting to identify the actual unsupported element type. Now the error says "Expression of type `numpy.int64` is not supported" with a note explaining "Unsupported value was found inside a list."
+
+**Why this matters:** Good error messages can mean the difference between fixing a bug in 5 minutes versus spending hours trying to understand what went wrong. When an error points at the wrong thing, developers waste time investigating the container (the list) instead of the actual problem (the NumPy type). This is especially important for developers working with scientific computing libraries like NumPy who are transitioning to quantum programming.
+
+As always, I appreciate the Guppy contributors at Quantinuum for their help and collaboration.
+
+For more technical details, refer to [PR #1484](https://github.com/Quantinuum/guppylang/pull/1484).

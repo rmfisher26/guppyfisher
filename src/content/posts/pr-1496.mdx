@@ -1,0 +1,21 @@
+---
+title: "PR #1496: Fixing WASM Module Path Resolution"
+description: "Fixed a file system bug where Guppy looked for WASM modules relative to the current working directory instead of the source file's location, breaking Jupyter notebook workflows."
+series: pull-requests
+seriesNumber: 5
+pubDate: 2026-03-04
+readingTime: "2 min"
+prRef: "PR #1496"
+---
+
+This week I wanted to comment on another Quantinuum Guppy contribution: fixing a file system bug when importing Web Assembly (WASM) modules.
+
+When developers organized their quantum code across multiple folders and tried to import WASM modules using relative paths, Guppy would fail to find the files — but only when running from Jupyter notebooks or scripts in different directories. The same code would work fine when run directly from the module's folder.
+
+The root cause was that Guppy looked in the current working directory (where you run the script) instead of relative to the source file's location (where the module actually lives). This broke common workflows where notebooks live in parent directories or developers organize projects with multiple subdirectories.
+
+In PR #1496, I updated Guppy to find files relative to their actual location. Now WASM modules load correctly no matter where your script or notebook is located — making it possible to organize quantum projects just like any other Python project.
+
+Thanks to the Guppy contributors at Quantinuum for their support.
+
+For more technical details, refer to [PR #1496](https://github.com/Quantinuum/guppylang/pull/1496).

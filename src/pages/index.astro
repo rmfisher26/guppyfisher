@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
+import { flatEntries, typeColors } from '../data/logEntries';
 
 const allPosts = await getCollection('posts', ({ data }) => !data.draft);
 const sorted = allPosts.sort(
@@ -11,9 +12,11 @@ const sorted = allPosts.sort(
 
 const featured = sorted[0];
 
-const conceptsPosts  = sorted.filter(p => p.data.series === 'concepts');
-const compilerPosts  = sorted.filter(p => p.data.series === 'compiler');
-const deepDivesPosts = sorted.filter(p => p.data.series === 'deep-dives');
+const conceptsPosts      = sorted.filter(p => p.data.series === 'concepts');
+const compilerPosts      = sorted.filter(p => p.data.series === 'compiler');
+const deepDivesPosts     = sorted.filter(p => p.data.series === 'deep-dives');
+const pullRequestsPosts  = sorted.filter(p => p.data.series === 'pull-requests');
+const recentPRs          = pullRequestsPosts.slice(0, 3);
 
 const seriesLabel: Record<string, string> = {
   concepts:    'Series 1 · Concepts',
@@ -24,6 +27,8 @@ const seriesLabel: Record<string, string> = {
 const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
   month: 'short', year: 'numeric',
 });
+
+const recentActivity = flatEntries.slice(0, 2);
 ---
 
 <Base title="Guppyfisher">
@@ -38,20 +43,30 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
       a quantum programming language built by Quantinuum. Status: compiling.
     </p>
 
-    <div class="hero-pipeline">
-      <span class="pipe-step">@guppy</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-step">Python AST</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-active">type checker</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-step">linearity</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-step">HUGR nodes</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-step">validation</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-step">hardware</span>
+    <!-- RECENT ACTIVITY -->
+    <div class="recent-activity">
+      <div class="section-heading">
+        <h2>Recent Activity</h2>
+        <div class="rule"></div>
+        <a href={`${import.meta.env.BASE_URL}log`} class="view-log-link">view log →</a>
+      </div>
+      <div class="activity-list">
+        {recentActivity.map((item) => (
+          <div class="activity-item" style={`--entry-color: ${typeColors[item.type] ?? 'var(--muted)'}`}>
+            <div class="activity-dot" />
+            <div class="activity-body">
+              <div class="activity-meta">
+                <span class="activity-type">{item.label}</span>
+                <span class="activity-date">{item.date}</span>
+                {item.link && (
+                  <a class="activity-link" href={item.link}>{item.linkLabel ?? 'view'}</a>
+                )}
+              </div>
+              <div class="activity-title">{item.title}</div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -106,91 +121,37 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     </>
   )}
 
-  <!-- TAB BAR -->
-  <div class="tab-bar">
-    <button class="tab active" data-tab="all">All Posts</button>
-    <button class="tab" data-tab="series1">Series 1: Concepts</button>
-    <button class="tab" data-tab="series2">Series 2: Compiler</button>
-    <button class="tab" data-tab="series3">Series 3: Deep Dives</button>
-  </div>
-
-  <!-- POST GRIDS -->
-  <div class="tab-content active" id="tab-all">
-    <div class="post-grid">
-      {sorted.map((post) => (
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          series={post.data.series}
-          seriesNumber={post.data.seriesNumber}
-          pubDate={post.data.pubDate}
-          readingTime={post.data.readingTime}
-          prRef={post.data.prRef}
-          slug={post.slug}
-        />
-      ))}
+  <!-- RECENT PULL REQUESTS -->
+  {recentPRs.length > 0 && (
+    <div class="recent-prs">
+      <div class="section-heading">
+        <h2>Recent Pull Requests</h2>
+        <div class="rule"></div>
+        <a href={`${import.meta.env.BASE_URL}series`} class="view-log-link">view all →</a>
+      </div>
+      <div class="recent-pr-grid">
+        {recentPRs.map((post) => (
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            series={post.data.series}
+            seriesNumber={post.data.seriesNumber}
+            pubDate={post.data.pubDate}
+            readingTime={post.data.readingTime}
+            prRef={post.data.prRef}
+            slug={post.slug}
+          />
+        ))}
+      </div>
     </div>
-  </div>
+  )}
 
-  <div class="tab-content" id="tab-series1">
-    <div class="post-grid">
-      {conceptsPosts.map((post) => (
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          series={post.data.series}
-          seriesNumber={post.data.seriesNumber}
-          pubDate={post.data.pubDate}
-          readingTime={post.data.readingTime}
-          prRef={post.data.prRef}
-          slug={post.slug}
-        />
-      ))}
-      {conceptsPosts.length === 0 && <p class="empty-tab">No posts yet in this series.</p>}
-    </div>
-  </div>
-
-  <div class="tab-content" id="tab-series2">
-    <div class="post-grid">
-      {compilerPosts.map((post) => (
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          series={post.data.series}
-          seriesNumber={post.data.seriesNumber}
-          pubDate={post.data.pubDate}
-          readingTime={post.data.readingTime}
-          prRef={post.data.prRef}
-          slug={post.slug}
-        />
-      ))}
-      {compilerPosts.length === 0 && <p class="empty-tab">No posts yet in this series.</p>}
-    </div>
-  </div>
-
-  <div class="tab-content" id="tab-series3">
-    <div class="post-grid">
-      {deepDivesPosts.map((post) => (
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          series={post.data.series}
-          seriesNumber={post.data.seriesNumber}
-          pubDate={post.data.pubDate}
-          readingTime={post.data.readingTime}
-          prRef={post.data.prRef}
-          slug={post.slug}
-        />
-      ))}
-      {deepDivesPosts.length === 0 && <p class="empty-tab">No posts yet in this series.</p>}
-    </div>
-  </div>
 </Base>
 
 <style>
   /* HERO */
   .hero {
-    padding: 5rem 2rem 4rem;
+    padding: 2.5rem 2rem 2rem;
     max-width: 900px;
     margin: 0 auto;
     animation: fadeUp 0.6s ease both;
@@ -245,7 +206,7 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
   .hero-desc {
     font-size: 1.15rem;
     color: var(--muted);
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
     font-style: italic;
   }
 
@@ -451,76 +412,126 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     color: var(--ink);
   }
 
-  /* TAB BAR */
-  .tab-bar {
+  /* RECENT PULL REQUESTS */
+  .recent-prs {
     max-width: 900px;
-    margin: 0 auto 2rem;
+    margin: 0 auto 3rem;
     padding: 0 2rem;
-    display: flex;
-    gap: 0;
-    border-bottom: 2px solid var(--border);
+    animation: fadeUp 0.6s ease 0.15s both;
   }
 
-  .tab {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 0.75rem 1.5rem;
-    cursor: pointer;
-    border: none;
-    background: none;
-    color: var(--muted);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
-    transition: color 0.2s;
-  }
-
-  .tab.active {
-    color: var(--ink);
-    border-bottom-color: var(--ink);
-  }
-
-  /* TAB CONTENT */
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* POST GRID */
-  .post-grid {
-    max-width: 900px;
-    margin: 0 auto 5rem;
-    padding: 0 2rem;
+  .recent-pr-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
-    animation: fadeUp 0.6s ease 0.2s both;
+    margin-top: 1.5rem;
   }
 
-  .empty-tab {
+  /* RECENT ACTIVITY */
+  .recent-activity {
     max-width: 900px;
-    margin: 0 auto 5rem;
-    padding: 2rem;
+    margin: 0 auto 3rem;
+    padding: 0 2rem;
+    animation: fadeUp 0.6s ease 0.15s both;
+  }
+
+  .section-heading .view-log-link {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
+    font-size: 0.72rem;
     color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+
+  .section-heading .view-log-link:hover {
+    color: var(--accent);
+  }
+
+  .activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-left: 2px solid var(--border);
+    padding-left: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .activity-item {
+    position: relative;
+    display: flex;
+  }
+
+  .activity-dot {
+    position: absolute;
+    left: -1.6rem;
+    top: 0.45rem;
+    transform: translateX(calc(-50% + 1px));
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--entry-color);
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1.5px var(--entry-color);
+    flex-shrink: 0;
+  }
+
+  .activity-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .activity-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .activity-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--entry-color);
+    background: color-mix(in srgb, var(--entry-color) 10%, transparent);
+    padding: 0.2rem 0.55rem;
+    border-radius: 99px;
+  }
+
+  .activity-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  .activity-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--border);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .activity-link:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .activity-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ink);
+    line-height: 1.35;
   }
 
   @media (max-width: 700px) {
     .featured-card { grid-template-columns: 1fr; }
-    .post-grid { grid-template-columns: 1fr; }
-    .tab { padding: 0.75rem 0.75rem; font-size: 0.7rem; }
+    .recent-pr-grid { grid-template-columns: 1fr; }
   }
 </style>
-
-<script>
-  document.querySelectorAll<HTMLButtonElement>('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const tabId = tab.dataset.tab;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById(`tab-${tabId}`)?.classList.add('active');
-    });
-  });
-</script>
