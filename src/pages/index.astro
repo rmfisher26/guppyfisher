@@ -28,7 +28,7 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
   month: 'short', year: 'numeric',
 });
 
-const recentActivity = flatEntries.slice(0, 2);
+const recentActivity = flatEntries.slice(0, 3);
 ---
 
 <Base title="Guppyfisher">
@@ -43,32 +43,35 @@ const recentActivity = flatEntries.slice(0, 2);
       a quantum programming language built by Quantinuum. Status: compiling.
     </p>
 
-    <!-- RECENT ACTIVITY -->
-    <div class="recent-activity">
-      <div class="section-heading">
-        <h2>Recent Activity</h2>
-        <div class="rule"></div>
-        <a href={`${import.meta.env.BASE_URL}log`} class="view-log-link">view log →</a>
-      </div>
-      <div class="activity-list">
-        {recentActivity.map((item) => (
-          <div class="activity-item" style={`--entry-color: ${typeColors[item.type] ?? 'var(--muted)'}`}>
-            <div class="activity-dot" />
-            <div class="activity-body">
-              <div class="activity-meta">
-                <span class="activity-type">{item.label}</span>
-                <span class="activity-date">{item.date}</span>
-                {item.link && (
-                  <a class="activity-link" href={item.link}>{item.linkLabel ?? 'view'}</a>
-                )}
-              </div>
-              <div class="activity-title">{item.title}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
   </section>
+
+  <hr class="section-rule" />
+
+  <!-- RECENT ACTIVITY -->
+  <div class="recent-activity">
+    <div class="section-heading">
+      <h2>Recent Activity</h2>
+      <div class="rule"></div>
+      <a href={`${import.meta.env.BASE_URL}log`} class="view-log-link">view log →</a>
+    </div>
+    <div class="activity-list">
+      {recentActivity.map((item) => (
+        <div class="activity-item" style={`--entry-color: ${typeColors[item.type] ?? 'var(--muted)'}`}>
+          <div class="activity-dot" />
+          <div class="activity-body">
+            <div class="activity-meta">
+              <span class="activity-type">{item.label}</span>
+              <span class="activity-date">{item.date}</span>
+              {item.link && (
+                <a class="activity-link" href={item.link}>{item.linkLabel ?? 'view'}</a>
+              )}
+            </div>
+            <div class="activity-title">{item.title}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
 
   <hr class="section-rule" />
 
@@ -433,6 +436,14 @@ const recentActivity = flatEntries.slice(0, 2);
     margin: 0 auto 3rem;
     padding: 0 2rem;
     animation: fadeUp 0.6s ease 0.15s both;
+  }
+
+  .recent-activity .section-heading,
+  .recent-prs .section-heading {
+    padding: 0;
+    max-width: unset;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .section-heading .view-log-link {

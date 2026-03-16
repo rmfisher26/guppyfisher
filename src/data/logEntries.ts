@@ -24,7 +24,7 @@ export const entries: LogWeek[] = [
       {
         date: 'Fri Mar 13',
         items: [
-          { type: 'community', label: 'Q-Net', title: 'Q-Net Connect 2026: Day 2: TBD', body: null, link: null, linkLabel: null },
+          { type: 'community', label: 'Q-Net', title: 'Q-Net Connect 2026: Day 2: Various Talks', body: null, link: null, linkLabel: null },
         ],
       },
       {
