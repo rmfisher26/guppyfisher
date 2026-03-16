@@ -52,12 +52,14 @@ const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-US', 
       </div>
     </header>
 
-    <!-- Series navigation -->
-    <SeriesNav
-      posts={seriesPosts}
-      currentSlug={slug}
-      seriesName={seriesLabel[frontmatter.series]}
-    />
+    <!-- Series navigation (not shown for pull-requests) -->
+    {frontmatter.series !== 'pull-requests' && (
+      <SeriesNav
+        posts={seriesPosts}
+        currentSlug={slug}
+        seriesName={seriesLabel[frontmatter.series]}
+      />
+    )}
 
     <!-- MDX content renders here -->
     <div class="prose">
@@ -114,6 +116,24 @@ const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-US', 
     line-height: 1.1;
     letter-spacing: -0.03em;
     margin-bottom: 1.25rem;
+  }
+
+  .pr-link {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 0.25rem 0.65rem;
+    margin: 1.5rem 0 0;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .pr-link:hover {
+    background: var(--accent);
+    color: var(--paper);
   }
 
   .post-meta {
