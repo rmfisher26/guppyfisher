@@ -9,7 +9,7 @@ prRef: "PR #1484"
 prType: fix
 ---
 
-Today, I wanted to share another Quantinuum Guppy contribution: fixing a misleading error message when using NumPy arrays.
+Today, I wanted to share another <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> Guppy contribution: fixing a misleading error message when using NumPy arrays.
 
 **The problem:** When developers passed a list containing NumPy integers to `comptime()`, Guppy's error message blamed the list itself rather than the unsupported NumPy integer type inside it. The error said "Expression of type `list` is not supported" — which was confusing because lists are supported, it's the NumPy integers that aren't.
 
@@ -17,6 +17,6 @@ Today, I wanted to share another Quantinuum Guppy contribution: fixing a mislead
 
 **Why this matters:** Good error messages can mean the difference between fixing a bug in 5 minutes versus spending hours trying to understand what went wrong. When an error points at the wrong thing, developers waste time investigating the container (the list) instead of the actual problem (the NumPy type). This is especially important for developers working with scientific computing libraries like NumPy who are transitioning to quantum programming.
 
-As always, I appreciate the Guppy contributors at Quantinuum for their help and collaboration.
+As always, I appreciate the Guppy contributors at <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> for their help and collaboration.
 
-For more technical details, refer to [PR #1484](https://github.com/Quantinuum/guppylang/pull/1484).
+For more technical details, refer to <a href="https://github.com/Quantinuum/guppylang/pull/1484" target="_blank" rel="noopener">PR #1484</a>.
