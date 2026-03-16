@@ -16,7 +16,7 @@ const conceptsPosts      = sorted.filter(p => p.data.series === 'concepts');
 const compilerPosts      = sorted.filter(p => p.data.series === 'compiler');
 const deepDivesPosts     = sorted.filter(p => p.data.series === 'deep-dives');
 const pullRequestsPosts  = sorted.filter(p => p.data.series === 'pull-requests');
-const recentPRs          = pullRequestsPosts.slice(0, 3);
+const recentPRs          = pullRequestsPosts.filter(p => p.slug !== featured?.slug).slice(0, 3);
 
 const seriesLabel: Record<string, string> = {
   concepts:    'Series 1 · Concepts',
@@ -86,23 +86,62 @@ const recentActivity = flatEntries.slice(0, 3);
       <div class="featured">
         <a href={`${import.meta.env.BASE_URL}posts/${featured.slug}`} class="featured-card">
           <div class="featured-visual">
-            <div class="hugr-viz">
-              <svg aria-hidden="true">
-                <line x1="18%" y1="20%" x2="42%" y2="20%" stroke="#00c896" stroke-width="1" stroke-opacity="0.4"/>
-                <line x1="55%" y1="20%" x2="70%" y2="20%" stroke="#00c896" stroke-width="1" stroke-opacity="0.4"/>
-                <line x1="25%" y1="28%" x2="25%" y2="58%" stroke="#00c896" stroke-width="1" stroke-opacity="0.3"/>
-                <line x1="65%" y1="28%" x2="65%" y2="58%" stroke="#00c896" stroke-width="1" stroke-opacity="0.3"/>
-                <line x1="35%" y1="68%" x2="43%" y2="82%" stroke="#ff5c3a" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="4,3"/>
-                <line x1="72%" y1="68%" x2="58%" y2="82%" stroke="#ff5c3a" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="4,3"/>
+            <div class="circuit-viz">
+              <svg viewBox="0 0 280 180" aria-hidden="true" class="circuit-svg">
+                <!-- Qubit wire labels -->
+                <text x="6" y="48" class="q-label">q[0]</text>
+                <text x="6" y="98" class="q-label">q[1]</text>
+                <text x="6" y="148" class="q-label">q[2]</text>
+
+                <!-- Qubit wires -->
+                <line x1="44" y1="45" x2="265" y2="45" class="wire"/>
+                <line x1="44" y1="95" x2="265" y2="95" class="wire"/>
+                <line x1="44" y1="145" x2="265" y2="145" class="wire"/>
+
+                <!-- H gate q[0] -->
+                <rect x="55" y="33" width="26" height="24" class="gate gate-h"/>
+                <text x="68" y="50" class="gate-label">H</text>
+
+                <!-- H gate q[1] -->
+                <rect x="55" y="83" width="26" height="24" class="gate gate-h"/>
+                <text x="68" y="100" class="gate-label">H</text>
+
+                <!-- CNOT: control q[0], target q[1] -->
+                <line x1="115" y1="45" x2="115" y2="95" class="cnot-line"/>
+                <circle cx="115" cy="45" r="5" class="cnot-ctrl"/>
+                <circle cx="115" cy="95" r="10" class="cnot-target"/>
+                <line x1="115" y1="85" x2="115" y2="105" class="cnot-cross"/>
+                <line x1="105" y1="95" x2="125" y2="95" class="cnot-cross"/>
+
+                <!-- Rz gate q[2] -->
+                <rect x="100" y="133" width="30" height="24" class="gate gate-rz"/>
+                <text x="115" y="150" class="gate-label">Rz</text>
+
+                <!-- CNOT: control q[1], target q[2] -->
+                <line x1="165" y1="95" x2="165" y2="145" class="cnot-line"/>
+                <circle cx="165" cy="95" r="5" class="cnot-ctrl"/>
+                <circle cx="165" cy="145" r="10" class="cnot-target"/>
+                <line x1="165" y1="135" x2="165" y2="155" class="cnot-cross"/>
+                <line x1="155" y1="145" x2="175" y2="145" class="cnot-cross"/>
+
+                <!-- Measure gates -->
+                <rect x="215" y="33" width="32" height="24" class="gate gate-m"/>
+                <text x="231" y="50" class="gate-label">M</text>
+                <rect x="215" y="83" width="32" height="24" class="gate gate-m"/>
+                <text x="231" y="100" class="gate-label">M</text>
+                <rect x="215" y="133" width="32" height="24" class="gate gate-m"/>
+                <text x="231" y="150" class="gate-label">M</text>
+
+                <!-- Double-line (classical) after measure -->
+                <line x1="247" y1="43" x2="265" y2="43" class="classical"/>
+                <line x1="247" y1="47" x2="265" y2="47" class="classical"/>
+                <line x1="247" y1="93" x2="265" y2="93" class="classical"/>
+                <line x1="247" y1="97" x2="265" y2="97" class="classical"/>
+                <line x1="247" y1="143" x2="265" y2="143" class="classical"/>
+                <line x1="247" y1="147" x2="265" y2="147" class="classical"/>
               </svg>
-              <div class="hugr-node">DFG root</div>
-              <div class="hugr-node">FuncDef</div>
-              <div class="hugr-node">BasicBlock</div>
-              <div class="hugr-node">Call</div>
-              <div class="hugr-node">Return</div>
-              <div class="hugr-node">Output</div>
+              <div class="circuit-comment">// quantum circuit — 3 qubits</div>
             </div>
-            <div class="hugr-comment">// HUGR hierarchical graph — live nodes</div>
           </div>
           <div class="featured-content">
             <div>
@@ -306,49 +345,96 @@ const recentActivity = flatEntries.slice(0, 3);
     overflow: hidden;
   }
 
-  .hugr-viz {
-    position: relative;
-    width: 100%;
-    height: 200px;
-  }
-
-  .hugr-viz svg {
-    position: absolute;
-    inset: 0;
+  /* QUANTUM CIRCUIT */
+  .circuit-viz {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
   }
 
-  .hugr-node {
-    position: absolute;
-    border: 1px solid var(--accent);
-    border-radius: 4px;
-    background: rgba(0,200,150,0.08);
+  .circuit-svg {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .circuit-svg .q-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--accent);
-    padding: 0.3rem 0.6rem;
-    white-space: nowrap;
-    animation: nodepulse 2.5s ease-in-out infinite;
+    font-size: 11px;
+    fill: var(--muted);
   }
 
-  .hugr-node:nth-child(2) { top: 10%; left: 5%;   animation-delay: 0s; }
-  .hugr-node:nth-child(3) { top: 10%; left: 38%;  animation-delay: 0.3s; }
-  .hugr-node:nth-child(4) { top: 10%; left: 68%;  animation-delay: 0.6s; }
-  .hugr-node:nth-child(5) { top: 55%; left: 20%;  animation-delay: 0.9s; }
-  .hugr-node:nth-child(6) { top: 55%; left: 58%;  animation-delay: 1.2s; }
-  .hugr-node:nth-child(7) { top: 78%; left: 38%;  animation-delay: 1.5s; }
-
-  @keyframes nodepulse {
-    0%, 100% { border-color: var(--accent); box-shadow: 0 0 0 0 rgba(0,200,150,0); }
-    50%       { border-color: #00ffbb; box-shadow: 0 0 8px 2px rgba(0,200,150,0.25); }
+  .circuit-svg .wire {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-opacity: 0.35;
   }
 
-  .hugr-comment {
+  .circuit-svg .classical {
+    stroke: var(--accent2);
+    stroke-width: 1;
+    stroke-opacity: 0.5;
+  }
+
+  .circuit-svg .gate-h {
+    fill: rgba(0, 200, 150, 0.12);
+    stroke: var(--accent);
+    stroke-width: 1.2;
+    rx: 3;
+  }
+
+  .circuit-svg .gate-rz {
+    fill: rgba(124, 92, 191, 0.15);
+    stroke: #a78bfa;
+    stroke-width: 1.2;
+    rx: 3;
+  }
+
+  .circuit-svg .gate-m {
+    fill: rgba(255, 92, 58, 0.33);
+    stroke: #a35545;
+    stroke-width: 2;
+    rx: 3;
+  }
+
+  .circuit-svg .gate-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    fill: #ffffff;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  .circuit-svg .cnot-line {
+    stroke: var(--accent);
+    stroke-width: 1.2;
+    stroke-opacity: 0.6;
+  }
+
+  .circuit-svg .cnot-ctrl {
+    fill: var(--accent);
+    stroke: none;
+  }
+
+  .circuit-svg .cnot-target {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+  }
+
+  .circuit-svg .cnot-cross {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+  }
+
+  .circuit-comment {
     margin-top: 1rem;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
-    color: #585b70;
+    color: #c4ced9;
   }
 
   .featured-content {
