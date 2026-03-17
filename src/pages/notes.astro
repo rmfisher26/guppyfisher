@@ -13,14 +13,14 @@ const seriesMeta = [
     key: 'concepts',
     number: '01',
     label: 'Core Concepts',
-    description: 'The ideas you need before the code makes sense — linear types, the no-cloning theorem, and why Guppy\'s type system is shaped the way it is.',
+    description: 'Discussions from my own analysis and study of Guppy and how it works (as far as I know)',
     color: 'var(--accent)',
   },
   {
     key: 'deep-dives',
     number: '02',
     label: 'Source Deep Dives',
-    description: 'Full walkthroughs of specific PRs — what broke, what the fix looks like, and what it reveals about the underlying architecture.',
+    description: 'Explorations of various code samples to study further',
     color: '#facc15',
   },
 ];
@@ -35,15 +35,15 @@ function postsForSeries(key: string) {
 }
 ---
 
-<Base title="Series" description="All post series on Guppyfisher.">
+<Base title="Notes" description="All notes on Guppyfisher.">
   <Header />
 
   <main class="series-page">
 
     <div class="page-header">
       <div class="eyebrow">reading paths</div>
-      <h1>Series</h1>
-      <p class="subtitle">Dive into various topics about Guppy</p>
+      <h1>Notes</h1>
+      <p class="subtitle">Collections of my notes from my deep dives into Guppy</p>
     </div>
 
     {seriesMeta.map((s) => {

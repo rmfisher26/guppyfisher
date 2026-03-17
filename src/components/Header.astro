@@ -10,7 +10,7 @@ const currentPath = Astro.url.pathname;
 
   <nav id="main-nav" aria-label="Main navigation">
     <a href={base} class={currentPath === base || currentPath === `${base}/` ? 'active' : ''}>Posts</a>
-    <a href={`${base}series`} class={currentPath.startsWith(`${base}series`) ? 'active' : ''}>Series</a>
+    <a href={`${base}notes`} class={currentPath.startsWith(`${base}notes`) ? 'active' : ''}>Notes</a>
     <a href={`${base}pull-requests`} class={currentPath.startsWith(`${base}pull-requests`) ? 'active' : ''}>Pull Requests</a>
     <a href={`${base}log`} class={currentPath.startsWith(`${base}log`) ? 'active' : ''}>Log</a>
     <a href={`${base}about`} class={currentPath === `${base}about` ? 'active' : ''}>About</a>

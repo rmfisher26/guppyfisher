@@ -25,7 +25,7 @@ import Header from '../components/Header.astro';
       <div class="col-text">
         <h2>Why this blog?</h2>
         <p>
-          In December 2025, I discovered Guppy after watching two Quantinuum webinars. I was fascinated by the opportunity to contribute to a quantum computing programming language. 
+          In December 2025, I discovered Guppy after watching two <a href="https://www.quantinuum.com" target="_blank" rel="noopener">Quantinuum</a> webinars. I was fascinated by the opportunity to contribute to a quantum computing programming language.
         </p>
         <p>
           With that goal in mind, I cloned the Guppylang repository, explored some open issues, and successfully merged some pull requests.
@@ -36,9 +36,9 @@ import Header from '../components/Header.astro';
         <h2>What you'll find here</h2>
         <ul>
           <li><strong>Posts:</strong> The main page highlights a featured post alongside recent activity from the log and the latest pull request write-ups — a snapshot of what I'm currently working on and writing about.</li>
-          <li><strong>Series:</strong> Posts organized into two reading tracks — Core Concepts covers the foundational ideas behind Guppy's type system and quantum semantics, while Source Deep Dives walk through specific parts of the compiler in detail.</li>
+          <li><strong>Notes:</strong> Posts organized into two reading tracks — Core Concepts covers my own analysis and study of how Guppy works, while Source Deep Dives explore specific code samples and topics I wanted to study further.</li>
           <li><strong>Pull Requests:</strong> A dedicated collection of every merged contribution to Guppy — what the problem was, what the fix looked like, and why it matters.</li>
-          <li><strong>Log:</strong> A timeline of my journey as I learn more about quantum computing, Quantinuum, Guppy, and more.</li>
+          <li><strong>Log:</strong> A timeline of my journey as I learn more about quantum computing, <a href="https://www.quantinuum.com" target="_blank" rel="noopener">Quantinuum</a>, Guppy, and more.</li>
         </ul>
       </div>
 
@@ -173,17 +173,21 @@ import Header from '../components/Header.astro';
     margin-bottom: 1.2rem;
   }
 
-  .col-text p a {
+  .col-text p a,
+  .col-text li a {
     color: var(--accent);
     text-decoration: none;
   }
 
-  .col-text p a:hover { text-decoration: underline; }
+  .col-text p a:hover,
+  .col-text li a:hover { text-decoration: underline; }
 
   .col-text ul {
     padding-left: 1.2rem;
-    line-height: 1.9;
-    font-size: 0.95rem;
+    line-height: 1.75;
+    font-size: 1rem;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
   }
 
   .col-text li { margin-bottom: 0.4rem; }
