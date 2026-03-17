@@ -43,7 +43,7 @@ function postsForSeries(key: string) {
     <div class="page-header">
       <div class="eyebrow">reading paths</div>
       <h1>Notes</h1>
-      <p class="subtitle">Collections of my notes from my deep dives into Guppy</p>
+      <p class="subtitle">Collections of my notes from my deep dives into <a href="https://docs.quantinuum.com/guppy/" target="_blank" rel="noopener">Guppy</a></p>
     </div>
 
     {seriesMeta.map((s) => {
@@ -165,6 +165,17 @@ function postsForSeries(key: string) {
     font-size: 1rem;
     color: var(--muted);
     font-style: italic;
+  }
+
+  .subtitle a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+
+  .subtitle a:hover {
+    border-bottom-color: var(--accent);
   }
 
   /* ── SERIES SECTION ── */
