@@ -145,7 +145,10 @@ const recentActivity = flatEntries.slice(0, 3);
           </div>
           <div class="featured-content">
             <div>
-              <div class="feat-series">{seriesLabel[featured.data.series]} · Post #{featured.data.seriesNumber}</div>
+              <div class="feat-series-row">
+                <div class="feat-series">{seriesLabel[featured.data.series]} · Post #{featured.data.seriesNumber}</div>
+                {featured.data.prType && <span class={`feat-pr-type feat-pr-type--${featured.data.prType}`}>{featured.data.prType === 'documentation' ? 'documentation' : featured.data.prType}</span>}
+              </div>
               <div class="feat-title">{featured.data.title}</div>
               <div class="feat-excerpt">{featured.data.description}</div>
             </div>
@@ -153,7 +156,6 @@ const recentActivity = flatEntries.slice(0, 3);
               <div class="feat-meta">
                 <span>{featuredDate}</span>
                 <span>~{featured.data.readingTime} read</span>
-                {featured.data.prType && <span class={`feat-pr-type feat-pr-type--${featured.data.prType}`}>{featured.data.prType === 'documentation' ? 'documentation' : featured.data.prType}</span>}
               </div>
               <span class="read-btn">Read more →</span>
             </div>
@@ -460,12 +462,19 @@ const recentActivity = flatEntries.slice(0, 3);
     justify-content: space-between;
   }
 
+  .feat-series-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
   .feat-series {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.72rem;
     color: var(--accent);
     letter-spacing: 0.05em;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0;
   }
 
   .feat-title {
@@ -495,8 +504,9 @@ const recentActivity = flatEntries.slice(0, 3);
   }
 
   .feat-pr-type {
-    padding: 0.1rem 0.5rem;
+    padding: 0.05rem 0.35rem;
     border-radius: 3px;
+    font-size: 0.55rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
