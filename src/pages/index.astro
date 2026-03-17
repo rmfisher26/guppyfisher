@@ -10,13 +10,13 @@ const sorted = allPosts.sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-const featured = sorted[0];
-
 const conceptsPosts      = sorted.filter(p => p.data.series === 'concepts');
 const compilerPosts      = sorted.filter(p => p.data.series === 'compiler');
 const deepDivesPosts     = sorted.filter(p => p.data.series === 'deep-dives');
 const pullRequestsPosts  = sorted.filter(p => p.data.series === 'pull-requests');
-const recentPRs          = pullRequestsPosts.filter(p => p.slug !== featured?.slug).slice(0, 3);
+
+const featured = pullRequestsPosts[0];
+const recentPRs = pullRequestsPosts.filter(p => p.slug !== featured?.slug).slice(0, 3);
 
 const seriesLabel: Record<string, string> = {
   concepts:    'Series 1 · Concepts',
@@ -25,7 +25,7 @@ const seriesLabel: Record<string, string> = {
 };
 
 const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
-  month: 'short', year: 'numeric',
+  month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC',
 });
 
 const recentActivity = flatEntries.slice(0, 3);
@@ -504,7 +504,7 @@ const recentActivity = flatEntries.slice(0, 3);
 
   .feat-pr-type--feature { background: rgba(0,200,150,0.15);  color: var(--accent); }
   .feat-pr-type--fix     { background: rgba(255,92,58,0.15);  color: #ff5c3a; }
-  .feat-pr-type--doc     { background: rgba(250,204,21,0.15); color: #d4a800; }
+  .feat-pr-type--documentation { background: rgba(96,165,250,0.15); color: #60a5fa; }
 
   .read-btn {
     margin-top: 1.5rem;

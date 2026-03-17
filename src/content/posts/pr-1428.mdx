@@ -1,0 +1,27 @@
+---
+title: "PR #1428: API Documentation for Standard Library Modules"
+description: "Added module-level docstrings across Guppy's standard library, giving each module a clear description for IDE tooltips and automated documentation tooling."
+series: pull-requests
+seriesNumber: 1
+pubDate: 2026-01-10
+readingTime: "2 min"
+prRef: "PR #1428"
+prType: documentation
+---
+
+My first open-source contribution to <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a>'s Guppy has been merged!
+
+PR #1428 might not look flashy on the surface — it's documentation — but getting it right taught me more than I expected.
+
+The task was straightforward: add module-level docstrings to Guppy's standard library. Without them, IDE tooltips are blank and auto-generated docs have nothing to work with. The modules covered include `guppylang.std.futures`, `guppylang.std.collections`, `guppylang.std.option`, and the `qsystem` family — which handles operations on actual Quantinuum quantum hardware.
+
+What made it interesting was the review process. Two maintainers pushed back on my wording in ways that sharpened my understanding of the project:
+
+- **"Module" vs "library"** — `guppylang.std` is referred to as the *standard library*, not a module. Small distinction, but it matters for consistency across docs.
+- **"quantum system operations" vs "Quantinuum Systems device operations"** — the latter is more precise. These aren't generic quantum ops; they're specific to Quantinuum hardware.
+
+It's a good reminder that documentation isn't just writing — it's understanding the thing well enough to describe it accurately.
+
+Thanks to the maintainers at <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> for the thorough review feedback throughout the process.
+
+For more technical details, refer to <a href="https://github.com/Quantinuum/guppylang/pull/1428" target="_blank" rel="noopener">PR #1428</a>.

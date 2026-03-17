@@ -17,7 +17,7 @@ const seriesLabel: Record<string, string> = {
 };
 
 const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-US', {
-  month: 'long', day: 'numeric', year: 'numeric',
+  month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC',
 });
 ---
 
@@ -162,9 +162,9 @@ const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-US', 
     text-transform: uppercase;
   }
 
-  .pr-type-chip--feature { background: rgba(0,200,150,0.15);  color: var(--accent); }
-  .pr-type-chip--fix     { background: rgba(255,92,58,0.15);  color: #ff5c3a; }
-  .pr-type-chip--doc     { background: rgba(250,204,21,0.15); color: #d4a800; }
+  .pr-type-chip--feature       { background: rgba(0,200,150,0.15);  color: var(--accent); }
+  .pr-type-chip--fix           { background: rgba(255,92,58,0.15);  color: #ff5c3a; }
+  .pr-type-chip--documentation { background: rgba(96,165,250,0.15); color: #60a5fa; }
 
   .source-chip code {
     font-size: 0.72rem;

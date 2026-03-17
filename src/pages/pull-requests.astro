@@ -26,6 +26,7 @@ const posts = allPosts
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="feature">Feature</button>
       <button class="filter-btn" data-filter="fix">Fix</button>
+      <button class="filter-btn" data-filter="documentation">Documentation</button>
     </div>
 
     <div class="pr-grid">
@@ -144,6 +145,12 @@ const posts = allPosts
     background: rgba(255,92,58,0.15);
     color: #ff5c3a;
     border-color: #ff5c3a;
+  }
+
+  .filter-btn[data-filter="documentation"].active {
+    background: rgba(96,165,250,0.15);
+    color: #60a5fa;
+    border-color: #60a5fa;
   }
 
   /* GRID */

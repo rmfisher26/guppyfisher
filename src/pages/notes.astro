@@ -21,7 +21,7 @@ const seriesMeta = [
     number: '02',
     label: 'Source Deep Dives',
     description: 'Explorations of various code samples to study further',
-    color: '#facc15',
+    color: '#60a5fa',
   },
 ];
 
@@ -97,7 +97,7 @@ function postsForSeries(key: string) {
                       <div class="post-excerpt">{post.data.description}</div>
                     </div>
                     <div class="post-meta">
-                      <span>{post.data.pubDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                      <span>{post.data.pubDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })}</span>
                       <span>{post.data.readingTime}</span>
                       {post.data.prRef && <span class="pr-chip">{post.data.prRef}</span>}
                     </div>
