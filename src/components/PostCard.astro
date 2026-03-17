@@ -45,7 +45,7 @@ const formattedDate = pubDate.toLocaleDateString('en-US', { month: 'short', day:
         <span>{formattedDate} · {readingTime}</span>
         {prType && <span class={`pr-type pr-type--${prType}`}>{prTypeLabel[prType]}</span>}
       </div>
-      <span class="card-arrow">↗</span>
+      <span class="card-read-more">Read more <span class="card-arrow">↗</span></span>
     </div>
   </div>
 </a>
@@ -150,6 +150,19 @@ const formattedDate = pubDate.toLocaleDateString('en-US', { month: 'short', day:
   .pr-type--feature       { background: rgba(0,200,150,0.15);  color: var(--accent); }
   .pr-type--fix           { background: rgba(255,92,58,0.15);  color: #ff5c3a; }
   .pr-type--documentation { background: rgba(96,165,250,0.15); color: #60a5fa; }
+
+  .card-read-more {
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: color 0.2s;
+  }
+
+  .post-card:hover .card-read-more { color: var(--ink); }
 
   .card-arrow { transition: transform 0.2s; }
   .post-card:hover .card-arrow { transform: translate(3px, -3px); }
