@@ -40,7 +40,7 @@ const recentActivity = flatEntries.slice(0, 3);
     <h1>Casting a line into <em><span class="hero-guppy">Guppy's</span></em> depths</h1>
     <p class="hero-desc">
       An ongoing log of everything I'm discovering about Guppy —
-      a quantum programming language built by Quantinuum. Status: compiling.
+      a quantum programming language built by <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a>. Status: compiling.
     </p>
 
   </section>
@@ -254,6 +254,17 @@ const recentActivity = flatEntries.slice(0, 3);
     color: var(--muted);
     margin-bottom: 1.5rem;
     font-style: italic;
+  }
+
+  .hero-desc a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+
+  .hero-desc a:hover {
+    border-bottom-color: var(--accent);
   }
 
   .hero-pipeline {
