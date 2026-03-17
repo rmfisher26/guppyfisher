@@ -49,14 +49,14 @@ body::before {
 /* Prose in MDX articles */
 .prose p { margin-bottom: 1.4rem; }
 .prose h2 {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Figtree', sans-serif;
   font-weight: 600;
   font-size: 1.5rem;
   letter-spacing: -0.02em;
   margin: 2.5rem 0 0.75rem;
 }
 .prose h3 {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Figtree', sans-serif;
   font-weight: 700;
   font-size: 1.15rem;
   letter-spacing: -0.02em;
