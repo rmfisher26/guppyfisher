@@ -59,7 +59,7 @@ const recentActivity = flatEntries.slice(0, 3);
               <span class="timeline-type-pill">{item.label}</span>
               <span class="activity-date">{item.date}</span>
               {item.link && (
-                <a class="activity-link" href={item.link}>{item.linkLabel ?? 'view'}</a>
+                <a class="activity-link" href={item.link} target="_blank" rel="noopener">{item.linkLabel ?? 'view'}</a>
               )}
             </div>
             <div class="activity-title">{item.title}</div>

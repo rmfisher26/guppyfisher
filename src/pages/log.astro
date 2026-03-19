@@ -61,7 +61,7 @@ const totalPages = pages.length;
                             <div class="entry-meta">
                               <span class="timeline-type-pill">{item.label}</span>
                               {item.link && (
-                                <a class="entry-link" href={item.link}>{item.linkLabel ?? 'view'}</a>
+                                <a class="entry-link" href={item.link} target="_blank" rel="noopener">{item.linkLabel ?? 'view'}</a>
                               )}
                             </div>
                             <div class="entry-title">{item.title}</div>

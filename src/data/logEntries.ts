@@ -24,6 +24,7 @@ export const entries: LogWeek[] = [
       {
         date: 'Fri Mar 13',
         items: [
+          { type: 'pr', label: 'PR', title: 'PR #1551 fix: Nested modifier propagation', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1551', linkLabel: 'view PR' },
           { type: 'community', label: 'Q-Net', title: 'Q-Net Connect 2026: Day 2: Various Talks', body: null, link: null, linkLabel: null },
         ],
       },
@@ -53,7 +54,7 @@ export const entries: LogWeek[] = [
       {
         date: 'Fri Feb 27',
         items: [
-          { type: 'pr', label: 'PR', title: 'feat: Improve error message for passing non-comptime values into comptime', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1527', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'PR #1527 feat: Improve error message for passing non-comptime values into comptime', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1527', linkLabel: 'view PR' },
         ],
       },
     ],
@@ -64,15 +65,15 @@ export const entries: LogWeek[] = [
       {
         date: 'Wed Feb 18',
         items: [
-          { type: 'pr', label: 'PR', title: 'fix: Resolve relative wasm file paths from calling file', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1496', linkLabel: 'view PR' },
-          { type: 'pr', label: 'PR', title: 'feat: Improve error message for failed borrows due to failed leaf borrows', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1501', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'PR #1496 fix: Resolve relative wasm file paths from calling file', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1496', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'PR #1501 feat: Improve error message for failed borrows due to failed leaf borrows', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1501', linkLabel: 'view PR' },
         ],
       },
       {
         date: 'Tue Feb 17',
         items: [
-          { type: 'pr', label: 'PR', title: 'fix: Misleading error message for leaked qubits', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1497', linkLabel: 'view PR' },
-          { type: 'pr', label: 'PR', title: 'feat: Add missing bool methods (__rxor__, __rand__, __ror__)', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1498', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'PR #1497 fix: Misleading error message for leaked qubits', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1497', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'PR #1498 feat: Add missing bool methods (__rxor__, __rand__, __ror__)', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1498', linkLabel: 'view PR' },
         ],
       },
     ],
@@ -83,14 +84,14 @@ export const entries: LogWeek[] = [
       {
         date: 'Tue Feb 10',
         items: [
-          { type: 'pr', label: 'PR', title: 'feat: Add function to swap two array elements that lowers to hugr swap op', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1459', linkLabel: 'view PR' },
-          { type: 'pr', label: 'PR', title: 'feat: Compile time array indexing linearity check for literal indices', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1469', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'PR #1459 feat: Add function to swap two array elements that lowers to hugr swap op', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1459', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'PR #1469 feat: Compile time array indexing linearity check for literal indices', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1469', linkLabel: 'view PR' },
         ],
       },
       {
         date: 'Mon Feb 9',
         items: [
-          { type: 'pr', label: 'PR', title: 'fix: Misleading error message when trying to load a list of numpy integers using comptime', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1484', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'PR #1484 fix: Misleading error message when trying to load a list of numpy integers using comptime', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1484', linkLabel: 'view PR' },
         ],
       },
     ],
@@ -101,7 +102,7 @@ export const entries: LogWeek[] = [
       {
         date: 'Wed Jan 28',
         items: [
-          { type: 'pr', label: 'PR', title: 'feat: Compile time array bounds check for literal indices', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1448', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'PR #1448 feat: Compile time array bounds check for literal indices', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1448', linkLabel: 'view PR' },
         ],
       },
     ],
@@ -124,7 +125,7 @@ export const entries: LogWeek[] = [
       {
         date: 'Sat Jan 10',
         items: [
-          { type: 'pr', label: 'PR', title: 'docs: Added documentation for Issue #1213 — Add API docs for std modules', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1428', linkLabel: 'view PR' },
+          { type: 'pr', label: 'PR', title: 'PR #1428 docs: Added documentation for Issue #1213 — Add API docs for std modules', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1428', linkLabel: 'view PR' },
         ],
       },
     ],
