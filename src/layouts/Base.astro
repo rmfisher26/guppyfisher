@@ -5,8 +5,14 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
 }
-const { title, description = 'Learning Guppylang compiler internals in public.' } = Astro.props;
+const {
+  title,
+  description = 'A developer blog documenting my contributions to Guppy — Quantinuum\'s quantum programming language.',
+  ogImage = 'https://guppyfisher.dev/assets/og-image.png',
+} = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, 'https://guppyfisher.dev').href;
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +21,20 @@ const { title, description = 'Learning Guppylang compiler internals in public.' 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title} — Guppyfisher</title>
   <meta name="description" content={description} />
+
+  <!-- Open Graph / LinkedIn -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content={canonicalUrl} />
+  <meta property="og:title"       content={`${title} — Guppyfisher`} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image"       content={ogImage} />
+
+  <!-- Twitter / X card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content={`${title} — Guppyfisher`} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image"       content={ogImage} />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;1,400;1,600&family=Figtree:wght@400;600;700&display=swap" />
