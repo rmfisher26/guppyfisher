@@ -6,10 +6,16 @@ seriesNumber: 1
 pubDate: 2026-03-12
 readingTime: "6 min"
 ---
-## What is Guppy?
-Guppy is a quantum-first programming language that runs on real quantum computers. The language is open source and built by the quantum computing company, Quantinuum. 
+import Callout from '../../components/Callout.astro';
 
-Features:
+If you've ever been curious about quantum computing but didn't know where to start, Guppy is one of the most approachable entry points — especially if you already know Python.
+
+## What is Guppy?
+
+Guppy is a quantum-first programming language that runs on real quantum computers. The language is open source and built by the quantum computing company, [Quantinuum](https://www.quantinuum.com).
+
+### Features
+
 - **Embedded in Python**: integration with existing Python workflows makes adoption smoother.
 - **Familiar syntax**: learning is simpler, since writing Guppy programs is familiar to those who understand Python.
 - **Compiler and Qubit Safety**: the compiler can detect potential runtime errors that would be expensive if they ran on quantum hardware.
@@ -28,11 +34,12 @@ def circuit() -> qubit:
 ```
 
 Here's a more complete example — a Bell state circuit:
+
 ```python
-#python host
+# Python host
 from guppylang import guppy
 
-#quantum kernel
+# Quantum kernel
 @guppy
 def bell() -> tuple[qubit, qubit]:
     q0, q1 = qubit(), qubit()
@@ -46,22 +53,29 @@ def main() -> None:
     c0 = measure(q0)
     c1 = measure(q1)
 
-#compile
+# Compile
 hugr = main.compile()
 
-#run
+# Run
 main.emulator(n_qubits=2).run()
 ```
 
+<Callout type="note" label="Bell State">
+  A Bell state is one of the simplest examples of quantum entanglement — measuring one qubit instantly determines the state of the other, no matter how far apart they are.
+</Callout>
 
-## The Guppy Compiler  
+## The Guppy Compiler
+
 Guppy is strongly-typed, which makes it possible to catch and report compilation errors during development. This helps developers find bugs early and can save time and avoid costly quantum resources.
-In addition, the compiler can recognize linearity violations on qubits. Linearity is a critical part of quantum computing, so just know that this is an essential concept that makes quantum algorithms work.
+
+<Callout type="note" label="Linearity">
+  The compiler can recognize linearity violations on qubits. Linearity is a critical part of quantum computing — it's an essential concept that makes quantum algorithms work.
+</Callout>
 
 The compiler goes through a series of steps to translate Guppy code into runnable code on quantum hardware. The goal of this series is to explain how this works for the benefit of future Guppy developers.
 
 In the next parts of the series, I will explain more about why linearity matters and how the Guppy compiler works to enforce this.
 
+---
 
-For more details on Guppy, please feel free to explore Quantinuum's own documentation:
-Source: https://docs.quantinuum.com/guppy/
+For more details on Guppy, explore the official documentation: [docs.quantinuum.com/guppy](https://docs.quantinuum.com/guppy/)

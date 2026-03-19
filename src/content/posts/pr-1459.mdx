@@ -1,0 +1,24 @@
+---
+title: "PR #1459: Efficient Array Swap via HUGR's Native Swap Operation"
+description: "Added an array_swap function that compiles directly to HUGR's native swap op, replacing a less efficient workaround and giving developers a clean path from high-level Python to optimized operations."
+series: pull-requests
+seriesNumber: 5
+pubDate: 2026-02-10
+readingTime: "2 min"
+prRef: "PR #1459"
+prType: feature
+---
+
+Continuing my work on <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> Guppy: I added an efficient array swap function for quantum computing.
+
+When quantum developers needed to swap two elements in an array (like swapping qubits at different positions), they had to use a workaround function (`mem_swap`) that was less efficient than it could be.
+
+In PR #1459, I added a new `array_swap` function that compiles directly to HUGR's native swap operation. This means swapping array elements now translates to optimized low-level operations instead of going through multiple steps.
+
+By providing a direct path from high-level Python code to optimized operations, developers can write cleaner code that runs more efficiently on quantum hardware.
+
+To be precise: `array_swap` compiles to an optimized real-time classical operation on the quantum computer's control system — not a gate acting on qubits.
+
+As always, I appreciate the Guppy contributors at <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> for their help and collaboration.
+
+For more technical details, refer to <a href="https://github.com/Quantinuum/guppylang/pull/1459" target="_blank" rel="noopener">PR #1459</a>.

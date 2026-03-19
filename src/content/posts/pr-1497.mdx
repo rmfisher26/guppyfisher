@@ -1,0 +1,22 @@
+---
+title: "PR #1497: Fixing Misleading Qubit Leak Error Messages"
+description: "Fixed a compiler bug where leaked qubits would generate error messages blaming the wrong location — pointing at a branch condition instead of the unconditional leak."
+series: pull-requests
+seriesNumber: 7
+pubDate: 2026-02-17
+readingTime: "2 min"
+prRef: "PR #1497"
+prType: fix
+---
+
+In my latest <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> Guppy contribution, I helped fix a subtle but confusing error message.
+
+When a qubit leaked (i.e. went out of scope without being consumed), Guppy would report an error, but in some cases the message was misleading — incorrectly blaming a branch condition when the qubit was actually leaked unconditionally.
+
+The root cause was that Guppy's compiler wasn't distinguishing between two different ways of using a qubit: borrowing it temporarily (e.g. applying a gate) versus consuming it for good (e.g. measuring it). This caused the error message to point at the wrong place.
+
+In PR #1497, I fixed this so the compiler correctly identifies whether a qubit was truly consumed on each branch of the code before deciding how to phrase the error. The result is a more accurate message that points developers straight to the real problem.
+
+Thanks to the Guppy contributors at <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> for their support.
+
+For more technical details, refer to <a href="https://github.com/Quantinuum/guppylang/pull/1497" target="_blank" rel="noopener">PR #1497</a>.

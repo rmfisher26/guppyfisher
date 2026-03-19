@@ -2,12 +2,7 @@
 const base = import.meta.env.BASE_URL;
 ---
 <footer>
-  <div class="footer-col">
-    <h4>Series</h4>
-    <a href={`${base}series`}>1 · Core Concepts</a>
-    <a href={`${base}series`}>2 · Compiler Internals</a>
-    <a href={`${base}series`}>3 · Source Deep Dives</a>
-  </div>
+
   <div class="footer-col">
     <h4>On GitHub</h4>
     <a href="https://github.com/rmfisher26" target="_blank" rel="noopener">@rmfisher26 ↗</a>
@@ -20,24 +15,21 @@ const base = import.meta.env.BASE_URL;
     <a href="https://www.linkedin.com/in/rmfisher26/" target="_blank" rel="noopener">LinkedIn ↗</a>
   </div>
 </footer>
-<div class="footer-bottom">
-  <span>GUPPYFISHER</span>
-</div>
 
 <style>
   footer {
     border-top: 2px solid var(--ink);
     padding: 2.5rem 2rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 6rem;
     max-width: 900px;
     margin: 0 auto;
     font-size: 0.85rem;
   }
 
   .footer-col h4 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 700;
     font-size: 0.75rem;
     letter-spacing: 0.1em;
@@ -49,7 +41,7 @@ const base = import.meta.env.BASE_URL;
     display: block;
     color: var(--muted);
     text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Figtree', sans-serif;
     font-size: 0.75rem;
     line-height: 2;
     transition: color 0.2s;
@@ -57,19 +49,7 @@ const base = import.meta.env.BASE_URL;
 
   .footer-col a:hover { color: var(--accent); }
 
-  .footer-bottom {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 1rem 2rem 2rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--muted);
-    display: flex;
-    justify-content: space-between;
-    border-top: 1px solid var(--border);
-  }
-
   @media (max-width: 700px) {
-    footer { grid-template-columns: 1fr; }
+    footer { gap: 3rem; }
   }
 </style>

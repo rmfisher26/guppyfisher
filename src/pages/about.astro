@@ -13,8 +13,8 @@ import Header from '../components/Header.astro';
       <h1>Continuously Learning</em></h1>
       <p class="subtitle">
         I'm Robert Fisher — a software engineer with over a decade of experience, learning the internals
-        of <a href="https://github.com/CQCL/guppylang" target="_blank" rel="noopener">Guppylang</a>
-        by reading source code, tracing PRs, and writing about what I find.
+        of <a href="https://github.com/CQCL/guppylang" target="_blank" rel="noopener">Guppy</a>
+        by reading the source code, adding new features, and fixing bugs.
       </p>
     </div>
 
@@ -25,18 +25,20 @@ import Header from '../components/Header.astro';
       <div class="col-text">
         <h2>Why this blog?</h2>
         <p>
-          In December 2025, I discovered Guppy after watching two Quantinuum webinars. I was fascinated by the opportunity to contribute to a quantum computing programming language. 
+          In December 2025, I discovered <a href="https://docs.quantinuum.com/guppy/" target="_blank" rel="noopener">Guppy</a> after watching two Quantinuum webinars (<a href="https://www.quantinuum.com/webinar/an-overview-of-our-helios-quantum-computer" target="_blank" rel="noopener">An Overview of Our Helios Quantum Computer</a> and <a href="https://www.quantinuum.com/webinar/unpack-the-stack" target="_blank" rel="noopener">Unpack the Stack</a>). I was fascinated by the opportunity to contribute to a quantum computing programming language.
         </p>
         <p>
-          With that goal in mind, I cloned the Guppylang repository, explored some open issues, and successfully merged some pull requests.
-          So that’s where I am today, continuing to learn about Guppy and helping out wherever I can. Still, there's a lot for me to learn about quantum computing, but I'm looking forward to the journey. 
+          With that goal in mind, I cloned the <a href="https://github.com/Quantinuum/guppylang" target="_blank" rel="noopener">Guppylang</a> repository, explored some open issues, and successfully merged some pull requests.
+          So that’s where I am today, continuing to learn about <a href="https://docs.quantinuum.com/guppy/" target="_blank" rel="noopener">Guppy</a> and helping out wherever I can. Still, there's a lot for me to learn about quantum computing, but I'm looking forward to the journey. 
         </p>
   
 
         <h2>What you'll find here</h2>
         <ul>
-          <li><strong>Posts:</strong> A collection of articles about my contributions, coding examples, and additional notes.</li>
-          <li><strong>Logs:</strong> A timeline of my journey as learn more about quantum computing, Quantinuum, Guppy, and more.</li>
+          <li><strong>Posts:</strong> The main page highlights a featured post alongside recent activity from the log and the latest pull request write-ups — a snapshot of what I'm currently working on and writing about.</li>
+          <li><strong>Notes:</strong> Posts organized into two reading tracks — Core Concepts covers my own analysis and study of how <a href="https://docs.quantinuum.com/guppy/" target="_blank" rel="noopener">Guppy</a> works, while Source Deep Dives explore specific code samples and topics I wanted to study further.</li>
+          <li><strong>Pull Requests:</strong> A dedicated collection of every merged contribution to <a href="https://docs.quantinuum.com/guppy/" target="_blank" rel="noopener">Guppy</a> — what the problem was, what the fix looked like, and why it matters.</li>
+          <li><strong>Log:</strong> A timeline of my journey as I learn more about quantum computing, <a href="https://www.quantinuum.com" target="_blank" rel="noopener">Quantinuum</a>, <a href="https://docs.quantinuum.com/guppy/" target="_blank" rel="noopener">Guppy</a>, and more.</li>
         </ul>
       </div>
 
@@ -84,40 +86,17 @@ import Header from '../components/Header.astro';
     animation: fadeUp 0.6s ease both;
   }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
   .about-header {
     padding: 5rem 0 3rem;
   }
 
-  .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--accent);
-    letter-spacing: 0.05em;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .eyebrow::before {
-    content: '';
-    display: inline-block;
-    width: 2rem;
-    height: 1px;
-    background: var(--accent);
-  }
-
   h1 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 600;
     font-size: clamp(2.5rem, 6vw, 4.5rem);
     line-height: 0.95;
     letter-spacing: -0.04em;
+    color: var(--accent2);
     margin-bottom: 1.5rem;
   }
 
@@ -131,7 +110,6 @@ import Header from '../components/Header.astro';
   .subtitle {
     font-size: 1.1rem;
     color: var(--muted);
-    max-width: 580px;
     line-height: 1.7;
     font-style: italic;
   }
@@ -151,14 +129,12 @@ import Header from '../components/Header.astro';
 
   /* Two-column layout */
   .two-col {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 4rem;
+    display: block;
     margin-bottom: 3rem;
   }
 
   .col-text h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 600;
     font-size: 1.15rem;
     letter-spacing: -0.02em;
@@ -174,17 +150,21 @@ import Header from '../components/Header.astro';
     margin-bottom: 1.2rem;
   }
 
-  .col-text p a {
+  .col-text p a,
+  .col-text li a {
     color: var(--accent);
     text-decoration: none;
   }
 
-  .col-text p a:hover { text-decoration: underline; }
+  .col-text p a:hover,
+  .col-text li a:hover { text-decoration: underline; }
 
   .col-text ul {
     padding-left: 1.2rem;
-    line-height: 1.9;
-    font-size: 0.95rem;
+    line-height: 1.75;
+    font-size: 1rem;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
   }
 
   .col-text li { margin-bottom: 0.4rem; }
@@ -227,7 +207,7 @@ import Header from '../components/Header.astro';
   }
 
   .stack-value {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 700;
     font-size: 0.95rem;
   }
@@ -236,7 +216,7 @@ import Header from '../components/Header.astro';
 
   /* Links section */
   .links-section h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 600;
     font-size: 1.15rem;
     letter-spacing: -0.02em;
@@ -280,7 +260,7 @@ import Header from '../components/Header.astro';
   }
 
   .link-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 700;
     font-size: 0.9rem;
     margin-bottom: 0.2rem;

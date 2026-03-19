@@ -10,7 +10,8 @@ const currentPath = Astro.url.pathname;
 
   <nav id="main-nav" aria-label="Main navigation">
     <a href={base} class={currentPath === base || currentPath === `${base}/` ? 'active' : ''}>Posts</a>
-    <a href={`${base}series`} class={currentPath.startsWith(`${base}series`) ? 'active' : ''}>Series</a>
+    <a href={`${base}notes`} class={currentPath.startsWith(`${base}notes`) ? 'active' : ''}>Notes</a>
+    <a href={`${base}pull-requests`} class={currentPath.startsWith(`${base}pull-requests`) ? 'active' : ''}>Pull Requests</a>
     <a href={`${base}log`} class={currentPath.startsWith(`${base}log`) ? 'active' : ''}>Log</a>
     <a href={`${base}about`} class={currentPath === `${base}about` ? 'active' : ''}>About</a>
   </nav>
@@ -58,7 +59,7 @@ const currentPath = Astro.url.pathname;
 
   /* ── LOGO ── */
   .site-logo {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 600;
     font-size: 1.4rem;
     letter-spacing: -0.03em;
@@ -72,22 +73,11 @@ const currentPath = Astro.url.pathname;
   .logo-guppy  { color: var(--accent); }
   .logo-fisher { color: var(--accent2); }
 
-  .logo-fish {
-    display: inline-block;
-    font-size: 1.6rem;
-    animation: swim 3s ease-in-out infinite;
-  }
-
-  @keyframes swim {
-    0%, 100% { transform: translateY(0) rotate(-5deg); }
-    50%       { transform: translateY(-4px) rotate(5deg); }
-  }
-
   /* ── DESKTOP NAV ── */
   nav {
     display: flex;
     gap: 2rem;
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-size: 0.82rem;
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -220,6 +210,7 @@ const currentPath = Astro.url.pathname;
     nav.open a:nth-child(2) { animation-delay: 0.12s; }
     nav.open a:nth-child(3) { animation-delay: 0.18s; }
     nav.open a:nth-child(4) { animation-delay: 0.24s; }
+    nav.open a:nth-child(5) { animation-delay: 0.30s; }
 
     @keyframes itemSlide {
       from { opacity: 0; transform: translateX(-8px); }

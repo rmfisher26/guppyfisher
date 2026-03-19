@@ -1,0 +1,77 @@
+---
+title: "Guppy Architecture Overview"
+description: "A high-level look at how the Guppy compiler is structured — the key packages, core components, and the 5-phase compilation pipeline."
+series: concepts
+seriesNumber: 2
+pubDate: 2026-03-16
+readingTime: "5 min"
+draft: false
+---
+
+import Callout from '../../components/Callout.astro';
+import SourceRef from '../../components/SourceRef.astro';
+
+<Callout type="warning" label="Disclaimer">
+  This article reflects my personal understanding of the Guppy codebase and has not been reviewed or approved by Quantinuum. For official documentation, refer to the <a href="https://github.com/CQCL/guppylang" target="_blank" rel="noopener">guppylang repository</a> or the <a href="https://docs.quantinuum.com/guppy/" target="_blank" rel="noopener">official Guppy docs</a>.
+</Callout>
+
+In the [previous post](/posts/getting-started-with-guppy), we looked at what Guppy is and wrote our first quantum circuit. Now let's go one level deeper — how is the Guppy project actually structured, and what happens to your code between the `@guppy` decorator and running on hardware?
+
+## Project Structure
+
+The repository is organized as a monorepo workspace with three packages, plus supporting directories:
+
+```
+guppylang/
+├── guppylang/              # User-facing API package
+├── guppylang-internals/    # Compiler implementation (~100 Python files)
+├── tests/                  # 100+ test files
+├── examples/               # Jupyter notebook examples
+└── docs/                   # Sphinx documentation
+```
+
+### `guppylang/`
+
+The stable, public-facing package. This is what users import. It contains the `@guppy` decorator, the standard library (quantum gates, collections, builtins), and the emulator interface. The goal is a clean API boundary — users should never need to touch `guppylang-internals` directly.
+
+### `guppylang-internals/`
+
+The full compiler implementation — around 100 Python files. This is where parsing, type checking, CFG construction, and HUGR code generation live. It's intentionally marked as unstable; the internal APIs can change between versions without notice.
+
+### `tests/`
+
+100+ test files split across integration tests (compilation and emulation), error tests (validating diagnostic output), benchmarks, and issue regression tests.
+
+### `examples/`
+
+A collection of Jupyter notebooks demonstrating real Guppy programs — quantum algorithms, gate-level circuits, and emulator usage. A good starting point for seeing what Guppy code actually looks like before diving into the compiler internals.
+
+### `docs/`
+
+Sphinx-generated documentation for the public API. Covers the decorator system, standard library, and emulator interface.
+
+
+## Core Components
+
+1. **Compilation Engine** — Central orchestrator. Manages a `DefinitionStore` and drives the 4-phase definition lifecycle.
+2. **Type System** — Linear/affine types for quantum resource management. Tracks whether values are copyable or droppable.
+3. **Type Checker** — Checks expressions, statements, and linearity. Ensures qubits are used exactly once.
+4. **Control Flow Graph (CFG)** — Intermediate representation between the AST and HUGR. Enables flow-sensitive analysis.
+5. **HUGR Compiler** — Compiles CFG to HUGR operations, handles monomorphization and dataflow graph generation.
+6. **Standard Library** — Quantum gates, measurements, collections, and builtins.
+7. **Emulator** — Runs programs via `selene-sim` without targeting real hardware.
+
+## Compilation Pipeline
+
+Every Guppy function passes through five phases:
+
+1. **Decoration & Registration** — `@guppy` captures the function and registers it in the `DefinitionStore`.
+2. **Parsing** — Type annotations are parsed and the signature is validated.
+3. **Type Checking** — CFG is built, expressions are type-checked, linearity is enforced.
+4. **Monomorphization** — Generic parameters are instantiated where needed.
+5. **HUGR Compilation** — The CFG is compiled into a HUGR package ready for execution or simulation.
+
+<Callout type="note" label="HUGR">
+  HUGR (Hierarchical Unified Graph Representation) is the target IR that Guppy compiles to. It's a separate open-source project also maintained by Quantinuum — designed to be a portable, hardware-agnostic format for quantum programs.
+</Callout>
+

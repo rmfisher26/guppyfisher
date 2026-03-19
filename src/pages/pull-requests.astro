@@ -1,0 +1,167 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const posts = allPosts
+  .filter(p => p.data.series === 'pull-requests')
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Base title="Pull Requests" description="A summary of every merged Guppy pull request — the problem, the fix, and why it matters.">
+  <Header />
+
+  <main class="pr-page">
+    <div class="page-header">
+      <div class="eyebrow">contributions</div>
+      <h1>Pull Requests</h1>
+      <p class="subtitle">
+        A summary of every merged pull request — the problem, the fix, and why it matters.
+      </p>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="feature">Feature</button>
+      <button class="filter-btn" data-filter="fix">Fix</button>
+      <button class="filter-btn" data-filter="documentation">Documentation</button>
+    </div>
+
+    <div class="pr-grid">
+      {posts.map((post) => (
+        <div class="pr-card-wrap" data-type={post.data.prType ?? 'none'}>
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            series={post.data.series}
+            seriesNumber={post.data.seriesNumber}
+            pubDate={post.data.pubDate}
+            readingTime={post.data.readingTime}
+            prRef={post.data.prRef}
+            prType={post.data.prType}
+            slug={post.slug}
+          />
+        </div>
+      ))}
+    </div>
+  </main>
+</Base>
+
+<style>
+  .pr-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem 5rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .page-header {
+    padding: 5rem 0 3.5rem;
+  }
+
+  h1 {
+    font-family: 'Figtree', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .filter-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .filter-btn:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .filter-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .filter-btn[data-filter="feature"].active {
+    background: rgba(0,200,150,0.15);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .filter-btn[data-filter="fix"].active {
+    background: rgba(255,92,58,0.15);
+    color: #ff5c3a;
+    border-color: #ff5c3a;
+  }
+
+  .filter-btn[data-filter="documentation"].active {
+    background: rgba(96,165,250,0.15);
+    color: #60a5fa;
+    border-color: #60a5fa;
+  }
+
+  /* GRID */
+  .pr-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .pr-card-wrap { display: contents; }
+  .pr-card-wrap.hidden { display: none; }
+
+  @media (max-width: 700px) {
+    .pr-grid { grid-template-columns: 1fr; }
+    .pr-card-wrap.hidden { display: none; }
+  }
+</style>
+
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const cards = document.querySelectorAll<HTMLElement>('.pr-card-wrap');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+      cards.forEach(card => {
+        if (filter === 'all' || card.dataset.type === filter) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>

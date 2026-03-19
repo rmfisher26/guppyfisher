@@ -1,148 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
-
-const entries = [
-  {
-    week: 'Week of Mar 9, 2026',
-    days: [
-      {
-        date: 'Fri Mar 13',
-        items: [
-          { type: 'community', label: 'Q-Net', title: 'Q-Net Connect 2026: Day 2: TBD', body: null, link: null, linkLabel: null },
-        ],
-      },
-      {
-        date: 'Thu Mar 12',
-        items: [
-          { type: 'community', label: 'Q-Net', title: 'Q-Net Connect 2026: Day 1 — From Qubits to Code: Quantinuum for Developers (Dr. Seyon Sivarajah)', body: null, link: null, linkLabel: null },
-        ],
-      },
-    ],
-  },
-  {
-    week: 'Week of Mar 2, 2026',
-    days: [
-      {
-        date: 'Thu Mar 5',
-        items: [
-          { type: 'community', label: 'Q-Net', title: 'Joined Q-Net Community', body: null, link: 'https://www.quantinuum.com/q-net', linkLabel: 'learn more' },
-          { type: 'webinar',   label: 'Webinar', title: 'Helios Unlocks a New Frontier in Superconductivity', body: null, link: 'https://www.quantinuum.com/webinar/helios-unlocks-a-new-frontier-in-superconductivity', linkLabel: 'watch' },
-        ],
-      },
-    ],
-  },
-  {
-    week: 'Week of Feb 23, 2026',
-    days: [
-      {
-        date: 'Fri Feb 27',
-        items: [
-          { type: 'pr', label: 'PR', title: 'feat: Improve error message for passing non-comptime values into comptime', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1527', linkLabel: 'view PR' },
-        ],
-      },
-    ],
-  },
-  {
-    week: 'Week of Feb 16, 2026',
-    days: [
-      {
-        date: 'Wed Feb 18',
-        items: [
-          { type: 'pr', label: 'PR', title: 'fix: Resolve relative wasm file paths from calling file', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1496', linkLabel: 'view PR' },
-          { type: 'pr', label: 'PR', title: 'feat: Improve error message for failed borrows due to failed leaf borrows', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1501', linkLabel: 'view PR' },
-        ],
-      },
-      {
-        date: 'Tue Feb 17',
-        items: [
-          { type: 'pr', label: 'PR', title: 'fix: Misleading error message for leaked qubits', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1497', linkLabel: 'view PR' },
-          { type: 'pr', label: 'PR', title: 'feat: Add missing bool methods (__rxor__, __rand__, __ror__)', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1498', linkLabel: 'view PR' },
-        ],
-      },
-    ],
-  },
-  {
-    week: 'Week of Feb 9, 2026',
-    days: [
-      {
-        date: 'Tue Feb 10',
-        items: [
-          { type: 'pr', label: 'PR', title: 'feat: Add function to swap two array elements that lowers to hugr swap op', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1459', linkLabel: 'view PR' },
-          { type: 'pr', label: 'PR', title: 'feat: Compile time array indexing linearity check for literal indices', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1469', linkLabel: 'view PR' },
-        ],
-      },
-      {
-        date: 'Mon Feb 9',
-        items: [
-          { type: 'pr', label: 'PR', title: 'fix: Misleading error message when trying to load a list of numpy integers using comptime', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1484', linkLabel: 'view PR' },
-        ],
-      },
-    ],
-  },
-  {
-    week: 'Week of Jan 26, 2026',
-    days: [
-      {
-        date: 'Wed Jan 28',
-        items: [
-          { type: 'pr', label: 'PR', title: 'feat: Compile time array bounds check for literal indices', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1448', linkLabel: 'view PR' },
-        ],
-      },
-    ],
-  },
-  {
-    week: 'Week of Jan 19, 2026',
-    days: [
-      {
-        date: 'Wed Jan 21',
-        items: [
-          { type: 'video', label: 'Video', title: 'Introducing Guppy: Our Quantum-first Programming Language', body: null, link: 'https://www.youtube.com/watch?v=0o-NlN5y1hY', linkLabel: 'watch' },
-          { type: 'video', label: 'Video', title: 'How Guppy Got Its Name', body: null, link: 'https://www.youtube.com/watch?v=Amm3QJbpKFA', linkLabel: 'watch' },
-        ],
-      },
-    ],
-  },
-  {
-    week: 'Week of Jan 5, 2026',
-    days: [
-      {
-        date: 'Sat Jan 10',
-        items: [
-          { type: 'pr', label: 'PR', title: 'docs: Added documentation for Issue #1213 — Add API docs for std modules', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1428', linkLabel: 'view PR' },
-        ],
-      },
-    ],
-  },
-  {
-    week: 'Week of Dec 15, 2025',
-    days: [
-      {
-        date: 'Tue Dec 16',
-        items: [
-          { type: 'webinar', label: 'Webinar', title: 'Quantum Computing With Real-World Impact', body: null, link: 'https://www.quantinuum.com/webinar/an-overview-of-our-helios-quantum-computer', linkLabel: 'watch' },
-          { type: 'webinar', label: 'Webinar', title: "Unpack the Stack: An Introduction to Quantinuum's Next-Generation Software Stack", body: null, link: 'https://www.quantinuum.com/webinar/unpack-the-stack', linkLabel: 'watch' },
-        ],
-      },
-    ],
-  },
-];
-
-const typeColors: Record<string, string> = {
-  pr:        'var(--accent2)',
-  video:     '#7c5cbf',
-  webinar:   '#b06d2a',
-  community: 'var(--accent)',
-};
+import { entries, typeColors, flatEntries } from '../data/logEntries';
 
 const ITEMS_PER_PAGE = 10;
 
-// Flatten all items preserving week/day context
-const flat = entries.flatMap(w =>
-  w.days.flatMap(d =>
-    d.items.map(item => ({ weekLabel: w.week, date: d.date, ...item }))
-  )
-);
+const flat = flatEntries;
 
 // Chunk into pages of ITEMS_PER_PAGE
 const chunks: (typeof flat)[] = [];
@@ -193,12 +56,12 @@ const totalPages = pages.length;
                     <div class="day-items">
                       {day.items.map((item) => (
                         <div class="log-entry" style={`--entry-color: ${typeColors[item.type] ?? 'var(--muted)'}`}>
-                          <div class="entry-dot" />
+                          <div class="timeline-dot" />
                           <div class="entry-body">
                             <div class="entry-meta">
-                              <span class="entry-type">{item.label}</span>
+                              <span class="timeline-type-pill">{item.label}</span>
                               {item.link && (
-                                <a class="entry-link" href={item.link}>{item.linkLabel ?? 'view'}</a>
+                                <a class="entry-link" href={item.link} target="_blank" rel="noopener">{item.linkLabel ?? 'view'}</a>
                               )}
                             </div>
                             <div class="entry-title">{item.title}</div>
@@ -242,11 +105,6 @@ const totalPages = pages.length;
     padding: 4rem 2rem 6rem;
   }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
   /* ── HEADER ── */
   .page-header {
     animation: fadeUp 0.5s ease both;
@@ -282,20 +140,21 @@ const totalPages = pages.length;
   }
 
   h1 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 700;
     font-size: clamp(2.5rem, 6vw, 4rem);
     line-height: 1;
     letter-spacing: -0.03em;
-    color: var(--ink);
+    color: var(--accent2);
     margin-bottom: 1rem;
   }
 
   .log-desc {
     font-size: 1.05rem;
     color: var(--muted);
-    max-width: 480px;
     line-height: 1.6;
+    padding-bottom: 2rem;
+    font-style:italic;
   }
 
   /* ── WEEK BLOCK ── */
@@ -307,7 +166,7 @@ const totalPages = pages.length;
   .week-block[hidden] { display: none; }
 
   .week-label {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 700;
     font-size: 0.7rem;
     letter-spacing: 0.12em;
@@ -349,20 +208,6 @@ const totalPages = pages.length;
     display: flex;
   }
 
-  .entry-dot {
-    position: absolute;
-    left: -1.6rem;
-    top: 0.45rem;
-    transform: translateX(calc(-50% + 1px));
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--entry-color);
-    border: 2px solid var(--paper);
-    box-shadow: 0 0 0 1.5px var(--entry-color);
-    flex-shrink: 0;
-  }
-
   .entry-body {
     display: flex;
     flex-direction: column;
@@ -374,18 +219,6 @@ const totalPages = pages.length;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-  }
-
-  .entry-type {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--entry-color);
-    background: color-mix(in srgb, var(--entry-color) 10%, transparent);
-    padding: 0.2rem 0.55rem;
-    border-radius: 99px;
   }
 
   .entry-link {
@@ -404,8 +237,7 @@ const totalPages = pages.length;
   }
 
   .entry-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
+    font-family: 'Figtree', sans-serif;
     font-size: 0.95rem;
     color: var(--ink);
     line-height: 1.35;
@@ -433,7 +265,7 @@ const totalPages = pages.length;
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-size: 0.82rem;
     font-weight: 600;
     letter-spacing: 0.04em;

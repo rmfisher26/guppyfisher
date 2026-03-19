@@ -3,30 +3,31 @@ import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
+import { flatEntries, typeColors } from '../data/logEntries';
+import { seriesLabel } from '../data/series';
 
+const base = import.meta.env.BASE_URL;
 const allPosts = await getCollection('posts', ({ data }) => !data.draft);
 const sorted = allPosts.sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-const featured = sorted[0];
+const conceptsPosts      = sorted.filter(p => p.data.series === 'concepts');
+const compilerPosts      = sorted.filter(p => p.data.series === 'compiler');
+const deepDivesPosts     = sorted.filter(p => p.data.series === 'deep-dives');
+const pullRequestsPosts  = sorted.filter(p => p.data.series === 'pull-requests');
 
-const conceptsPosts  = sorted.filter(p => p.data.series === 'concepts');
-const compilerPosts  = sorted.filter(p => p.data.series === 'compiler');
-const deepDivesPosts = sorted.filter(p => p.data.series === 'deep-dives');
-
-const seriesLabel: Record<string, string> = {
-  concepts:    'Series 1 · Concepts',
-  compiler:    'Series 2 · Compiler Internals',
-  'deep-dives': 'Series 3 · Deep Dives',
-};
+const featured = pullRequestsPosts[0];
+const recentPRs = pullRequestsPosts.filter(p => p.slug !== featured?.slug).slice(0, 3);
 
 const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
-  month: 'short', year: 'numeric',
+  month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC',
 });
+
+const recentActivity = flatEntries.slice(0, 3);
 ---
 
-<Base title="Guppyfisher">
+<Base title="Posts">
   <Header />
 
   <!-- HERO -->
@@ -34,26 +35,39 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     <div class="hero-eyebrow">welcome</div>
     <h1>Casting a line into <em><span class="hero-guppy">Guppy's</span></em> depths</h1>
     <p class="hero-desc">
-      An ongoing log of everything I'm discovering about Guppy —
-      a quantum programming language built by Quantinuum. Status: compiling.
+      An ongoing log of everything I'm discovering about <a href="https://docs.quantinuum.com/guppy/" target="_blank" rel="noopener">Guppy</a> —
+      a quantum programming language built by <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a>.
     </p>
 
-    <div class="hero-pipeline">
-      <span class="pipe-step">@guppy</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-step">Python AST</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-active">type checker</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-step">linearity</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-step">HUGR nodes</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-step">validation</span>
-      <span class="pipe-arrow">→</span>
-      <span class="pipe-step">hardware</span>
-    </div>
   </section>
+
+  <hr class="section-rule" />
+
+  <!-- RECENT ACTIVITY -->
+  <div class="recent-activity">
+    <div class="section-heading">
+      <h2>Recent Activity</h2>
+      <div class="rule"></div>
+      <a href={`${base}log`} class="view-log-link">view log →</a>
+    </div>
+    <div class="activity-list">
+      {recentActivity.map((item) => (
+        <div class="activity-item" style={`--entry-color: ${typeColors[item.type] ?? 'var(--muted)'}`}>
+          <div class="timeline-dot" />
+          <div class="activity-body">
+            <div class="activity-meta">
+              <span class="timeline-type-pill">{item.label}</span>
+              <span class="activity-date">{item.date}</span>
+              {item.link && (
+                <a class="activity-link" href={item.link} target="_blank" rel="noopener">{item.linkLabel ?? 'view'}</a>
+              )}
+            </div>
+            <div class="activity-title">{item.title}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
 
   <hr class="section-rule" />
 
@@ -66,29 +80,71 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
       </div>
 
       <div class="featured">
-        <a href={`${import.meta.env.BASE_URL}posts/${featured.slug}`} class="featured-card">
+        <a href={`${base}posts/${featured.slug}`} class="featured-card">
           <div class="featured-visual">
-            <div class="hugr-viz">
-              <svg aria-hidden="true">
-                <line x1="18%" y1="20%" x2="42%" y2="20%" stroke="#00c896" stroke-width="1" stroke-opacity="0.4"/>
-                <line x1="55%" y1="20%" x2="70%" y2="20%" stroke="#00c896" stroke-width="1" stroke-opacity="0.4"/>
-                <line x1="25%" y1="28%" x2="25%" y2="58%" stroke="#00c896" stroke-width="1" stroke-opacity="0.3"/>
-                <line x1="65%" y1="28%" x2="65%" y2="58%" stroke="#00c896" stroke-width="1" stroke-opacity="0.3"/>
-                <line x1="35%" y1="68%" x2="43%" y2="82%" stroke="#ff5c3a" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="4,3"/>
-                <line x1="72%" y1="68%" x2="58%" y2="82%" stroke="#ff5c3a" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="4,3"/>
+            <div class="circuit-viz">
+              <svg viewBox="0 0 280 180" aria-hidden="true" class="circuit-svg">
+                <!-- Qubit wire labels -->
+                <text x="6" y="48" class="q-label">q[0]</text>
+                <text x="6" y="98" class="q-label">q[1]</text>
+                <text x="6" y="148" class="q-label">q[2]</text>
+
+                <!-- Qubit wires -->
+                <line x1="44" y1="45" x2="265" y2="45" class="wire"/>
+                <line x1="44" y1="95" x2="265" y2="95" class="wire"/>
+                <line x1="44" y1="145" x2="265" y2="145" class="wire"/>
+
+                <!-- H gate q[0] -->
+                <rect x="55" y="33" width="26" height="24" class="gate gate-h"/>
+                <text x="68" y="50" class="gate-label">H</text>
+
+                <!-- H gate q[1] -->
+                <rect x="55" y="83" width="26" height="24" class="gate gate-h"/>
+                <text x="68" y="100" class="gate-label">H</text>
+
+                <!-- CNOT: control q[0], target q[1] -->
+                <line x1="115" y1="45" x2="115" y2="95" class="cnot-line"/>
+                <circle cx="115" cy="45" r="5" class="cnot-ctrl"/>
+                <circle cx="115" cy="95" r="10" class="cnot-target"/>
+                <line x1="115" y1="85" x2="115" y2="105" class="cnot-cross"/>
+                <line x1="105" y1="95" x2="125" y2="95" class="cnot-cross"/>
+
+                <!-- Rz gate q[2] -->
+                <rect x="100" y="133" width="30" height="24" class="gate gate-rz"/>
+                <text x="115" y="150" class="gate-label">Rz</text>
+
+                <!-- CNOT: control q[1], target q[2] -->
+                <line x1="165" y1="95" x2="165" y2="145" class="cnot-line"/>
+                <circle cx="165" cy="95" r="5" class="cnot-ctrl"/>
+                <circle cx="165" cy="145" r="10" class="cnot-target"/>
+                <line x1="165" y1="135" x2="165" y2="155" class="cnot-cross"/>
+                <line x1="155" y1="145" x2="175" y2="145" class="cnot-cross"/>
+
+                <!-- Measure gates -->
+                <rect x="215" y="33" width="32" height="24" class="gate gate-m"/>
+                <text x="231" y="50" class="gate-label">M</text>
+                <rect x="215" y="83" width="32" height="24" class="gate gate-m"/>
+                <text x="231" y="100" class="gate-label">M</text>
+                <rect x="215" y="133" width="32" height="24" class="gate gate-m"/>
+                <text x="231" y="150" class="gate-label">M</text>
+
+                <!-- Double-line (classical) after measure -->
+                <line x1="247" y1="43" x2="265" y2="43" class="classical"/>
+                <line x1="247" y1="47" x2="265" y2="47" class="classical"/>
+                <line x1="247" y1="93" x2="265" y2="93" class="classical"/>
+                <line x1="247" y1="97" x2="265" y2="97" class="classical"/>
+                <line x1="247" y1="143" x2="265" y2="143" class="classical"/>
+                <line x1="247" y1="147" x2="265" y2="147" class="classical"/>
               </svg>
-              <div class="hugr-node">DFG root</div>
-              <div class="hugr-node">FuncDef</div>
-              <div class="hugr-node">BasicBlock</div>
-              <div class="hugr-node">Call</div>
-              <div class="hugr-node">Return</div>
-              <div class="hugr-node">Output</div>
+              <div class="circuit-comment">// quantum circuit — 3 qubits</div>
             </div>
-            <div class="hugr-comment">// HUGR hierarchical graph — live nodes</div>
           </div>
           <div class="featured-content">
             <div>
-              <div class="feat-series">{seriesLabel[featured.data.series]} · Post #{featured.data.seriesNumber}</div>
+              <div class="feat-series-row">
+                <div class="feat-series">{seriesLabel[featured.data.series]} · Post #{featured.data.seriesNumber}</div>
+                {featured.data.prType && <span class={`pr-badge pr-badge--${featured.data.prType}`}>{featured.data.prType}</span>}
+              </div>
               <div class="feat-title">{featured.data.title}</div>
               <div class="feat-excerpt">{featured.data.description}</div>
             </div>
@@ -96,9 +152,8 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
               <div class="feat-meta">
                 <span>{featuredDate}</span>
                 <span>~{featured.data.readingTime} read</span>
-                {featured.data.prRef && <span>{featured.data.prRef}</span>}
               </div>
-              <span class="read-btn">Read post →</span>
+              <span class="read-btn">Read more →</span>
             </div>
           </div>
         </a>
@@ -106,99 +161,41 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     </>
   )}
 
-  <!-- TAB BAR -->
-  <div class="tab-bar">
-    <button class="tab active" data-tab="all">All Posts</button>
-    <button class="tab" data-tab="series1">Series 1: Concepts</button>
-    <button class="tab" data-tab="series2">Series 2: Compiler</button>
-    <button class="tab" data-tab="series3">Series 3: Deep Dives</button>
-  </div>
-
-  <!-- POST GRIDS -->
-  <div class="tab-content active" id="tab-all">
-    <div class="post-grid">
-      {sorted.map((post) => (
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          series={post.data.series}
-          seriesNumber={post.data.seriesNumber}
-          pubDate={post.data.pubDate}
-          readingTime={post.data.readingTime}
-          prRef={post.data.prRef}
-          slug={post.slug}
-        />
-      ))}
+  <!-- RECENT PULL REQUESTS -->
+  {recentPRs.length > 0 && (
+    <div class="recent-prs">
+      <div class="section-heading">
+        <h2>Recent Pull Requests</h2>
+        <div class="rule"></div>
+        <a href={`${base}pull-requests`} class="view-log-link">view all →</a>
+      </div>
+      <div class="recent-pr-grid">
+        {recentPRs.map((post) => (
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            series={post.data.series}
+            seriesNumber={post.data.seriesNumber}
+            pubDate={post.data.pubDate}
+            readingTime={post.data.readingTime}
+            prRef={post.data.prRef}
+            prType={post.data.prType}
+            slug={post.slug}
+          />
+        ))}
+      </div>
     </div>
-  </div>
+  )}
 
-  <div class="tab-content" id="tab-series1">
-    <div class="post-grid">
-      {conceptsPosts.map((post) => (
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          series={post.data.series}
-          seriesNumber={post.data.seriesNumber}
-          pubDate={post.data.pubDate}
-          readingTime={post.data.readingTime}
-          prRef={post.data.prRef}
-          slug={post.slug}
-        />
-      ))}
-      {conceptsPosts.length === 0 && <p class="empty-tab">No posts yet in this series.</p>}
-    </div>
-  </div>
-
-  <div class="tab-content" id="tab-series2">
-    <div class="post-grid">
-      {compilerPosts.map((post) => (
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          series={post.data.series}
-          seriesNumber={post.data.seriesNumber}
-          pubDate={post.data.pubDate}
-          readingTime={post.data.readingTime}
-          prRef={post.data.prRef}
-          slug={post.slug}
-        />
-      ))}
-      {compilerPosts.length === 0 && <p class="empty-tab">No posts yet in this series.</p>}
-    </div>
-  </div>
-
-  <div class="tab-content" id="tab-series3">
-    <div class="post-grid">
-      {deepDivesPosts.map((post) => (
-        <PostCard
-          title={post.data.title}
-          description={post.data.description}
-          series={post.data.series}
-          seriesNumber={post.data.seriesNumber}
-          pubDate={post.data.pubDate}
-          readingTime={post.data.readingTime}
-          prRef={post.data.prRef}
-          slug={post.slug}
-        />
-      ))}
-      {deepDivesPosts.length === 0 && <p class="empty-tab">No posts yet in this series.</p>}
-    </div>
-  </div>
 </Base>
 
 <style>
   /* HERO */
   .hero {
-    padding: 5rem 2rem 4rem;
+    padding: 2.5rem 2rem 2rem;
     max-width: 900px;
     margin: 0 auto;
     animation: fadeUp 0.6s ease both;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
   }
 
   .hero-eyebrow {
@@ -221,18 +218,21 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
   }
 
   h1 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 600;
     font-size: clamp(3rem, 8vw, 6rem);
     line-height: 0.95;
     letter-spacing: -0.04em;
+    color: var(--accent2);
     margin-bottom: 2rem;
   }
 
   .hero-guppy {
-    font-family: 'Object Sans', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-style: normal;
     color: var(--accent);
+    font-weight: 600;
+
   }
 
   h1 em {
@@ -245,8 +245,19 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
   .hero-desc {
     font-size: 1.15rem;
     color: var(--muted);
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
     font-style: italic;
+  }
+
+  .hero-desc a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+
+  .hero-desc a:hover {
+    border-bottom-color: var(--accent);
   }
 
   .hero-pipeline {
@@ -291,7 +302,7 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
   }
 
   .section-heading h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 600;
     font-size: 1.1rem;
     letter-spacing: 0.1em;
@@ -342,49 +353,96 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     overflow: hidden;
   }
 
-  .hugr-viz {
-    position: relative;
-    width: 100%;
-    height: 200px;
-  }
-
-  .hugr-viz svg {
-    position: absolute;
-    inset: 0;
+  /* QUANTUM CIRCUIT */
+  .circuit-viz {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
   }
 
-  .hugr-node {
-    position: absolute;
-    border: 1px solid var(--accent);
-    border-radius: 4px;
-    background: rgba(0,200,150,0.08);
+  .circuit-svg {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .circuit-svg .q-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--accent);
-    padding: 0.3rem 0.6rem;
-    white-space: nowrap;
-    animation: nodepulse 2.5s ease-in-out infinite;
+    font-size: 11px;
+    fill: var(--muted);
   }
 
-  .hugr-node:nth-child(2) { top: 10%; left: 5%;   animation-delay: 0s; }
-  .hugr-node:nth-child(3) { top: 10%; left: 38%;  animation-delay: 0.3s; }
-  .hugr-node:nth-child(4) { top: 10%; left: 68%;  animation-delay: 0.6s; }
-  .hugr-node:nth-child(5) { top: 55%; left: 20%;  animation-delay: 0.9s; }
-  .hugr-node:nth-child(6) { top: 55%; left: 58%;  animation-delay: 1.2s; }
-  .hugr-node:nth-child(7) { top: 78%; left: 38%;  animation-delay: 1.5s; }
-
-  @keyframes nodepulse {
-    0%, 100% { border-color: var(--accent); box-shadow: 0 0 0 0 rgba(0,200,150,0); }
-    50%       { border-color: #00ffbb; box-shadow: 0 0 8px 2px rgba(0,200,150,0.25); }
+  .circuit-svg .wire {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-opacity: 0.35;
   }
 
-  .hugr-comment {
+  .circuit-svg .classical {
+    stroke: var(--accent2);
+    stroke-width: 1;
+    stroke-opacity: 0.5;
+  }
+
+  .circuit-svg .gate-h {
+    fill: rgba(0, 200, 150, 0.12);
+    stroke: var(--accent);
+    stroke-width: 1.2;
+    rx: 3;
+  }
+
+  .circuit-svg .gate-rz {
+    fill: rgba(124, 92, 191, 0.15);
+    stroke: #a78bfa;
+    stroke-width: 1.2;
+    rx: 3;
+  }
+
+  .circuit-svg .gate-m {
+    fill: rgba(255, 92, 58, 0.33);
+    stroke: #a35545;
+    stroke-width: 2;
+    rx: 3;
+  }
+
+  .circuit-svg .gate-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    fill: #ffffff;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  .circuit-svg .cnot-line {
+    stroke: var(--accent);
+    stroke-width: 1.2;
+    stroke-opacity: 0.6;
+  }
+
+  .circuit-svg .cnot-ctrl {
+    fill: var(--accent);
+    stroke: none;
+  }
+
+  .circuit-svg .cnot-target {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+  }
+
+  .circuit-svg .cnot-cross {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+  }
+
+  .circuit-comment {
     margin-top: 1rem;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
-    color: #585b70;
+    color: #c4ced9;
   }
 
   .featured-content {
@@ -395,21 +453,29 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     justify-content: space-between;
   }
 
+  .feat-series-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
   .feat-series {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.72rem;
     color: var(--accent);
     letter-spacing: 0.05em;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0;
   }
 
   .feat-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 600;
     font-size: 1.5rem;
     line-height: 1.2;
     letter-spacing: -0.02em;
     margin-bottom: 1rem;
+    color: var(--accent2);
   }
 
   .feat-excerpt {
@@ -417,7 +483,6 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     color: var(--muted);
     line-height: 1.6;
     margin-bottom: 1.5rem;
-    font-style: italic;
   }
 
   .feat-meta {
@@ -436,7 +501,7 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     gap: 0.5rem;
     background: var(--ink);
     color: var(--paper);
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -451,76 +516,107 @@ const featuredDate = featured?.data.pubDate.toLocaleDateString('en-US', {
     color: var(--ink);
   }
 
-  /* TAB BAR */
-  .tab-bar {
+  /* RECENT PULL REQUESTS */
+  .recent-prs {
     max-width: 900px;
-    margin: 0 auto 2rem;
+    margin: 0 auto 3rem;
     padding: 0 2rem;
-    display: flex;
-    gap: 0;
-    border-bottom: 2px solid var(--border);
+    animation: fadeUp 0.6s ease 0.15s both;
   }
 
-  .tab {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 0.75rem 1.5rem;
-    cursor: pointer;
-    border: none;
-    background: none;
-    color: var(--muted);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
-    transition: color 0.2s;
-  }
-
-  .tab.active {
-    color: var(--ink);
-    border-bottom-color: var(--ink);
-  }
-
-  /* TAB CONTENT */
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* POST GRID */
-  .post-grid {
-    max-width: 900px;
-    margin: 0 auto 5rem;
-    padding: 0 2rem;
+  .recent-pr-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
-    animation: fadeUp 0.6s ease 0.2s both;
+    margin-top: 1.5rem;
   }
 
-  .empty-tab {
+  /* RECENT ACTIVITY */
+  .recent-activity {
     max-width: 900px;
-    margin: 0 auto 5rem;
-    padding: 2rem;
+    margin: 0 auto 3rem;
+    padding: 0 2rem;
+    animation: fadeUp 0.6s ease 0.15s both;
+  }
+
+  .recent-activity .section-heading,
+  .recent-prs .section-heading {
+    padding: 0;
+    max-width: unset;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .section-heading .view-log-link {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
+    font-size: 0.72rem;
     color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+
+  .section-heading .view-log-link:hover {
+    color: var(--accent);
+  }
+
+  .activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-left: 2px solid var(--border);
+    padding-left: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .activity-item {
+    position: relative;
+    display: flex;
+  }
+
+  .activity-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .activity-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .activity-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  .activity-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--border);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .activity-link:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .activity-title {
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    line-height: 1.35;
   }
 
   @media (max-width: 700px) {
     .featured-card { grid-template-columns: 1fr; }
-    .post-grid { grid-template-columns: 1fr; }
-    .tab { padding: 0.75rem 0.75rem; font-size: 0.7rem; }
+    .recent-pr-grid { grid-template-columns: 1fr; }
   }
 </style>
-
-<script>
-  document.querySelectorAll<HTMLButtonElement>('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const tabId = tab.dataset.tab;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById(`tab-${tabId}`)?.classList.add('active');
-    });
-  });
-</script>

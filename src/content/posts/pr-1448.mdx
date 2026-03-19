@@ -1,0 +1,20 @@
+---
+title: "PR #1448: Compile-Time Array Bounds Checking"
+description: "Implemented compile-time bounds checking for Guppy arrays when the array size and index are statically known, catching out-of-bounds errors at compile time rather than runtime."
+series: pull-requests
+seriesNumber: 2
+pubDate: 2026-01-28
+readingTime: "2 min"
+prRef: "PR #1448"
+prType: feature
+---
+
+I'm glad to share that my pull request to Guppy, an open-source quantum programming language from <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a>, has been merged!
+
+In PR #1448, I implemented compile-time bounds checking for Guppy arrays when the array size and index are statically known. This allows out-of-bounds errors to be caught during compilation rather than at runtime, giving developers immediate feedback on array indexing issues and helping them fix bugs earlier.
+
+The work involved extending the existing compilation pipeline, integrating with Guppy's type system and error-reporting patterns, and adding comprehensive tests. During development, this also uncovered two existing bugs in the test suite.
+
+Thanks to the maintainers at <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> for the thorough code reviews and feedback throughout the process.
+
+For more technical details, refer to <a href="https://github.com/Quantinuum/guppylang/pull/1448" target="_blank" rel="noopener">PR #1448</a>.

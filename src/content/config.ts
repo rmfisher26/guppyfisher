@@ -5,11 +5,12 @@ const posts = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    series: z.enum(['concepts', 'compiler', 'deep-dives']),
+    series: z.enum(['concepts', 'compiler', 'deep-dives', 'pull-requests']),
     seriesNumber: z.number(),           // position within the series
     pubDate: z.coerce.date(),
     readingTime: z.string(),            // e.g. "12 min"
     prRef: z.string().optional(),       // e.g. "PR #1497"
+    prType: z.enum(['feature', 'fix', 'documentation']).optional(),
     sourceFile: z.string().optional(),  // e.g. "guppylang/checker/linearity.py"
     draft: z.boolean().default(false),
   }),

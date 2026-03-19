@@ -14,10 +14,15 @@
 
 html { scroll-behavior: smooth; }
 
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 body {
   background: var(--paper);
   color: var(--ink);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Figtree', sans-serif;
   font-size: 18px;
   line-height: 1.7;
   overflow-x: hidden;
@@ -46,22 +51,88 @@ body::before {
   border-left: 3px solid var(--accent);
 }
 
+/* PR type badge — shared across PostCard, PostLayout, index featured */
+.pr-badge {
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.pr-badge--feature       { background: rgba(0,200,150,0.15);  color: #30a08e; }
+.pr-badge--fix           { background: rgba(255,92,58,0.15);  color: #ff5c3a; }
+.pr-badge--documentation { background: rgba(96,165,250,0.15); color: #60a5fa; }
+
+/* Eyebrow label — used on about, notes, pull-requests pages */
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 1.5rem;
+  height: 1px;
+  background: var(--accent);
+}
+
+/* Timeline dot — shared between log page and index recent activity */
+.timeline-dot {
+  position: absolute;
+  left: -1.6rem;
+  top: 0.45rem;
+  transform: translateX(calc(-50% + 1px));
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--entry-color);
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 0 1.5px var(--entry-color);
+  flex-shrink: 0;
+}
+
+/* Timeline type pill — shared between log page and index recent activity */
+.timeline-type-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--entry-color);
+  background: color-mix(in srgb, var(--entry-color) 10%, transparent);
+  padding: 0.2rem 0.55rem;
+  border-radius: 99px;
+}
+
 /* Prose in MDX articles */
 .prose p { margin-bottom: 1.4rem; }
 .prose h2 {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Figtree', sans-serif;
   font-weight: 600;
   font-size: 1.5rem;
   letter-spacing: -0.02em;
   margin: 2.5rem 0 0.75rem;
 }
 .prose h3 {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Figtree', sans-serif;
   font-weight: 700;
   font-size: 1.15rem;
   letter-spacing: -0.02em;
   margin: 2rem 0 0.6rem;
 }
+.prose ul, .prose ol {
+  margin: 0 0 1.4rem 1.75rem;
+  padding-left: 0.25rem;
+}
+.prose li { margin-bottom: 0.4rem; }
+.prose li > ul, .prose li > ol { margin-top: 0.4rem; margin-bottom: 0; }
 .prose a { color: var(--accent); }
 .prose strong { font-weight: 700; }
 .prose em { font-style: italic; }

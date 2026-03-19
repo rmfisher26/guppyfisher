@@ -11,6 +11,7 @@ interface Props {
   seriesName: string;
 }
 
+const base = import.meta.env.BASE_URL;
 const { posts, currentSlug, seriesName } = Astro.props;
 const sorted = [...posts].sort((a, b) => a.data.seriesNumber - b.data.seriesNumber);
 ---
@@ -22,7 +23,7 @@ const sorted = [...posts].sort((a, b) => a.data.seriesNumber - b.data.seriesNumb
       <li class={p.slug === currentSlug ? 'current' : ''}>
         {p.slug === currentSlug
           ? <span>{p.data.title} <em>← you are here</em></span>
-          : <a href={`${import.meta.env.BASE_URL}posts/${p.slug}`}>{p.data.title}</a>
+          : <a href={`${base}posts/${p.slug}`}>{p.data.title}</a>
         }
       </li>
     ))}
@@ -41,7 +42,7 @@ const sorted = [...posts].sort((a, b) => a.data.seriesNumber - b.data.seriesNumb
   }
 
   .series-nav-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.1em;

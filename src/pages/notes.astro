@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
+import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 
 const base = import.meta.env.BASE_URL;
@@ -12,41 +13,37 @@ const seriesMeta = [
     key: 'concepts',
     number: '01',
     label: 'Core Concepts',
-    description: 'The ideas you need before the code makes sense — linear types, the no-cloning theorem, and why Guppy\'s type system is shaped the way it is.',
+    description: 'Discussions from my own analysis and study of Guppy and how it works (as far as I know)',
     color: 'var(--accent)',
   },
   {
-    key: 'compiler',
-    number: '02',
-    label: 'Compiler Internals',
-    description: 'How the compilation pipeline works end to end — from the @guppy decorator through type checking, linearity analysis, and HUGR output.',
-    color: '#a78bfa',
-  },
-  {
     key: 'deep-dives',
-    number: '03',
+    number: '02',
     label: 'Source Deep Dives',
-    description: 'Full walkthroughs of specific PRs — what broke, what the fix looks like, and what it reveals about the underlying architecture.',
-    color: '#facc15',
+    description: 'Explorations of various code samples to study further',
+    color: '#60a5fa',
   },
 ];
 
 function postsForSeries(key: string) {
   return allPosts
     .filter(p => p.data.series === key)
-    .sort((a, b) => a.data.seriesNumber - b.data.seriesNumber);
+    .sort((a, b) => key === 'pull-requests'
+      ? b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+      : a.data.seriesNumber - b.data.seriesNumber
+    );
 }
 ---
 
-<Base title="Series" description="All post series on Guppyfisher.">
+<Base title="Notes" description="All notes on Guppyfisher.">
   <Header />
 
   <main class="series-page">
 
     <div class="page-header">
       <div class="eyebrow">reading paths</div>
-      <h1>Series</h1>
-      <p class="subtitle">Three ways into the Guppy compiler — pick where you want to start.</p>
+      <h1>Notes</h1>
+      <p class="subtitle">Collections of my notes from my deep dives into <a href="https://docs.quantinuum.com/guppy/" target="_blank" rel="noopener">Guppy</a></p>
     </div>
 
     {seriesMeta.map((s) => {
@@ -61,30 +58,55 @@ function postsForSeries(key: string) {
             </div>
           </div>
 
-          <div class="post-list">
-            {posts.length === 0 ? (
+          {s.key === 'pull-requests' ? (
+            posts.length === 0 ? (
               <div class="empty">
                 <span class="empty-icon">⟳</span>
                 <span>Posts coming soon</span>
               </div>
             ) : (
-              posts.map((post) => (
-                <a href={`${base}posts/${post.slug}`} class="post-row">
-                  <span class="post-num">#{post.data.seriesNumber}</span>
-                  <div class="post-info">
-                    <div class="post-title">{post.data.title}</div>
-                    <div class="post-excerpt">{post.data.description}</div>
-                  </div>
-                  <div class="post-meta">
-                    <span>{post.data.pubDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-                    <span>{post.data.readingTime}</span>
-                    {post.data.prRef && <span class="pr-chip">{post.data.prRef}</span>}
-                  </div>
-                  <span class="post-arrow">↗</span>
-                </a>
-              ))
-            )}
-          </div>
+              <div class="post-card-grid">
+                {posts.map((post) => (
+                  <PostCard
+                    title={post.data.title}
+                    description={post.data.description}
+                    series={post.data.series}
+                    seriesNumber={post.data.seriesNumber}
+                    pubDate={post.data.pubDate}
+                    readingTime={post.data.readingTime}
+                    prRef={post.data.prRef}
+                    prType={post.data.prType}
+                    slug={post.slug}
+                  />
+                ))}
+              </div>
+            )
+          ) : (
+            <div class="post-list">
+              {posts.length === 0 ? (
+                <div class="empty">
+                  <span class="empty-icon">⟳</span>
+                  <span>Posts coming soon</span>
+                </div>
+              ) : (
+                posts.map((post) => (
+                  <a href={`${base}posts/${post.slug}`} class="post-row">
+                    <span class="post-num">#{post.data.seriesNumber}</span>
+                    <div class="post-info">
+                      <div class="post-title">{post.data.title}</div>
+                      <div class="post-excerpt">{post.data.description}</div>
+                    </div>
+                    <div class="post-meta">
+                      <span>{post.data.pubDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })}</span>
+                      <span>{post.data.readingTime}</span>
+                      {post.data.prRef && <span class="pr-chip">{post.data.prRef}</span>}
+                    </div>
+                    <span class="post-read-more">Read<span class="post-arrow">↗</span></span>
+                  </a>
+                ))
+              )}
+            </div>
+          )}
         </section>
       );
     })}
@@ -105,36 +127,13 @@ function postsForSeries(key: string) {
     animation: fadeUp 0.5s ease both;
   }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    color: var(--accent);
-    letter-spacing: 0.06em;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .eyebrow::before {
-    content: '';
-    display: inline-block;
-    width: 1.5rem;
-    height: 1px;
-    background: var(--accent);
-  }
-
   h1 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 600;
     font-size: clamp(2.5rem, 6vw, 4rem);
     line-height: 1;
     letter-spacing: -0.04em;
+    color: var(--accent2);
     margin-bottom: 1rem;
   }
 
@@ -142,6 +141,17 @@ function postsForSeries(key: string) {
     font-size: 1rem;
     color: var(--muted);
     font-style: italic;
+  }
+
+  .subtitle a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+
+  .subtitle a:hover {
+    border-bottom-color: var(--accent);
   }
 
   /* ── SERIES SECTION ── */
@@ -153,8 +163,6 @@ function postsForSeries(key: string) {
   }
 
   .series-section:nth-child(2) { animation-delay: 0.05s; }
-  .series-section:nth-child(3) { animation-delay: 0.10s; }
-  .series-section:nth-child(4) { animation-delay: 0.15s; }
 
   .series-header {
     display: flex;
@@ -177,7 +185,7 @@ function postsForSeries(key: string) {
   }
 
   .series-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 600;
     font-size: 1.3rem;
     letter-spacing: -0.02em;
@@ -189,7 +197,6 @@ function postsForSeries(key: string) {
     color: var(--muted);
     line-height: 1.65;
     max-width: 580px;
-    font-style: italic;
   }
 
   /* ── POST LIST ── */
@@ -201,7 +208,7 @@ function postsForSeries(key: string) {
 
   .post-row {
     display: grid;
-    grid-template-columns: 2.5rem 1fr auto 1.5rem;
+    grid-template-columns: 2.5rem 1fr auto auto;
     align-items: center;
     gap: 1rem;
     padding: 1rem 1rem 1rem 0;
@@ -235,7 +242,7 @@ function postsForSeries(key: string) {
   }
 
   .post-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 600;
     font-size: 0.95rem;
     letter-spacing: -0.01em;
@@ -245,7 +252,6 @@ function postsForSeries(key: string) {
   .post-excerpt {
     font-size: 0.8rem;
     color: var(--muted);
-    font-style: italic;
     line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -271,11 +277,37 @@ function postsForSeries(key: string) {
     border-radius: 3px;
   }
 
+  .post-read-more {
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+
+  .post-row:hover .post-read-more { color: var(--ink); }
+
   .post-arrow {
     font-size: 1rem;
     color: var(--muted);
     transition: transform 0.2s ease, color 0.2s ease;
     text-align: center;
+  }
+
+  /* ── PULL REQUEST CARD GRID ── */
+  .post-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .post-card-grid { grid-template-columns: 1fr; }
   }
 
   /* ── EMPTY STATE ── */
@@ -298,7 +330,7 @@ function postsForSeries(key: string) {
   /* ── RESPONSIVE ── */
   @media (max-width: 640px) {
     .post-row {
-      grid-template-columns: 2rem 1fr 1.5rem;
+      grid-template-columns: 2rem 1fr auto;
     }
 
     .post-meta { display: none; }

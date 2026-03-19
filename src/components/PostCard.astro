@@ -7,16 +7,14 @@ interface Props {
   pubDate: Date;
   readingTime: string;
   prRef?: string;
+  prType?: 'feature' | 'fix' | 'documentation';
   slug: string;
 }
 
-const { title, description, series, seriesNumber, pubDate, readingTime, prRef, slug } = Astro.props;
+import { seriesLabel } from '../data/series';
 
-const seriesLabel: Record<string, string> = {
-  concepts: 'Series 1 · Concepts',
-  compiler: 'Series 2 · Compiler',
-  'deep-dives': 'Series 3 · Deep Dives',
-};
+const base = import.meta.env.BASE_URL;
+const { title, description, series, seriesNumber, pubDate, readingTime, prRef, prType, slug } = Astro.props;
 
 const stripeClass: Record<string, string> = {
   concepts: 's1',
@@ -24,19 +22,21 @@ const stripeClass: Record<string, string> = {
   'deep-dives': 's4',
 };
 
-const formattedDate = pubDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+const formattedDate = pubDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 ---
 
-<a href={`${import.meta.env.BASE_URL}posts/${slug}`} class="post-card">
+<a href={`${base}posts/${slug}`} class="post-card">
   <div class={`card-stripe ${stripeClass[series] ?? 's1'}`}></div>
   <div class="card-body">
-    <div class="card-series">{seriesLabel[series]} · #{seriesNumber}</div>
+    <div class="card-header">
+      <div class="card-series">{seriesLabel[series]} · #{seriesNumber}</div>
+      {prType && <span class={`pr-badge pr-badge--${prType}`}>{prType}</span>}
+    </div>
     <div class="card-title">{title}</div>
     <div class="card-excerpt">{description}</div>
     <div class="card-footer">
       <span>{formattedDate} · {readingTime}</span>
-      {prRef && <span class="pr-ref">{prRef}</span>}
-      <span class="card-arrow">↗</span>
+      <span class="card-read-more">Read <span class="card-arrow">↗</span></span>
     </div>
   </div>
 </a>
@@ -70,7 +70,7 @@ const formattedDate = pubDate.toLocaleDateString('en-US', { month: 'short', year
   .s1 { background: var(--accent); }
   .s2 { background: var(--accent2); }
   .s3 { background: #a78bfa; }
-  .s4 { background: #facc15; }
+  .s4 { background: #60a5fa; }
 
   .card-body {
     padding: 1.5rem;
@@ -79,27 +79,33 @@ const formattedDate = pubDate.toLocaleDateString('en-US', { month: 'short', year
     flex-direction: column;
   }
 
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
   .card-series {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
     letter-spacing: 0.05em;
     color: var(--muted);
-    margin-bottom: 0.5rem;
   }
 
   .card-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 700;
     font-size: 1rem;
     line-height: 1.3;
     margin-bottom: 0.75rem;
     letter-spacing: -0.01em;
+    color: var(--accent2);
   }
 
   .card-excerpt {
     font-size: 0.85rem;
     color: var(--muted);
-    font-style: italic;
     line-height: 1.55;
     flex: 1;
     margin-bottom: 1rem;
@@ -117,12 +123,19 @@ const formattedDate = pubDate.toLocaleDateString('en-US', { month: 'short', year
     gap: 0.5rem;
   }
 
-  .pr-ref {
-    background: rgba(0,200,150,0.12);
-    color: var(--accent);
-    padding: 0.1rem 0.4rem;
-    border-radius: 3px;
+
+  .card-read-more {
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: color 0.2s;
   }
+
+  .post-card:hover .card-read-more { color: var(--ink); }
 
   .card-arrow { transition: transform 0.2s; }
   .post-card:hover .card-arrow { transform: translate(3px, -3px); }
