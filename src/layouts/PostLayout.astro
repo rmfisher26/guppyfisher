@@ -17,7 +17,12 @@ const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-US', 
 });
 ---
 
-<Base title={frontmatter.title} description={frontmatter.description}>
+<Base
+  title={frontmatter.title}
+  description={frontmatter.description}
+  ogType="article"
+  pubDate={frontmatter.pubDate}
+>
   <Header />
 
   <div class="back-link">
