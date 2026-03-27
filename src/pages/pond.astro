@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import PipelineController from '../components/pond/PipelineController';
+---
+
+<Base
+  title="Pond"
+  description="Trace a Guppy quantum program through the full Quantinuum stack: HUGR IR → TKET → Selene emulation."
+>
+  <Header />
+  <div class="pond-page">
+    <div class="pond-wrapper">
+      <PipelineController client:load initialProgram="bell" />
+    </div>
+  </div>
+</Base>
+
+<style>
+  /*
+   * Pond CSS variables are scoped here so they don't leak into the rest of
+   * the site. The pond components use var(--bg), var(--green), etc. which
+   * cascade down from this wrapper.
+   */
+  .pond-page {
+    --bg:      #07080c;
+    --bg1:     #0d0f16;
+    --bg2:     #12151f;
+    --bg3:     #181c28;
+    --border:  #1e2436;
+    --text:    #d8e0f0;
+    --muted:   #505878;
+    --green:   #1a6b4a;
+    --green-l: #2a9d6a;
+    --blue:    #4a80c8;
+    --red:     #c84040;
+    --purple:  #a040c8;
+    --gold:    #c8a040;
+    --font-body: 'Outfit', sans-serif;
+    --font-mono: 'Fira Code', monospace;
+
+    min-height: calc(100vh - 72px);
+  }
+
+  .pond-wrapper {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-bottom: 60px;
+  }
+
+  /* Syntax highlight tokens used by pond components */
+  :global(.hl-kw)  { color: #f08090; font-style: italic; }
+  :global(.hl-dec) { color: #d0b050; }
+  :global(.hl-typ) { color: #50c898; }
+  :global(.hl-fn)  { color: #78b8e0; }
+  :global(.hl-str) { color: #88c868; }
+  :global(.hl-com) { color: #3a4050; font-style: italic; }
+  :global(.hl-num) { color: #e0a060; }
+
+  :global(.hl-jkey) { color: #78b8e0; }
+  :global(.hl-jstr) { color: #88c868; }
+  :global(.hl-jnum) { color: #e0a060; }
+  :global(.hl-jkw)  { color: #f08090; }
+</style>
