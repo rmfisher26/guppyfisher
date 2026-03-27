@@ -9,20 +9,64 @@ import PipelineController from '../components/pond/PipelineController';
   description="Trace a Guppy quantum program through the full Quantinuum stack: HUGR IR → TKET → Selene emulation."
 >
   <Header />
-  <div class="pond-page">
+
+  <main class="pond-page">
+
+    <div class="page-header">
+      <div class="eyebrow">pipeline visualizer</div>
+      <h1>Pond</h1>
+      <p class="subtitle">Trace a Guppy program through the full Quantinuum stack — HUGR IR → TKET → Selene emulation.</p>
+    </div>
+
     <div class="pond-wrapper">
       <PipelineController client:load initialProgram="bell" />
     </div>
-  </div>
+
+  </main>
 </Base>
 
 <style>
+  .pond-page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 2rem 5rem;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    padding: 5rem 0 3.5rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  h1 {
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── PIPELINE ── */
+  .pond-wrapper {
+    animation: fadeUp 0.5s ease both;
+    animation-delay: 0.1s;
+    padding-bottom: 60px;
+  }
+
   /*
    * Pond CSS variables are scoped here so they don't leak into the rest of
    * the site. The pond components use var(--bg), var(--green), etc. which
    * cascade down from this wrapper.
    */
-  .pond-page {
+  .pond-wrapper {
     --bg:      #07080c;
     --bg1:     #0d0f16;
     --bg2:     #12151f;
@@ -38,14 +82,6 @@ import PipelineController from '../components/pond/PipelineController';
     --gold:    #c8a040;
     --font-body: 'Outfit', sans-serif;
     --font-mono: 'Fira Code', monospace;
-
-    min-height: calc(100vh - 72px);
-  }
-
-  .pond-wrapper {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding-bottom: 60px;
   }
 
   /* Syntax highlight tokens used by pond components */
