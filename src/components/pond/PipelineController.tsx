@@ -95,7 +95,6 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
     <>
       {/* Top bar */}
       <div className="pc-topbar">
-        <div className="pc-title"><span className="pc-mark">⬡</span> Pipeline Visualizer</div>
         <div className="pc-prog-tabs">
           {Object.entries(PROGRAMS).map(([key, p]) => (
             <button key={key}
@@ -178,7 +177,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
       </div>
 
       <style>{`
-        .pc-topbar { background:var(--paper); border-bottom:1px solid var(--border); padding:12px 20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+        .pc-topbar { background:var(--paper); border-bottom:1px solid #dfdddb; padding:12px 20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
         .pc-mark { color:var(--green); }
         .pc-title { font-size:15px; font-weight:700; letter-spacing:-0.01em; }
         .pc-prog-tabs { display:flex; gap:6px; flex-wrap:wrap; }
@@ -205,7 +204,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         .pc-arrow-label { font-family:var(--font-mono); font-size:9px; color:var(--muted); white-space:nowrap; }
 
 
-        .pc-progress { height:2px; background:var(--border); margin:10px 20px 0; border-radius:1px; overflow:hidden; }
+        .pc-progress { height:2px; background:#dfdddb; margin:10px 20px 0; border-radius:1px; overflow:hidden; }
         .pc-progress-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--blue)); transition:width 0.55s ease; }
 
         .pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:14px 20px 0; }
@@ -229,7 +228,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         .action-btn:hover { color:var(--text); border-color:var(--muted); }
         .action-btn--on { color:var(--gold); border-color:var(--gold); background:#201808; }
 
-        .pc-footer { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 20px; font-family:var(--font-mono); font-size:11px; color:var(--muted); border-top:1px solid var(--border); margin-top:14px; }
+        .pc-footer { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 20px; font-family:var(--font-mono); font-size:11px; color:var(--muted); border-top:1px solid #dfdddb; margin-top:14px; }
         .pc-footer a { color:var(--green); text-decoration:none; }
         .pc-footer a:hover { text-decoration:underline; }
         .pc-footer-sep { color:var(--border); }
