@@ -19,6 +19,17 @@ export interface LogWeek {
 
 export const entries: LogWeek[] = [
   {
+    week: 'Week of Mar 23, 2026',
+    days: [
+      {
+        date: 'Thu Mar 27',
+        items: [
+          { type: 'pr', label: 'PR', title: 'PR #1589 docs: Improve docstrings for angles.py', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1589', linkLabel: 'view PR' },
+        ],
+      },
+    ],
+  },
+  {
     week: 'Week of Mar 9, 2026',
     days: [
       {

@@ -1,0 +1,22 @@
+---
+title: "PR #1589: Clearer Docstrings for the Angle Type"
+description: "Improved the docstring for Guppy's angle class to explicitly document the half-turns convention, clarify the relationship to radians, and note that angles do not wrap around."
+series: pull-requests
+seriesNumber: 12
+pubDate: 2026-03-27
+readingTime: "2 min"
+prRef: "PR #1589"
+prType: documentation
+---
+
+Another small but meaningful contribution to <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a>'s Guppy — this time improving the documentation for the `angle` type.
+
+**The problem:** Guppy represents angles in *half-turns*, which is an uncommon convention. The existing docstring for the `angle` class didn't explain what that meant in practice — there was no mention of the conversion to radians, no worked examples, and no note about whether angles wrap around. For anyone not already familiar with the convention, the type was easy to misuse silently.
+
+**The fix:** PR #1589 addresses Issue #1188 by rewriting the `angle` class docstring in `angles.py` to make the convention explicit:
+
+- **Conversion stated clearly** — 1 half-turn equals π radians (180°), so `angle(0.5)` gives π/2 radians
+- **Concrete examples included** — showing what common angle values actually represent
+- **Wrapping behaviour clarified** — `angle(2)` is not the same as `angle(0)`; angles do not automatically reduce modulo a full rotation
+
+For more technical details, refer to <a href="https://github.com/Quantinuum/guppylang/pull/1589" target="_blank" rel="noopener">PR #1589</a>.
