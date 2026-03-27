@@ -34,9 +34,9 @@ function CircuitSVG({ data, optimised }: { data: TKETData; optimised: boolean })
       {data.qubits.map((q, i) => (
         <g key={i}>
           <line x1={PAD_L - 6} y1={qy(i)} x2={W - 12} y2={qy(i)}
-            stroke="#2a3040" strokeWidth="1.5" />
+            stroke="#c0c8d0" strokeWidth="1.5" />
           <text x={PAD_L - 8} y={qy(i)} textAnchor="end" dominantBaseline="middle"
-            fill="#5a6a8a" fontSize="10" fontFamily="'Fira Code',monospace">{q}</text>
+            fill="#6b7280" fontSize="10" fontFamily="'Fira Code',monospace">{q}</text>
         </g>
       ))}
 
@@ -108,7 +108,7 @@ function CircuitSVG({ data, optimised }: { data: TKETData; optimised: boolean })
       {/* Time markers */}
       {Array.from({ length: maxCol + 1 }, (_, c) => (
         <text key={c} x={gx(c)} y={H - 6} textAnchor="middle"
-          fill="#3a4050" fontSize="8" fontFamily="'Fira Code',monospace">
+          fill="#9ca3af" fontSize="8" fontFamily="'Fira Code',monospace">
           t{c}
         </text>
       ))}

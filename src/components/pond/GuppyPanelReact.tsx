@@ -29,13 +29,13 @@ export default function GuppyPanelReact({ code, name, description, isActive }: P
 
       <style>{`
         .guppy-code-pre {
-          background: #050608;
+          background: #f6f8fa;
           margin: 0;
           padding: 16px;
           font-family: var(--font-mono);
           font-size: 12px;
           line-height: 1.75;
-          color: #c0c8d8;
+          color: #0d0f14;
           overflow-x: auto;
           white-space: pre;
           border: none;

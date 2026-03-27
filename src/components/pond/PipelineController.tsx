@@ -226,7 +226,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         .panel-actions { display:flex; gap:5px; margin-left:auto; }
         .action-btn { background:var(--bg3); border:1px solid var(--border); border-radius:5px; padding:3px 10px; font-family:var(--font-mono); font-size:10px; color:var(--muted); cursor:pointer; transition:all 0.12s; }
         .action-btn:hover { color:var(--text); border-color:var(--muted); }
-        .action-btn--on { color:var(--gold); border-color:var(--gold); background:#201808; }
+        .action-btn--on { color:var(--gold); border-color:var(--gold); background:rgba(184,134,11,0.08); }
 
         .pc-footer { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 20px; font-family:var(--font-mono); font-size:11px; color:var(--muted); border-top:1px solid #dfdddb; margin-top:14px; }
         .pc-footer a { color:var(--green); text-decoration:none; }

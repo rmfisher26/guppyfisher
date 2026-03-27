@@ -153,19 +153,19 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
           width: 50px; height: 50px; border-radius: 50%;
           display: flex; align-items: center; justify-content: center;
           font-family: var(--font-mono); font-size: 12px; font-weight: 700;
-          border: 2px solid var(--green); background: #0d1a12; color: var(--green);
+          border: 2px solid var(--green); background: rgba(26,107,74,0.08); color: var(--green);
           transition: all 0.4s ease;
         }
         .se-bloch--sup {
-          background: #161a08; border-color: var(--gold); color: var(--gold);
+          background: rgba(184,134,11,0.08); border-color: var(--gold); color: var(--gold);
           animation: superpos 1s ease infinite alternate;
         }
         .se-bloch--ent {
-          background: #0a0d1a; border-color: var(--blue); color: var(--blue);
+          background: rgba(74,128,200,0.08); border-color: var(--blue); color: var(--blue);
           animation: entangle 1.5s ease infinite;
         }
         .se-bloch--cls {
-          background: #1a0a1a; border-color: var(--purple); color: var(--purple);
+          background: rgba(160,64,200,0.08); border-color: var(--purple); color: var(--purple);
         }
 
         .se-timeline { display: flex; overflow-x: auto; }
@@ -199,7 +199,7 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
         }
         .sr-sim-badge {
           font-family: var(--font-mono); font-size: 12px;
-          color: var(--purple); background: #1a0a2a;
+          color: var(--purple); background: rgba(160,64,200,0.08);
           border: 1px solid color-mix(in srgb,var(--purple) 40%,transparent);
           padding: 2px 10px; border-radius: 5px;
         }
@@ -226,7 +226,7 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
         .sr-pct   { font-family: var(--font-mono); font-size: 11px; color: var(--text); width: 36px; }
         .sr-noise {
           font-family: var(--font-mono); font-size: 9px;
-          color: var(--red); background: #200a0a;
+          color: var(--red); background: rgba(200,64,64,0.08);
           padding: 1px 6px; border-radius: 3px;
         }
         .sr-note  {
@@ -236,7 +236,7 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
         }
         .sr-idle  {
           font-family: var(--font-mono); font-size: 12px;
-          color: #2a2d40; padding: 12px 0;
+          color: #9ca3af; padding: 12px 0;
         }
       `}</style>
     </div>

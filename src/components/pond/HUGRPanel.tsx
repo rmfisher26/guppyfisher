@@ -154,10 +154,10 @@ export default function HUGRPanel({ nodes, edges, json, isActive }: Props) {
         }
         .legend-line { width: 16px; height: 2px; border-radius: 1px; }
         .json-pre {
-          background: #050608;
+          background: #f6f8fa;
           margin: 0; padding: 14px 16px;
           font-family: var(--font-mono); font-size: 11px; line-height: 1.7;
-          color: #c0c8d8; overflow: auto; max-height: 310px; white-space: pre;
+          color: #0d0f14; overflow: auto; max-height: 310px; white-space: pre;
         }
       `}</style>
     </div>
