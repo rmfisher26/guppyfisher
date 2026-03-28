@@ -48,10 +48,18 @@ function CircuitSVG({ data, optimised }: { data: TKETData; optimised: boolean })
         // Two-qubit gates
         if (g.type === 'CX' || g.type === 'ZZMax') {
           const y0 = qy(g.qubits[0]), y1 = qy(g.qubits[1]);
+          const lineColor = g.native ? '#c84040' : '#4a80c8';
+          const minQ = Math.min(g.qubits[0], g.qubits[1]);
+          const maxQ = Math.max(g.qubits[0], g.qubits[1]);
+          const skippedQubits = Array.from({ length: maxQ - minQ - 1 }, (_, k) => minQ + k + 1);
           return (
             <g key={gi}>
               <line x1={x} y1={y0} x2={x} y2={y1}
-                stroke={g.native ? '#c84040' : '#4a80c8'} strokeWidth="1.5" />
+                stroke={lineColor} strokeWidth="1.5" />
+              {skippedQubits.map(qi => (
+                <circle key={qi} cx={x} cy={qy(qi)} r={5}
+                  fill="var(--bg1)" stroke={lineColor} strokeWidth="1.5" />
+              ))}
               {g.type === 'CX' ? (
                 <>
                   <circle cx={x} cy={y0} r={6} fill="#4a80c8" />

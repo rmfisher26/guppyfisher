@@ -44,6 +44,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
   const [seleneDone,  setSeleneDone]  = useState(false);
   const [shots,          setShots]          = useState(200);
   const [liveHugrJson,   setLiveHugrJson]   = useState<string | null>(null);
+  const [liveTketData,   setLiveTketData]   = useState<Program['tket'] | null>(null);
   const [liveSeleneData, setLiveSeleneData] = useState<Program['selene'] | null>(null);
   const [compileError,   setCompileError]   = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -64,7 +65,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
     clearTimer();
     setRunning(false); setReachedIdx(-1); setActiveIdx(0);
     setStateStep(0); setSeleneRun(false); setSeleneDone(false);
-    setLiveHugrJson(null); setLiveSeleneData(null); setCompileError(null);
+    setLiveHugrJson(null); setLiveTketData(null); setLiveSeleneData(null); setCompileError(null);
   }, []);
 
   useEffect(() => { resetPipeline(); }, [programKey]);
@@ -107,8 +108,14 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (data.success && data.hugr_json) {
+          console.log('[HUGR response]', data.hugr_json);
           setLiveHugrJson(JSON.stringify(data.hugr_json, null, 2));
+          if (data.tket) {
+            console.log('[TKET response]', data.tket);
+            setLiveTketData({ ...data.tket, optimised: data.tket.optimised ?? prog.tket.optimised } as Program['tket']);
+          }
           if (data.selene) {
+            console.log('[Selene response]', data.selene);
             setLiveSeleneData(data.selene as Program['selene']);
           }
         } else {
@@ -211,10 +218,10 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
           <HUGRPanel nodes={prog.hugr.nodes} edges={prog.hugr.edges} json={liveHugrJson ?? prog.hugr.json} isActive={activeIdx === 1}/>
         </div>
         <div style={{ opacity: reachedIdx >= 2 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
-          <TKETPanel data={prog.tket} isActive={activeIdx === 2}/>
+          <TKETPanel data={liveTketData ?? prog.tket} isActive={activeIdx === 2}/>
         </div>
         <div style={{ opacity: reachedIdx >= 3 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
-          <SelenePanel data={liveSeleneData ?? prog.selene} tket={prog.tket} stateStep={stateStep}
+          <SelenePanel data={liveSeleneData ?? prog.selene} tket={liveTketData ?? prog.tket} stateStep={stateStep}
             running={seleneRun && !seleneDone} done={seleneDone} isActive={activeIdx === 3}
             shots={shots} onShotsChange={setShots} pipelineRunning={running}/>
         </div>
