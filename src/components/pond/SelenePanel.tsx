@@ -19,6 +19,8 @@ function StateEvolution({ data, tket, step }: {
   const timeline = data.timeline;
   const current  = timeline[Math.min(step, timeline.length - 1)] || timeline[0];
   const nQ       = tket.qubits.length;
+  const isEnt    = Boolean(current.entangled);
+  const isCls    = Boolean(current.classical);
 
   return (
     <div className="state-evo">
@@ -27,9 +29,8 @@ function StateEvolution({ data, tket, step }: {
       <div className="se-qubits">
         {Array.from({ length: nQ }, (_, i) => {
           const amp   = current.state[i] ?? 0;
-          const isSup = Boolean(current.sup) && i === 0;
-          const isEnt = Boolean(current.entangled);
-          const isCls = Boolean(current.classical);
+          // Per-qubit superposition: amplitude is between 0 and 1 exclusive
+          const isSup = !isEnt && !isCls && amp > 0 && amp < 1;
           const cls   = [
             'se-bloch',
             isSup ? 'se-bloch--sup' : '',
@@ -43,8 +44,9 @@ function StateEvolution({ data, tket, step }: {
               <div className={cls}>
                 {isCls
                   ? (amp > 0.5 ? '1' : '0')
-                  : isSup && i === 0 ? '|+⟩'
-                  : isEnt ? '∿' : '|0⟩'}
+                  : isEnt ? '∿'
+                  : isSup ? '|+⟩'
+                  : amp >= 1 ? '|1⟩' : '|0⟩'}
               </div>
             </div>
           );
@@ -66,11 +68,10 @@ function StateEvolution({ data, tket, step }: {
 function ShotResults({ data, running, done }: {
   data: SeleneData; running: boolean; done: boolean;
 }) {
-  const total = data.results.reduce((s, r) => s + r.count, 0);
-  const fidelity = (
-    data.results.filter(r => r.correlated).reduce((s, r) => s + r.count, 0) / total * 100
-  ).toFixed(1);
-  const noiseCount = data.results.filter(r => !r.correlated).reduce((s, r) => s + r.count, 0);
+  const total         = data.results.reduce((s, r) => s + r.count, 0);
+  const correlatedCount = data.results.filter(r => r.correlated).reduce((s, r) => s + r.count, 0);
+  const noiseCount    = total - correlatedCount;
+  const fidelity      = total > 0 ? (correlatedCount / total * 100).toFixed(1) : null;
 
   return (
     <div className="shot-results">
@@ -92,7 +93,7 @@ function ShotResults({ data, running, done }: {
             return (
               <div key={i} className="sr-row"
                 style={{ animationDelay: `${i * 80}ms` }}>
-                <span className="sr-ket">|{r.state}⟩</span>
+                <span className="sr-ket">{r.state ? `|${r.state}⟩` : '—'}</span>
                 <div className="sr-bar-wrap">
                   <div className="sr-bar"
                     style={{
@@ -113,7 +114,9 @@ function ShotResults({ data, running, done }: {
             );
           })}
           <div className="sr-note">
-            Fidelity: {fidelity}% · {noiseCount} noise shots
+            {fidelity !== null && correlatedCount > 0
+              ? `Fidelity: ${fidelity}% · ${noiseCount} noise shots`
+              : `No correlated states · ${noiseCount} noise shots`}
           </div>
         </div>
       )}
