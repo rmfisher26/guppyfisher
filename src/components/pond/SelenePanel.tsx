@@ -5,12 +5,15 @@ type SeleneData = Program['selene'];
 type TKETData   = Program['tket'];
 
 interface Props {
-  data:      SeleneData;
-  tket:      TKETData;
-  stateStep: number;
-  running:   boolean;
-  done:      boolean;
-  isActive?: boolean;
+  data:             SeleneData;
+  tket:             TKETData;
+  stateStep:        number;
+  running:          boolean;
+  done:             boolean;
+  isActive?:        boolean;
+  shots:            number;
+  onShotsChange:    (n: number) => void;
+  pipelineRunning:  boolean;
 }
 
 function StateEvolution({ data, tket, step }: {
@@ -128,12 +131,23 @@ function ShotResults({ data, running, done }: {
   );
 }
 
-export default function SelenePanel({ data, tket, stateStep, running, done, isActive }: Props) {
+export default function SelenePanel({ data, tket, stateStep, running, done, isActive, shots, onShotsChange, pipelineRunning }: Props) {
   return (
     <div className={`pv-panel ${isActive ? 'pv-panel--active pv-panel--purple' : ''}`}>
       <div className="panel-header">
         <span className="badge badge-purple">◉ Selene</span>
         <span className="panel-name">selene_sim.run_shots()</span>
+        <div className="se-shots-control">
+          <span className="se-shots-label">shots</span>
+          <input
+            type="range" min={10} max={1000} step={10}
+            value={shots}
+            onChange={e => onShotsChange(Number(e.target.value))}
+            disabled={pipelineRunning}
+            className="se-shots-slider"
+          />
+          <span className="se-shots-value">{shots}</span>
+        </div>
       </div>
 
       <div className="panel-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -236,6 +250,20 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
           font-family: var(--font-mono); font-size: 11px;
           color: var(--muted); margin-top: 6px;
           padding-top: 8px; border-top: 1px solid var(--border);
+        }
+        .se-shots-control {
+          display: flex; align-items: center; gap: 7px; margin-left: auto;
+        }
+        .se-shots-label {
+          font-family: var(--font-mono); font-size: 10px; color: var(--muted);
+        }
+        .se-shots-slider {
+          width: 90px; accent-color: var(--purple); cursor: pointer;
+        }
+        .se-shots-slider:disabled { opacity: 0.4; cursor: not-allowed; }
+        .se-shots-value {
+          font-family: var(--font-mono); font-size: 11px; color: var(--purple);
+          min-width: 42px; text-align: right;
         }
         .sr-idle  {
           font-family: var(--font-mono); font-size: 12px;

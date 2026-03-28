@@ -42,6 +42,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
   const [stateStep,  setStateStep]  = useState(0);
   const [seleneRun,   setSeleneRun]   = useState(false);
   const [seleneDone,  setSeleneDone]  = useState(false);
+  const [shots,          setShots]          = useState(200);
   const [liveHugrJson,   setLiveHugrJson]   = useState<string | null>(null);
   const [liveSeleneData, setLiveSeleneData] = useState<Program['selene'] | null>(null);
   const [compileError,   setCompileError]   = useState<string | null>(null);
@@ -101,14 +102,13 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         const res = await fetch(`${BACKEND_URL}/api/compile`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: prog.guppy }),
+          body: JSON.stringify({ code: prog.guppy, selene_shots: shots }),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (data.success && data.hugr_json) {
           setLiveHugrJson(JSON.stringify(data.hugr_json, null, 2));
           if (data.selene) {
-            console.log('[Selene response]', data.selene);
             setLiveSeleneData(data.selene as Program['selene']);
           }
         } else {
@@ -215,7 +215,8 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         </div>
         <div style={{ opacity: reachedIdx >= 3 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
           <SelenePanel data={liveSeleneData ?? prog.selene} tket={prog.tket} stateStep={stateStep}
-            running={seleneRun && !seleneDone} done={seleneDone} isActive={activeIdx === 3}/>
+            running={seleneRun && !seleneDone} done={seleneDone} isActive={activeIdx === 3}
+            shots={shots} onShotsChange={setShots} pipelineRunning={running}/>
         </div>
       </div>
 
