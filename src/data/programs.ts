@@ -296,4 +296,139 @@ def ghz3(
       ],
     },
   },
+
+  teleport: {
+    name: 'Teleport',
+    description: 'Quantum state teleportation protocol',
+    guppy: `from guppylang import guppy
+from guppylang.std.quantum import qubit, owned, h, cx, measure
+
+@guppy
+def teleport(
+    msg: qubit @owned,
+    alice: qubit @owned,
+    bob: qubit @owned,
+) -> tuple[bool, bool, bool]:
+    h(alice)        # prepare Bell pair
+    cx(alice, bob)  # entangle alice & bob
+    cx(msg, alice)  # entangle msg with pair
+    h(msg)          # complete Bell measurement
+    return measure(msg), measure(alice), measure(bob)`,
+
+    hugr: {
+      nodes: [
+        { id:  0, kind: 'Module',   label: 'Module',             x: 50, y:  5, color: '#5a6a8a' },
+        { id:  1, kind: 'FuncDefn', label: 'FuncDefn\nteleport', x: 50, y: 16, color: '#4a80c8' },
+        { id:  2, kind: 'Input',    label: 'Input\n[Q,Q,Q]',     x: 50, y: 28, color: '#3a6a5a' },
+        { id:  3, kind: 'H',        label: 'H',                  x: 68, y: 40, color: '#1a6b4a' },
+        { id:  4, kind: 'CX',       label: 'CX\nalice→bob',      x: 72, y: 53, color: '#4a80c8' },
+        { id:  5, kind: 'CX',       label: 'CX\nmsg→alice',      x: 38, y: 64, color: '#4a80c8' },
+        { id:  6, kind: 'H',        label: 'H',                  x: 22, y: 75, color: '#1a6b4a' },
+        { id:  7, kind: 'Measure',  label: 'Measure',            x: 22, y: 87, color: '#a040c8' },
+        { id:  8, kind: 'Measure',  label: 'Measure',            x: 50, y: 87, color: '#a040c8' },
+        { id:  9, kind: 'Measure',  label: 'Measure',            x: 78, y: 87, color: '#a040c8' },
+        { id: 10, kind: 'Output',   label: 'Output\n[B,B,B]',    x: 50, y: 96, color: '#8a4a3a' },
+      ],
+      edges: [
+        { from:  0, to:  1, label: 'contains',  type: 'hierarchy' },
+        { from:  1, to:  2, label: '',           type: 'dataflow'  },
+        { from:  2, to:  3, label: 'Q(alice)',   type: 'quantum'   },
+        { from:  2, to:  4, label: 'Q(bob)',     type: 'quantum'   },
+        { from:  2, to:  5, label: 'Q(msg)',     type: 'quantum'   },
+        { from:  3, to:  4, label: 'Q',          type: 'quantum'   },
+        { from:  4, to:  5, label: 'Q(alice)',   type: 'quantum'   },
+        { from:  4, to:  9, label: 'Q(bob)',     type: 'quantum'   },
+        { from:  5, to:  6, label: 'Q(msg)',     type: 'quantum'   },
+        { from:  5, to:  8, label: 'Q(alice)',   type: 'quantum'   },
+        { from:  6, to:  7, label: 'Q',          type: 'quantum'   },
+        { from:  7, to: 10, label: 'B',          type: 'classical' },
+        { from:  8, to: 10, label: 'B',          type: 'classical' },
+        { from:  9, to: 10, label: 'B',          type: 'classical' },
+      ],
+      json: `{
+  "nodes": [
+    {"parent":0,"op":{"type":"Module"}},
+    {"parent":0,"op":{"type":"FuncDefn","name":"teleport",
+      "signature":{
+        "input":[{"t":"Q"},{"t":"Q"},{"t":"Q"}],
+        "output":[{"t":"B"},{"t":"B"},{"t":"B"}]
+      }}},
+    {"parent":1,"op":{"type":"Input"}},
+    {"parent":1,"op":{"type":"H","qubits":[1]}},
+    {"parent":1,"op":{"type":"CX","qubits":[1,2]}},
+    {"parent":1,"op":{"type":"CX","qubits":[0,1]}},
+    {"parent":1,"op":{"type":"H","qubits":[0]}},
+    {"parent":1,"op":{"type":"Measure","qubit":0}},
+    {"parent":1,"op":{"type":"Measure","qubit":1}},
+    {"parent":1,"op":{"type":"Measure","qubit":2}},
+    {"parent":1,"op":{"type":"Output"}}
+  ],
+  "edges": [
+    [2,1, 3,0, {"t":"Q"}],
+    [2,2, 4,1, {"t":"Q"}],
+    [2,0, 5,0, {"t":"Q"}],
+    [3,0, 4,0, {"t":"Q"}],
+    [4,0, 5,1, {"t":"Q"}],
+    [4,1, 9,0, {"t":"Q"}],
+    [5,0, 6,0, {"t":"Q"}],
+    [5,1, 8,0, {"t":"Q"}],
+    [6,0, 7,0, {"t":"Q"}],
+    [7,0,10,0, {"t":"B"}],
+    [8,0,10,1, {"t":"B"}],
+    [9,0,10,2, {"t":"B"}]
+  ]
+}`,
+    },
+
+    tket: {
+      qubits: ['q[0]', 'q[1]', 'q[2]'],
+      bits:   ['c[0]', 'c[1]', 'c[2]'],
+      gates: [
+        { type: 'H',       qubits: [1],    col: 0 },
+        { type: 'CX',      qubits: [1, 2], col: 1 },
+        { type: 'CX',      qubits: [0, 1], col: 2 },
+        { type: 'H',       qubits: [0],    col: 3 },
+        { type: 'Measure', qubits: [0], bits: [0], col: 4 },
+        { type: 'Measure', qubits: [1], bits: [1], col: 4 },
+        { type: 'Measure', qubits: [2], bits: [2], col: 4 },
+      ],
+      stats: { gates: 7, depth: 5, twoQ: 2 },
+      optimised: {
+        gates: [
+          { type: 'H',       qubits: [1],    col: 0 },
+          { type: 'ZZMax',   qubits: [1, 2], col: 1, native: true },
+          { type: 'Rz',      qubits: [1],    col: 2, native: true },
+          { type: 'Rz',      qubits: [2],    col: 2, native: true },
+          { type: 'ZZMax',   qubits: [0, 1], col: 3, native: true },
+          { type: 'H',       qubits: [0],    col: 4 },
+          { type: 'Rz',      qubits: [1],    col: 4, native: true },
+          { type: 'Measure', qubits: [0], bits: [0], col: 5 },
+          { type: 'Measure', qubits: [1], bits: [1], col: 5 },
+          { type: 'Measure', qubits: [2], bits: [2], col: 5 },
+        ],
+        stats: { gates: 10, depth: 6, twoQ: 2, note: 'CX → ZZMax (H2 native gate)' },
+      },
+    },
+
+    selene: {
+      shots: 200,
+      simulator: 'Stim',
+      results: [
+        { state: '000', count: 50, correlated: true  },
+        { state: '011', count: 48, correlated: true  },
+        { state: '100', count: 51, correlated: true  },
+        { state: '111', count: 49, correlated: true  },
+        { state: '001', count: 1,  correlated: false },
+        { state: '010', count: 1,  correlated: false },
+      ],
+      timeline: [
+        { step: 0, label: 'Init |000⟩',       state: [0, 0, 0]          },
+        { step: 1, label: 'H on alice (q[1])', state: [0, 0.5, 0],   sup: true       },
+        { step: 2, label: 'CX alice→bob',      state: [0, 0.5, 0.5], entangled: true },
+        { step: 3, label: 'CX msg→alice',      state: [0.5, 0.5, 0.5], entangled: true },
+        { step: 4, label: 'H on msg (q[0])',   state: [0.5, 0.5, 0.5], entangled: true },
+        { step: 5, label: 'Measured',          state: [1, 1, 1],     classical: true  },
+      ],
+    },
+  },
 };
