@@ -17,8 +17,33 @@ const GATE_STYLES: Record<string, { fill: string; label: string }> = {
   Measure: { fill: '#a040c8', label: 'M'   },
 };
 
+type TKETGate = TKETData['gates'][number];
+
+function resolveGateColumns(input: TKETGate[]): TKETGate[] {
+  const gates = input.map(g => ({ ...g }));
+  let changed = true;
+  while (changed) {
+    changed = false;
+    const passthroughs = new Set<string>();
+    for (const g of gates) {
+      if (g.type === 'CX' || g.type === 'ZZMax') {
+        const minQ = Math.min(g.qubits[0], g.qubits[1]);
+        const maxQ = Math.max(g.qubits[0], g.qubits[1]);
+        for (let q = minQ + 1; q < maxQ; q++) passthroughs.add(`${g.col},${q}`);
+      }
+    }
+    for (const g of gates) {
+      if (g.type !== 'CX' && g.type !== 'ZZMax' && passthroughs.has(`${g.col},${g.qubits[0]}`)) {
+        g.col += 1;
+        changed = true;
+      }
+    }
+  }
+  return gates;
+}
+
 function CircuitSVG({ data, optimised }: { data: TKETData; optimised: boolean }) {
-  const gates  = optimised ? data.optimised.gates : data.gates;
+  const gates  = resolveGateColumns(optimised ? data.optimised.gates : data.gates);
   const nQ     = data.qubits.length;
   const ROW = 44, COL = 62, PAD_L = 52, PAD_T = 20;
   const maxCol = Math.max(...gates.map(g => g.col));
