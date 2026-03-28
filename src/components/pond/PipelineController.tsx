@@ -9,6 +9,9 @@ import HUGRPanel       from './HUGRPanel';
 import TKETPanel       from './TKETPanel';
 import SelenePanel     from './SelenePanel';
 
+const LIVE_BACKEND = import.meta.env.PUBLIC_LIVE_BACKEND === 'true';
+const BACKEND_URL  = (import.meta.env.PUBLIC_BACKEND_URL ?? 'http://localhost:8000').replace(/\/$/, '');
+
 const STAGES = ['guppy', 'hugr', 'tket', 'selene'] as const;
 type Stage = typeof STAGES[number];
 
@@ -37,8 +40,10 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
   const [reachedIdx, setReachedIdx] = useState(-1);
   const [running,    setRunning]    = useState(false);
   const [stateStep,  setStateStep]  = useState(0);
-  const [seleneRun,  setSeleneRun]  = useState(false);
-  const [seleneDone, setSeleneDone] = useState(false);
+  const [seleneRun,   setSeleneRun]   = useState(false);
+  const [seleneDone,  setSeleneDone]  = useState(false);
+  const [liveHugrJson, setLiveHugrJson] = useState<string | null>(null);
+  const [compileError, setCompileError] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const prog: Program = PROGRAMS[programKey] ?? PROGRAMS['bell'];
@@ -57,6 +62,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
     clearTimer();
     setRunning(false); setReachedIdx(-1); setActiveIdx(0);
     setStateStep(0); setSeleneRun(false); setSeleneDone(false);
+    setLiveHugrJson(null); setCompileError(null);
   }, []);
 
   useEffect(() => { resetPipeline(); }, [programKey]);
@@ -87,6 +93,36 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
   const runPipeline = async () => {
     resetPipeline();
     await new Promise(r => setTimeout(r, 80));
+
+    if (LIVE_BACKEND) {
+      setRunning(true);
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/compile`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: prog.guppy }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (data.success && data.hugr_json) {
+          setLiveHugrJson(JSON.stringify(data.hugr_json, null, 2));
+        } else {
+          const errorLines = (data.lines ?? [])
+            .filter((l: { t: string; text: string }) => l.t === 'error' || l.t === 'hint')
+            .map((l: { t: string; text: string }) => l.text)
+            .join('\n');
+          setCompileError(errorLines || 'Compilation failed');
+          setRunning(false);
+          return;
+        }
+      } catch (e) {
+        setCompileError(`Backend unreachable at ${BACKEND_URL}`);
+        setRunning(false);
+        return;
+      }
+      setRunning(false);
+    }
+
     animatePipeline(prog.selene.timeline.length - 1);
   };
 
@@ -148,6 +184,14 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         })}
       </div>
 
+      {/* Compile error banner */}
+      {compileError && (
+        <div className="pc-error-banner">
+          <span className="pc-error-icon">✗</span>
+          <pre className="pc-error-text">{compileError}</pre>
+        </div>
+      )}
+
       {/* Progress bar */}
       <div className="pc-progress">
         <div className="pc-progress-fill"
@@ -158,7 +202,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
       <div className="pc-grid">
         <GuppyPanelReact code={prog.guppy} name={prog.name} description={prog.description} isActive={activeIdx === 0}/>
         <div style={{ opacity: reachedIdx >= 1 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
-          <HUGRPanel nodes={prog.hugr.nodes} edges={prog.hugr.edges} json={prog.hugr.json} isActive={activeIdx === 1}/>
+          <HUGRPanel nodes={prog.hugr.nodes} edges={prog.hugr.edges} json={liveHugrJson ?? prog.hugr.json} isActive={activeIdx === 1}/>
         </div>
         <div style={{ opacity: reachedIdx >= 2 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
           <TKETPanel data={prog.tket} isActive={activeIdx === 2}/>
@@ -171,7 +215,10 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
 
       {/* Footer */}
       <div className="pc-footer">
-        <span>Pipeline runs mock data — wire up the FastAPI backend for live compilation</span>
+        {LIVE_BACKEND
+          ? <><span className="pc-live-dot" />Connected to {BACKEND_URL}</>
+          : <span>Live backend disabled — set PUBLIC_LIVE_BACKEND=true to connect</span>
+        }
         <span className="pc-footer-sep">·</span>
         <a href="/about" className="pc-footer-link">About</a>
       </div>
@@ -236,6 +283,12 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         .pc-footer-link:hover { color:var(--text) !important; }
 
         .spinner { width:12px; height:12px; border:2px solid transparent; border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; display:inline-block; }
+
+        .pc-error-banner { display:flex; align-items:flex-start; gap:10px; background:rgba(200,64,64,0.08); border:1px solid rgba(200,64,64,0.3); border-radius:8px; padding:10px 16px; margin:10px 20px 0; }
+        .pc-error-icon { color:var(--red); font-size:14px; line-height:1.6; flex-shrink:0; }
+        .pc-error-text { margin:0; font-family:var(--font-mono); font-size:11px; color:var(--red); white-space:pre-wrap; line-height:1.6; }
+
+        .pc-live-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--green); margin-right:6px; animation:pulse 2s ease-in-out infinite; }
 
         @keyframes spin     { to { transform: rotate(360deg); } }
         @keyframes fadeIn   { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
