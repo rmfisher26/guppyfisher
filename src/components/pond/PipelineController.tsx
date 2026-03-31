@@ -269,6 +269,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         .pc-progress-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--blue)); transition:width 0.55s ease; }
 
         .pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:14px 20px 0; }
+        .pc-grid > * { min-width: 0; }
 
         .pv-panel { background:var(--bg1); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.25s,box-shadow 0.25s; }
         .pv-panel--green.pv-panel--active  { border-color:var(--green);  box-shadow:0 0 28px color-mix(in srgb,var(--green) 12%,transparent); }

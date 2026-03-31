@@ -158,6 +158,7 @@ export default function HUGRPanel({ nodes, edges, json, isActive }: Props) {
           margin: 0; padding: 14px 16px;
           font-family: var(--font-mono); font-size: 11px; line-height: 1.7;
           color: #0d0f14; overflow: auto; max-height: 310px; white-space: pre;
+          width: 100%; box-sizing: border-box;
         }
       `}</style>
     </div>
