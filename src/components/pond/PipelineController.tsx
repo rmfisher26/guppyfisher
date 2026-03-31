@@ -167,7 +167,14 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
           ))}
         </div>
         <div className="pc-actions">
-<button className="pc-run-btn" onClick={runPipeline} disabled={running}>
+          <div className="pc-shots">
+            <span className="pc-shots-label">shots</span>
+            <input type="range" min={10} max={1000} step={10}
+              value={shots} onChange={e => setShots(Number(e.target.value))}
+              disabled={running} className="pc-shots-slider" />
+            <span className="pc-shots-value">{shots}</span>
+          </div>
+          <button className="pc-run-btn" onClick={runPipeline} disabled={running}>
             {running ? <><span className="spinner" /> Running…</> : <>▶ Run Pipeline</>}
           </button>
         </div>
@@ -242,8 +249,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
             <div style={{ opacity: reachedIdx >= 3 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
               <SelenePanel data={r?.seleneData ?? prog.selene} tket={r?.tketData ?? prog.tket}
                 stateStep={stateStep} running={seleneRun && !seleneDone} done={seleneDone}
-                isActive={activeIdx === 3} shots={shots} onShotsChange={setShots}
-                pipelineRunning={running} loading={fetching || (running && reachedIdx < 3)} empty={!r && !running}/>
+                isActive={activeIdx === 3} loading={fetching || (running && reachedIdx < 3)} empty={!r && !running}/>
             </div>
           </div>
         );
@@ -266,8 +272,17 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         .pc-tab:hover { color:var(--ink); border-color:#989898; background:rgba(0,0,0,0.04); }
         .pc-tab--active { border-color:var(--accent); color:var(--accent); background:rgba(48,160,142,0.08); }
         .pc-actions { display:flex; align-items:center; gap:8px; margin-left:auto; }
-.pc-run-btn { display:flex; align-items:center; gap:8px; background:var(--green); color:#fff; border:none; border-radius:8px; padding:8px 20px; font-family:var(--font-body); font-size:14px; font-weight:700; cursor:pointer; transition:all 0.15s; }
-        .pc-run-btn:hover:not(:disabled) { background:#22a06b; transform:translateY(-1px); }
+        .pc-shots { display:flex; align-items:center; gap:7px; }
+        .pc-shots-label { font-family:var(--font-mono); font-size:11px; color:var(--muted); }
+        .pc-shots-slider { width:110px; accent-color:#30a08e; cursor:pointer; -webkit-appearance:none; appearance:none; background:transparent; height:16px; }
+        .pc-shots-slider::-webkit-slider-runnable-track { background:#d1d5db; border-radius:4px; height:4px; }
+        .pc-shots-slider::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:14px; height:14px; border-radius:50%; background:#30a08e; margin-top:-5px; cursor:pointer; }
+        .pc-shots-slider::-moz-range-track { background:#d1d5db; border-radius:4px; height:4px; }
+        .pc-shots-slider::-moz-range-thumb { width:14px; height:14px; border-radius:50%; background:#30a08e; border:none; cursor:pointer; }
+        .pc-shots-slider:disabled { opacity:0.4; cursor:not-allowed; }
+        .pc-shots-value { font-family:var(--font-mono); font-size:11px; color:#30a08e; min-width:38px; }
+.pc-run-btn { display:flex; align-items:center; gap:8px; background:#30a08e; color:#fff; border:none; border-radius:8px; padding:8px 20px; font-family:var(--font-body); font-size:14px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+        .pc-run-btn:hover:not(:disabled) { background:#279080; transform:translateY(-1px); }
         .pc-run-btn:disabled { background:var(--bg3); color:var(--muted); cursor:not-allowed; transform:none; }
 
         .pc-stages { display:flex; align-items:center; padding:16px 20px 8px; box-sizing:border-box; }
