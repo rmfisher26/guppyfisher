@@ -9,6 +9,7 @@ interface Props {
   data: TKETData;
   isActive?: boolean;
   loading?: boolean;
+  empty?: boolean;
 }
 
 function TKETSkeleton() {
@@ -165,7 +166,7 @@ function CircuitSVG({ data }: { data: TKETData }) {
   );
 }
 
-export default function TKETPanel({ data, isActive, loading }: Props) {
+export default function TKETPanel({ data, isActive, loading, empty }: Props) {
   const [showJson, setShowJson] = useState(false);
   const jsonData = { qubits: data.qubits, bits: data.bits, gates: data.gates, stats: data.stats };
 
@@ -186,6 +187,11 @@ export default function TKETPanel({ data, isActive, loading }: Props) {
 
       {loading ? (
         <TKETSkeleton />
+      ) : empty ? (
+        <div className="panel-empty">
+          <span className="panel-empty-icon" style={{ color: 'var(--red)' }}>◻</span>
+          <p>Run the pipeline to compile the TKET circuit</p>
+        </div>
       ) : showJson ? (
         <pre className="tket-json-pre"
           dangerouslySetInnerHTML={{ __html: highlightJson(JSON.stringify(jsonData, null, 2)) }} />

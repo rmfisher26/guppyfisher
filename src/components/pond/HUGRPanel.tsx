@@ -9,6 +9,7 @@ interface Props {
   json: string;
   isActive?: boolean;
   loading?: boolean;
+  empty?: boolean;
 }
 
 function HUGRSkeleton() {
@@ -135,7 +136,7 @@ function HUGRGraph({ nodes, edges, hovNode, setHovNode }: {
   );
 }
 
-export default function HUGRPanel({ nodes, edges, json, isActive, loading }: Props) {
+export default function HUGRPanel({ nodes, edges, json, isActive, loading, empty }: Props) {
   const [view, setView]     = useState<'graph' | 'json'>('graph');
   const [hovNode, setHovNode] = useState<number | null>(null);
 
@@ -162,6 +163,11 @@ export default function HUGRPanel({ nodes, edges, json, isActive, loading }: Pro
 
       {loading ? (
         <HUGRSkeleton />
+      ) : empty ? (
+        <div className="panel-empty">
+          <span className="panel-empty-icon" style={{ color: 'var(--blue)' }}>◈</span>
+          <p>Run the pipeline to generate the HUGR IR graph</p>
+        </div>
       ) : view === 'graph' ? (
         <>
           <div style={{ padding: '8px', minHeight: 240 }}>

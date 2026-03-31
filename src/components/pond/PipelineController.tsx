@@ -43,10 +43,13 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
   const [seleneRun,   setSeleneRun]   = useState(false);
   const [seleneDone,  setSeleneDone]  = useState(false);
   const [shots,          setShots]          = useState(200);
-  const [liveHugrJson,   setLiveHugrJson]   = useState<string | null>(null);
-  const [liveTketData,   setLiveTketData]   = useState<Program['tket'] | null>(null);
-  const [liveSeleneData, setLiveSeleneData] = useState<Program['selene'] | null>(null);
+  const [fetching,       setFetching]       = useState(false);
   const [compileError,   setCompileError]   = useState<string | null>(null);
+  const [programResults, setProgramResults] = useState<Record<string, {
+    hugrJson:   string;
+    tketData:   Program['tket'];
+    seleneData: Program['selene'];
+  }>>({});
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const prog: Program = PROGRAMS[programKey] ?? PROGRAMS['bell'];
@@ -65,7 +68,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
     clearTimer();
     setRunning(false); setReachedIdx(-1); setActiveIdx(0);
     setStateStep(0); setSeleneRun(false); setSeleneDone(false);
-    setLiveHugrJson(null); setLiveTketData(null); setLiveSeleneData(null); setCompileError(null);
+    setCompileError(null);
   }, []);
 
   useEffect(() => { resetPipeline(); }, [programKey]);
@@ -99,6 +102,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
 
     if (LIVE_BACKEND) {
       setRunning(true);
+      setFetching(true);
       try {
         const res = await fetch(`${BACKEND_URL}/api/compile`, {
           method: 'POST',
@@ -109,33 +113,44 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         const data = await res.json();
         if (data.success && data.hugr_json) {
           console.log('[HUGR response]', data.hugr_json);
-          setLiveHugrJson(JSON.stringify(data.hugr_json, null, 2));
-          if (data.tket) {
-            console.log('[TKET response]', data.tket);
-            setLiveTketData({ ...data.tket, optimised: data.tket.optimised ?? prog.tket.optimised } as Program['tket']);
-          }
-          if (data.selene) {
-            console.log('[Selene response]', data.selene);
-            setLiveSeleneData(data.selene as Program['selene']);
-          }
+          console.log('[TKET response]', data.tket);
+          console.log('[Selene response]', data.selene);
+          const key = programKey;
+          setProgramResults(prev => ({
+            ...prev,
+            [key]: {
+              hugrJson:   JSON.stringify(data.hugr_json, null, 2),
+              tketData:   (data.tket ?? prog.tket) as Program['tket'],
+              seleneData: (data.selene ?? prog.selene) as Program['selene'],
+            },
+          }));
+          setFetching(false);
         } else {
           const errorLines = (data.lines ?? [])
             .filter((l: { t: string; text: string }) => l.t === 'error' || l.t === 'hint')
             .map((l: { t: string; text: string }) => l.text)
             .join('\n');
           setCompileError(errorLines || 'Compilation failed');
+          setFetching(false);
           setRunning(false);
           return;
         }
       } catch (e) {
         setCompileError(`Backend unreachable at ${BACKEND_URL}`);
+        setFetching(false);
         setRunning(false);
         return;
       }
       setRunning(false);
     }
 
-    const seleneData = liveSeleneData ?? prog.selene;
+    if (!LIVE_BACKEND) {
+      setProgramResults(prev => ({
+        ...prev,
+        [programKey]: { hugrJson: prog.hugr.json, tketData: prog.tket, seleneData: prog.selene },
+      }));
+    }
+    const seleneData = programResults[programKey]?.seleneData ?? prog.selene;
     animatePipeline(seleneData.timeline.length - 1);
   };
 
@@ -209,28 +224,30 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         </div>
       )}
 
-      {/* Progress bar */}
-      <div className="pc-progress">
-        <div className="pc-progress-fill"
-          style={{ width: reachedIdx < 0 ? '0%' : `${((reachedIdx+1)/STAGES.length)*100}%` }}/>
-      </div>
-
       {/* Four-panel grid */}
-      <div className="pc-grid">
-        <GuppyPanelReact code={prog.guppy} name={prog.name} description={prog.description} isActive={activeIdx === 0}/>
-        <div style={{ opacity: reachedIdx >= 1 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
-          <HUGRPanel nodes={prog.hugr.nodes} edges={prog.hugr.edges} json={liveHugrJson ?? prog.hugr.json} isActive={activeIdx === 1} loading={LIVE_BACKEND && running && liveHugrJson === null}/>
-        </div>
-        <div style={{ opacity: reachedIdx >= 2 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
-          <TKETPanel data={liveTketData ?? prog.tket} isActive={activeIdx === 2} loading={LIVE_BACKEND && running && liveTketData === null}/>
-        </div>
-        <div style={{ opacity: reachedIdx >= 3 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
-          <SelenePanel data={liveSeleneData ?? prog.selene} tket={liveTketData ?? prog.tket} stateStep={stateStep}
-            running={seleneRun && !seleneDone} done={seleneDone} isActive={activeIdx === 3}
-            shots={shots} onShotsChange={setShots} pipelineRunning={running}
-            loading={LIVE_BACKEND && running && liveSeleneData === null}/>
-        </div>
-      </div>
+      {(() => {
+        const r = programResults[programKey] ?? null;
+        return (
+          <div className="pc-grid">
+            <GuppyPanelReact code={prog.guppy} name={prog.name} description={prog.description} isActive={activeIdx === 0}/>
+            <div style={{ opacity: reachedIdx >= 1 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
+              <HUGRPanel nodes={prog.hugr.nodes} edges={prog.hugr.edges}
+                json={r?.hugrJson ?? prog.hugr.json} isActive={activeIdx === 1}
+                loading={fetching || (running && reachedIdx < 1)} empty={!r && !running}/>
+            </div>
+            <div style={{ opacity: reachedIdx >= 2 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
+              <TKETPanel data={r?.tketData ?? prog.tket} isActive={activeIdx === 2}
+                loading={fetching || (running && reachedIdx < 2)} empty={!r && !running}/>
+            </div>
+            <div style={{ opacity: reachedIdx >= 3 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
+              <SelenePanel data={r?.seleneData ?? prog.selene} tket={r?.tketData ?? prog.tket}
+                stateStep={stateStep} running={seleneRun && !seleneDone} done={seleneDone}
+                isActive={activeIdx === 3} shots={shots} onShotsChange={setShots}
+                pipelineRunning={running} loading={fetching || (running && reachedIdx < 3)} empty={!r && !running}/>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Footer */}
       <div className="pc-footer">
@@ -271,10 +288,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         .pc-track-label { text-align:center; font-family:var(--font-mono); font-size:9px; color:var(--muted); white-space:nowrap; letter-spacing:0.03em; }
 
 
-        .pc-progress { height:2px; background:#dfdddb; margin:10px 20px 0; border-radius:1px; overflow:hidden; }
-        .pc-progress-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--blue)); transition:width 0.55s ease; }
-
-        .pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:18px 20px 0; }
+.pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:18px 20px 0; }
         .pc-grid > * { min-width: 0; }
 
         .pv-panel {
@@ -295,6 +309,9 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         .pv-panel--purple.pv-panel--active { border-color:var(--purple); box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--purple),0 8px 36px color-mix(in srgb,var(--purple) 16%,transparent); }
 
         .panel-header { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid rgba(0,0,0,0.06); background:rgba(0,0,0,0.015); flex-wrap:wrap; }
+        .panel-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:40px 20px; min-height:180px; }
+        .panel-empty-icon { font-size:28px; opacity:0.3; }
+        .panel-empty p { font-family:var(--font-mono); font-size:11px; color:var(--muted); text-align:center; margin:0; }
         .panel-name { font-size:13px; font-weight:600; color:var(--text); flex:1; min-width:80px; }
         .panel-body { padding:12px 16px; }
         .badge { font-family:var(--font-mono); font-size:11px; font-weight:600; padding:2px 9px; border-radius:5px; letter-spacing:0.04em; white-space:nowrap; }

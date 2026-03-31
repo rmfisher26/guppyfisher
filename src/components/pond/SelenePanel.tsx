@@ -17,6 +17,7 @@ interface Props {
   onShotsChange:    (n: number) => void;
   pipelineRunning:  boolean;
   loading?:         boolean;
+  empty?:           boolean;
 }
 
 function SeleneSkeleton() {
@@ -192,7 +193,7 @@ function ShotResults({ data, running, done }: {
   );
 }
 
-export default function SelenePanel({ data, tket, stateStep, running, done, isActive, shots, onShotsChange, pipelineRunning, loading }: Props) {
+export default function SelenePanel({ data, tket, stateStep, running, done, isActive, shots, onShotsChange, pipelineRunning, loading, empty }: Props) {
   const [showJson, setShowJson] = useState(false);
 
   return (
@@ -225,6 +226,11 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
 
       {loading ? (
         <SeleneSkeleton />
+      ) : empty ? (
+        <div className="panel-empty">
+          <span className="panel-empty-icon" style={{ color: 'var(--purple)' }}>◉</span>
+          <p>Run the pipeline to simulate with Selene</p>
+        </div>
       ) : showJson ? (
         <pre className="selene-json-pre"
           dangerouslySetInnerHTML={{ __html: highlightJson(JSON.stringify(data, null, 2)) }} />
