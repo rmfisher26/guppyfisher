@@ -274,16 +274,27 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         .pc-progress { height:2px; background:#dfdddb; margin:10px 20px 0; border-radius:1px; overflow:hidden; }
         .pc-progress-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--blue)); transition:width 0.55s ease; }
 
-        .pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:14px 20px 0; }
+        .pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:18px 20px 0; }
         .pc-grid > * { min-width: 0; }
 
-        .pv-panel { background:var(--bg1); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.25s,box-shadow 0.25s; }
-        .pv-panel--green.pv-panel--active  { border-color:var(--green);  box-shadow:0 0 28px color-mix(in srgb,var(--green) 12%,transparent); }
-        .pv-panel--blue.pv-panel--active   { border-color:var(--blue);   box-shadow:0 0 28px color-mix(in srgb,var(--blue) 12%,transparent); }
-        .pv-panel--red.pv-panel--active    { border-color:var(--red);    box-shadow:0 0 28px color-mix(in srgb,var(--red) 12%,transparent); }
-        .pv-panel--purple.pv-panel--active { border-color:var(--purple); box-shadow:0 0 28px color-mix(in srgb,var(--purple) 12%,transparent); }
+        .pv-panel {
+          background:#fff;
+          border:1px solid rgba(0,0,0,0.07);
+          border-radius:16px;
+          overflow:hidden;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.05), 0 8px 24px rgba(0,0,0,0.06);
+          transition: border-color 0.25s, box-shadow 0.3s, transform 0.2s;
+        }
+        .pv-panel:hover {
+          box-shadow: 0 4px 10px rgba(0,0,0,0.07), 0 12px 32px rgba(0,0,0,0.09);
+          transform: translateY(-1px);
+        }
+        .pv-panel--green.pv-panel--active  { border-color:var(--green);  box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--green), 0 8px 36px color-mix(in srgb,var(--green) 16%,transparent); }
+        .pv-panel--blue.pv-panel--active   { border-color:var(--blue);   box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--blue),  0 8px 36px color-mix(in srgb,var(--blue)  16%,transparent); }
+        .pv-panel--red.pv-panel--active    { border-color:var(--red);    box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--red),   0 8px 36px color-mix(in srgb,var(--red)   16%,transparent); }
+        .pv-panel--purple.pv-panel--active { border-color:var(--purple); box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--purple),0 8px 36px color-mix(in srgb,var(--purple) 16%,transparent); }
 
-        .panel-header { display:flex; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid var(--border); background:var(--bg2); flex-wrap:wrap; }
+        .panel-header { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid rgba(0,0,0,0.06); background:rgba(0,0,0,0.015); flex-wrap:wrap; }
         .panel-name { font-size:13px; font-weight:600; color:var(--text); flex:1; min-width:80px; }
         .panel-body { padding:12px 16px; }
         .badge { font-family:var(--font-mono); font-size:11px; font-weight:600; padding:2px 9px; border-radius:5px; letter-spacing:0.04em; white-space:nowrap; }
