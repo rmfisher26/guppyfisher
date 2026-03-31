@@ -237,8 +237,6 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
           ? <><span className="pc-live-dot" />Connected to {BACKEND_URL}</>
           : <span>Live backend disabled — set PUBLIC_LIVE_BACKEND=true to connect</span>
         }
-        <span className="pc-footer-sep">·</span>
-        <a href="/about" className="pc-footer-link">About</a>
       </div>
 
       <style>{`
