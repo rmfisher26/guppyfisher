@@ -158,38 +158,42 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         </div>
       </div>
 
-      {/* Stage tabs */}
+      {/* Stage track */}
       <div className="pc-stages">
         {STAGES.map((s, i) => {
-          const meta = STAGE_META[s];
+          const meta    = STAGE_META[s];
           const reached = reachedIdx >= i;
           const active  = activeIdx === i;
           return (
             <div key={s} className="pc-stage-group">
               <button
-                className={`pc-stage ${active ? 'pc-stage--active' : ''} ${reached ? 'pc-stage--reached' : ''}`}
-                style={{ color: active ? 'var(--accent)' : reached ? meta.color : undefined }}
+                className={`pc-node ${active ? 'pc-node--active' : ''} ${reached ? 'pc-node--reached' : ''}`}
                 onClick={() => reached && setActiveIdx(i)}
-                disabled={!reached} title={`${meta.label} — press ${i+1}`}>
-                <span className="pc-stage-icon">{meta.icon}</span>
-                <span className="pc-stage-label" style={{ color: active ? 'var(--accent)' : undefined }}>{meta.label}</span>
-                <span className="pc-stage-status">{reached ? 'ready' : 'pending'}</span>
+                disabled={!reached}
+                title={meta.label}>
+                <div className="pc-node-ring" style={{
+                  borderColor: reached ? meta.color : undefined,
+                  background:  active  ? meta.color + '1a' : undefined,
+                  boxShadow:   active  ? `0 0 0 3px ${meta.color}22` : undefined,
+                }}>
+                  <span className="pc-node-icon" style={{ color: reached ? meta.color : undefined }}>{meta.icon}</span>
+                </div>
+                <span className="pc-node-label" style={{ color: active ? meta.color : reached ? 'var(--text)' : undefined }}>
+                  {meta.label}
+                </span>
+                <span className="pc-node-status" style={{ color: reached ? meta.color : undefined }}>
+                  {reached ? '● ready' : '○ pending'}
+                </span>
               </button>
               {i < STAGES.length - 1 && (
-                <div className={`pc-arrow ${reachedIdx > i ? 'pc-arrow--active' : ''}`}>
-                  <svg width="38" height="14" viewBox="0 0 38 14">
-                    <defs>
-                      <linearGradient id={`ag-${i}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%"   stopColor={STAGE_META[STAGES[i]].color}   stopOpacity={reachedIdx > i ? 1 : 0.2}/>
-                        <stop offset="100%" stopColor={STAGE_META[STAGES[i+1]].color} stopOpacity={reachedIdx > i ? 1 : 0.2}/>
-                      </linearGradient>
-                    </defs>
-                    <line x1="2" y1="7" x2="30" y2="7" stroke={`url(#ag-${i})`} strokeWidth="2"
-                      strokeDasharray={reachedIdx > i ? 'none' : '4,3'}/>
-                    <polygon points="28,3 38,7 28,11"
-                      fill={reachedIdx > i ? STAGE_META[STAGES[i+1]].color : '#2a3040'}/>
-                  </svg>
-                  <span className="pc-arrow-label">{FLOW_LABELS[i]}</span>
+                <div className="pc-track">
+                  <div className="pc-track-rail">
+                    <div className="pc-track-fill" style={{
+                      transform: reachedIdx > i ? 'scaleX(1)' : 'scaleX(0)',
+                      background: `linear-gradient(90deg,${STAGE_META[STAGES[i]].color},${STAGE_META[STAGES[i+1]].color})`,
+                    }}/>
+                  </div>
+                  <span className="pc-track-label">{FLOW_LABELS[i]}</span>
                 </div>
               )}
             </div>
@@ -250,19 +254,22 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         .pc-run-btn:hover:not(:disabled) { background:#22a06b; transform:translateY(-1px); }
         .pc-run-btn:disabled { background:var(--bg3); color:var(--muted); cursor:not-allowed; transform:none; }
 
-        .pc-stages { display:flex; align-items:center; padding:14px 20px 0; gap:0; overflow-x:auto; }
-        .pc-stage-group { display:flex; align-items:center; }
-        .pc-stage { display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 16px; border-radius:9px; cursor:pointer; border:1px solid transparent; background:none; transition:all 0.18s; min-width:76px; color:var(--muted); }
-        .pc-stage:hover:not(:disabled) { background:rgba(0,0,0,0.04); }
-        .pc-stage--active { background:var(--paper); border-color:#dfdddb; }
-        .pc-stage:disabled { cursor:default; }
-        .pc-stage-icon  { font-size:16px; line-height:1; }
-        .pc-stage-label { font-family:var(--font-mono); font-size:11px; font-weight:500; white-space:nowrap; }
-        .pc-stage-status { font-family:var(--font-mono); font-size:9px; letter-spacing:0.05em; }
-        .pc-stage--reached .pc-stage-status { color:var(--green); }
-        .pc-stage:not(.pc-stage--reached) .pc-stage-status { color:var(--muted); }
-        .pc-arrow { display:flex; flex-direction:column; align-items:center; gap:2px; padding:0 3px; margin-bottom:6px; }
-        .pc-arrow-label { font-family:var(--font-mono); font-size:9px; color:var(--muted); white-space:nowrap; }
+        .pc-stages { display:flex; align-items:center; padding:16px 20px 8px; box-sizing:border-box; }
+        .pc-stage-group { display:flex; align-items:center; flex:1; }
+        .pc-stage-group:last-child { flex:0 0 auto; }
+
+        .pc-node { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:5px; background:none; border:none; cursor:pointer; padding:6px 10px; border-radius:10px; transition:background 0.15s; }
+        .pc-node:hover:not(:disabled) { background:rgba(0,0,0,0.05); }
+        .pc-node:disabled { cursor:default; }
+        .pc-node-ring { width:42px; height:42px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; transition:all 0.3s ease; }
+        .pc-node-icon { font-size:17px; line-height:1; color:var(--muted); transition:color 0.3s ease; }
+        .pc-node-label { font-family:var(--font-mono); font-size:11px; font-weight:600; white-space:nowrap; color:var(--muted); transition:color 0.3s ease; }
+        .pc-node-status { font-family:var(--font-mono); font-size:9px; letter-spacing:0.04em; color:var(--muted); transition:color 0.3s ease; }
+
+        .pc-track { flex:1; display:flex; flex-direction:column; align-items:stretch; gap:5px; padding:0 6px; margin-bottom:22px; }
+        .pc-track-rail { position:relative; height:2px; background:var(--border); border-radius:1px; overflow:hidden; }
+        .pc-track-fill { position:absolute; inset:0; border-radius:1px; transform-origin:left; transition:transform 0.55s ease; }
+        .pc-track-label { text-align:center; font-family:var(--font-mono); font-size:9px; color:var(--muted); white-space:nowrap; letter-spacing:0.03em; }
 
 
         .pc-progress { height:2px; background:#dfdddb; margin:10px 20px 0; border-radius:1px; overflow:hidden; }
