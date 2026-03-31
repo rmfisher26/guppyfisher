@@ -22,7 +22,7 @@ const STAGE_META: Record<Stage, { label: string; icon: string; color: string }> 
   selene: { label: 'Selene',  icon: '◉', color: '#a040c8' },
 };
 
-const FLOW_LABELS = ['compile→', 'lower→', 'emulate→'];
+const FLOW_LABELS = ['compile', 'lower', 'emulate'];
 
 interface Props {
   initialProgram?: string;

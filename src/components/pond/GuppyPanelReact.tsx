@@ -35,7 +35,7 @@ export default function GuppyPanelReact({ code, name, description, isActive }: P
           background: #f6f8fa;
           margin: 0;
           padding: 16px;
-          font-family: var(--font-mono);
+          font-family: 'Roboto Mono', monospace;
           font-size: 12px;
           line-height: 1.75;
           color: #0d0f14;
