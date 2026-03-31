@@ -26,6 +26,9 @@ export default function GuppyPanelReact({ code, name, description, isActive }: P
           dangerouslySetInnerHTML={{ __html: highlighted }}
         />
       </div>
+      <div className="guppy-desc">
+        Guppy is Quantinuum's Python-embedded quantum language — functions decorated with <span className="guppy-desc-code">@module.guppy</span> are type-checked and compiled directly to HUGR IR.
+      </div>
 
       <style>{`
         .guppy-code-pre {
@@ -45,6 +48,14 @@ export default function GuppyPanelReact({ code, name, description, isActive }: P
           font-size: 11px;
           color: var(--muted);
           margin-left: auto;
+        }
+        .guppy-desc {
+          padding: 8px 14px; border-top: 1px solid var(--border);
+          font-family: var(--font-mono); font-size: 10px; color: var(--muted); line-height: 1.6;
+        }
+        .guppy-desc-code {
+          background: rgba(0,0,0,0.06); border-radius: 3px; padding: 1px 4px;
+          font-family: var(--font-mono); font-size: 10px; color: var(--green);
         }
       `}</style>
     </div>

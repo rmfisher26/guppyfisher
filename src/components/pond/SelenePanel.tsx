@@ -238,6 +238,9 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
         <div className="panel-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <StateEvolution data={data} tket={tket} step={stateStep} />
           <ShotResults    data={data} running={running} done={done} />
+          <div className="selene-desc">
+            Selene is Quantinuum's emulator — it runs the compiled circuit repeatedly, sampling measurement outcomes to build up a shot distribution.
+          </div>
         </div>
       )}
 
@@ -354,6 +357,10 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
         .sr-idle  {
           font-family: var(--font-mono); font-size: 12px;
           color: #9ca3af; padding: 12px 0;
+        }
+        .selene-desc {
+          border-top: 1px solid var(--border); padding-top: 8px;
+          font-family: var(--font-mono); font-size: 10px; color: var(--muted); line-height: 1.6;
         }
         .selene-json-pre {
           margin: 0; padding: 14px 16px; background: #f6f8fa;

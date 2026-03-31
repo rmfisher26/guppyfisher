@@ -53,6 +53,7 @@ const EDGE_COLORS: Record<string, string> = {
   dataflow:  '#4a5a7a',
 };
 
+
 function HUGRGraph({ nodes, edges, hovNode, setHovNode }: {
   nodes: HUGRNode[];
   edges: HUGREdge[];
@@ -174,13 +175,8 @@ export default function HUGRPanel({ nodes, edges, json, isActive, loading, empty
             <HUGRGraph nodes={nodes} edges={edges}
               hovNode={hovNode} setHovNode={setHovNode} />
           </div>
-          <div className="hugr-legend">
-            {Object.entries(EDGE_COLORS).map(([k, c]) => (
-              <div key={k} className="legend-item">
-                <div className="legend-line" style={{ background: c }} />
-                <span>{k}</span>
-              </div>
-            ))}
+          <div className="hugr-desc">
+            HUGR is Quantinuum's hierarchical IR — nodes are quantum operations, edges are qubit and classical wires flowing through the program.
           </div>
         </>
       ) : (
@@ -198,15 +194,10 @@ export default function HUGRPanel({ nodes, edges, json, isActive, loading, empty
         }
         .hugr-skel-pulse { animation: hugrPulse 1.4s ease-in-out infinite; }
 
-        .hugr-legend {
-          display: flex; gap: 12px; flex-wrap: wrap;
+        .hugr-desc {
           padding: 8px 14px; border-top: 1px solid var(--border);
+          font-family: var(--font-mono); font-size: 10px; color: var(--muted); line-height: 1.6;
         }
-        .legend-item {
-          display: flex; align-items: center; gap: 5px;
-          font-family: var(--font-mono); font-size: 10px; color: var(--muted);
-        }
-        .legend-line { width: 16px; height: 2px; border-radius: 1px; }
         .json-pre {
           background: #f6f8fa;
           margin: 0; padding: 14px 16px;

@@ -204,6 +204,9 @@ export default function TKETPanel({ data, isActive, loading, empty }: Props) {
             <span>2Q: <b>{data.stats.twoQ}</b></span>
             {data.stats.note && <span className="stat-note">{data.stats.note}</span>}
           </div>
+          <div className="tket-desc">
+            TKET compiles the HUGR IR into a quantum circuit — scheduling gates into time columns, optimising depth, and targeting hardware-native operations.
+          </div>
         </div>
       )}
 
@@ -221,6 +224,10 @@ export default function TKETPanel({ data, isActive, loading, empty }: Props) {
         }
         .tket-stats b { color: var(--text); }
         .stat-note { color: var(--red); }
+        .tket-desc {
+          padding: 8px 0 0; border-top: 1px solid var(--border); margin-top: 4px;
+          font-family: var(--font-mono); font-size: 10px; color: var(--muted); line-height: 1.6;
+        }
         .tket-json-pre {
           margin: 0; padding: 14px 16px; background: #f6f8fa;
           font-family: var(--font-mono); font-size: 11px; line-height: 1.7;
