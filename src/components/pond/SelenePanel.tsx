@@ -1,5 +1,7 @@
 // src/components/pond/SelenePanel.tsx
+import { useState } from 'react';
 import type { Program } from '../../data/programs';
+import { highlightJson } from '../../utils/highlight';
 
 type SeleneData = Program['selene'];
 type TKETData   = Program['tket'];
@@ -132,28 +134,43 @@ function ShotResults({ data, running, done }: {
 }
 
 export default function SelenePanel({ data, tket, stateStep, running, done, isActive, shots, onShotsChange, pipelineRunning }: Props) {
+  const [showJson, setShowJson] = useState(false);
+
   return (
     <div className={`pv-panel ${isActive ? 'pv-panel--active pv-panel--purple' : ''}`}>
       <div className="panel-header">
         <span className="badge badge-purple">◉ Selene</span>
         <span className="panel-name">selene_sim.run_shots()</span>
-        <div className="se-shots-control">
-          <span className="se-shots-label">shots</span>
-          <input
-            type="range" min={10} max={1000} step={10}
-            value={shots}
-            onChange={e => onShotsChange(Number(e.target.value))}
-            disabled={pipelineRunning}
-            className="se-shots-slider"
-          />
-          <span className="se-shots-value">{shots}</span>
+        {!showJson && (
+          <div className="se-shots-control">
+            <span className="se-shots-label">shots</span>
+            <input
+              type="range" min={10} max={10000} step={10}
+              value={shots}
+              onChange={e => onShotsChange(Number(e.target.value))}
+              disabled={pipelineRunning}
+              className="se-shots-slider"
+            />
+            <span className="se-shots-value">{shots}</span>
+          </div>
+        )}
+        <div className="panel-actions">
+          <button className={`action-btn ${!showJson ? 'action-btn--on' : ''}`}
+            onClick={() => setShowJson(false)}>results</button>
+          <button className={`action-btn ${showJson ? 'action-btn--on' : ''}`}
+            onClick={() => setShowJson(true)}>json</button>
         </div>
       </div>
 
-      <div className="panel-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <StateEvolution data={data} tket={tket} step={stateStep} />
-        <ShotResults    data={data} running={running} done={done} />
-      </div>
+      {showJson ? (
+        <pre className="selene-json-pre"
+          dangerouslySetInnerHTML={{ __html: highlightJson(JSON.stringify(data, null, 2)) }} />
+      ) : (
+        <div className="panel-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <StateEvolution data={data} tket={tket} step={stateStep} />
+          <ShotResults    data={data} running={running} done={done} />
+        </div>
+      )}
 
       <style>{`
         /* ── State evolution ── */
@@ -268,6 +285,12 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
         .sr-idle  {
           font-family: var(--font-mono); font-size: 12px;
           color: #9ca3af; padding: 12px 0;
+        }
+        .selene-json-pre {
+          margin: 0; padding: 14px 16px; background: #f6f8fa;
+          font-family: var(--font-mono); font-size: 11px; line-height: 1.7;
+          color: #0d0f14; overflow: auto; max-height: 370px; white-space: pre;
+          width: 100%; box-sizing: border-box;
         }
       `}</style>
     </div>

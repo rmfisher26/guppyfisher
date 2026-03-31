@@ -1,6 +1,7 @@
 // src/components/pond/TKETPanel.tsx
 import { useState } from 'react';
 import type { Program } from '../../data/programs';
+import { highlightJson } from '../../utils/highlight';
 
 type TKETData = Program['tket'];
 
@@ -151,35 +152,51 @@ function CircuitSVG({ data, optimised }: { data: TKETData; optimised: boolean })
 
 export default function TKETPanel({ data, isActive }: Props) {
   const [optimised, setOptimised] = useState(false);
+  const [showJson,  setShowJson]  = useState(false);
   const stats = optimised ? data.optimised.stats : data.stats;
+  const jsonData = optimised
+    ? { qubits: data.qubits, bits: data.bits, ...data.optimised }
+    : { qubits: data.qubits, bits: data.bits, gates: data.gates, stats: data.stats };
 
   return (
     <div className={`pv-panel ${isActive ? 'pv-panel--active pv-panel--red' : ''}`}>
       <div className="panel-header">
         <span className="badge badge-red">◻ TKET</span>
         <span className="panel-name">pytket Circuit</span>
-        <label className={`opt-toggle ${optimised ? 'opt-toggle--on' : ''}`}>
-          <input type="checkbox" checked={optimised}
-            onChange={e => setOptimised(e.target.checked)} />
-          H2-native optimisation
-        </label>
-      </div>
-
-      <div className="panel-body">
-        <CircuitSVG data={data} optimised={optimised} />
-
-        <div className="tket-stats">
-          <span>Gates: <b>{stats.gates}</b></span>
-          <span>Depth: <b>{stats.depth}</b></span>
-          <span>2Q: <b>{stats.twoQ}</b></span>
-          {stats.note && <span className="stat-note">{stats.note}</span>}
-          {optimised && (
-            <span className="native-key">
-              <span className="native-dot" /> = native gate
-            </span>
-          )}
+        {!showJson && (
+          <label className={`opt-toggle ${optimised ? 'opt-toggle--on' : ''}`}>
+            <input type="checkbox" checked={optimised}
+              onChange={e => setOptimised(e.target.checked)} />
+            H2-native optimisation
+          </label>
+        )}
+        <div className="panel-actions">
+          <button className={`action-btn ${!showJson ? 'action-btn--on' : ''}`}
+            onClick={() => setShowJson(false)}>circuit</button>
+          <button className={`action-btn ${showJson ? 'action-btn--on' : ''}`}
+            onClick={() => setShowJson(true)}>json</button>
         </div>
       </div>
+
+      {showJson ? (
+        <pre className="tket-json-pre"
+          dangerouslySetInnerHTML={{ __html: highlightJson(JSON.stringify(jsonData, null, 2)) }} />
+      ) : (
+        <div className="panel-body">
+          <CircuitSVG data={data} optimised={optimised} />
+          <div className="tket-stats">
+            <span>Gates: <b>{stats.gates}</b></span>
+            <span>Depth: <b>{stats.depth}</b></span>
+            <span>2Q: <b>{stats.twoQ}</b></span>
+            {stats.note && <span className="stat-note">{stats.note}</span>}
+            {optimised && (
+              <span className="native-key">
+                <span className="native-dot" /> = native gate
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
       <style>{`
         .opt-toggle {
@@ -203,6 +220,12 @@ export default function TKETPanel({ data, isActive }: Props) {
         .native-key { display: flex; align-items: center; gap: 5px; color: var(--red); }
         .native-dot {
           width: 6px; height: 6px; border-radius: 50%; background: var(--red);
+        }
+        .tket-json-pre {
+          margin: 0; padding: 14px 16px; background: #f6f8fa;
+          font-family: var(--font-mono); font-size: 11px; line-height: 1.7;
+          color: #0d0f14; overflow: auto; max-height: 310px; white-space: pre;
+          width: 100%; box-sizing: border-box;
         }
       `}</style>
     </div>
