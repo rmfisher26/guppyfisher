@@ -16,6 +16,65 @@ interface Props {
   shots:            number;
   onShotsChange:    (n: number) => void;
   pipelineRunning:  boolean;
+  loading?:         boolean;
+}
+
+function SeleneSkeleton() {
+  return (
+    <div className="selene-skeleton">
+      {/* Qubit blobs row */}
+      <div className="ss-qubits">
+        {[0, 1, 2].map(i => (
+          <div key={i} className="ss-qubit">
+            <div className="ss-label sel-skel-pulse" style={{ animationDelay: `${i * 60}ms` }} />
+            <div className="ss-circle sel-skel-pulse" style={{ animationDelay: `${i * 80}ms` }} />
+          </div>
+        ))}
+      </div>
+      {/* Timeline dots */}
+      <div className="ss-timeline">
+        {[0,1,2,3,4].map(i => (
+          <div key={i} className="ss-tick">
+            <div className="ss-dot sel-skel-pulse" style={{ animationDelay: `${i * 60}ms` }} />
+            <div className="ss-tick-label sel-skel-pulse" style={{ animationDelay: `${i * 60 + 30}ms` }} />
+          </div>
+        ))}
+      </div>
+      {/* Bar chart placeholder */}
+      <div className="ss-bars">
+        {[70, 45, 20, 60].map((w, i) => (
+          <div key={i} className="ss-bar-row">
+            <div className="ss-ket sel-skel-pulse" style={{ animationDelay: `${i * 70}ms` }} />
+            <div className="ss-bar-wrap">
+              <div className="ss-bar sel-skel-pulse"
+                style={{ width: `${w}%`, animationDelay: `${i * 70 + 100}ms` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+      <style>{`
+        .selene-skeleton { display:flex; flex-direction:column; gap:14px; padding:12px 16px; }
+        .ss-qubits { display:flex; gap:12px; }
+        .ss-qubit  { display:flex; flex-direction:column; align-items:center; gap:5px; }
+        .ss-label  { width:28px; height:9px; border-radius:3px; background:var(--bg3); }
+        .ss-circle { width:50px; height:50px; border-radius:50%; background:var(--bg3); }
+        .ss-timeline { display:flex; gap:0; }
+        .ss-tick { display:flex; flex-direction:column; align-items:center; gap:4px; min-width:52px; }
+        .ss-dot  { width:10px; height:10px; border-radius:50%; background:var(--bg3); }
+        .ss-tick-label { width:30px; height:8px; border-radius:3px; background:var(--bg3); }
+        .ss-bars { display:flex; flex-direction:column; gap:8px; }
+        .ss-bar-row { display:flex; align-items:center; gap:9px; }
+        .ss-ket  { width:40px; height:12px; border-radius:3px; background:var(--bg3); flex-shrink:0; }
+        .ss-bar-wrap { flex:1; height:10px; background:var(--bg3); border-radius:5px; overflow:hidden; }
+        .ss-bar  { height:100%; border-radius:5px; background:var(--border); }
+        @keyframes selPulse {
+          0%,100% { opacity:0.5; }
+          50%      { opacity:1; }
+        }
+        .sel-skel-pulse { animation: selPulse 1.4s ease-in-out infinite; }
+      `}</style>
+    </div>
+  );
 }
 
 function StateEvolution({ data, tket, step }: {
@@ -133,7 +192,7 @@ function ShotResults({ data, running, done }: {
   );
 }
 
-export default function SelenePanel({ data, tket, stateStep, running, done, isActive, shots, onShotsChange, pipelineRunning }: Props) {
+export default function SelenePanel({ data, tket, stateStep, running, done, isActive, shots, onShotsChange, pipelineRunning, loading }: Props) {
   const [showJson, setShowJson] = useState(false);
 
   return (
@@ -141,7 +200,7 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
       <div className="panel-header">
         <span className="badge badge-purple">◉ Selene</span>
         <span className="panel-name">selene_sim.run_shots()</span>
-        {!showJson && (
+        {!loading && !showJson && (
           <div className="se-shots-control">
             <span className="se-shots-label">shots</span>
             <input
@@ -154,15 +213,19 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
             <span className="se-shots-value">{shots}</span>
           </div>
         )}
-        <div className="panel-actions">
-          <button className={`action-btn ${!showJson ? 'action-btn--on' : ''}`}
-            onClick={() => setShowJson(false)}>results</button>
-          <button className={`action-btn ${showJson ? 'action-btn--on' : ''}`}
-            onClick={() => setShowJson(true)}>json</button>
-        </div>
+        {!loading && (
+          <div className="panel-actions">
+            <button className={`action-btn ${!showJson ? 'action-btn--on' : ''}`}
+              onClick={() => setShowJson(false)}>results</button>
+            <button className={`action-btn ${showJson ? 'action-btn--on' : ''}`}
+              onClick={() => setShowJson(true)}>json</button>
+          </div>
+        )}
       </div>
 
-      {showJson ? (
+      {loading ? (
+        <SeleneSkeleton />
+      ) : showJson ? (
         <pre className="selene-json-pre"
           dangerouslySetInnerHTML={{ __html: highlightJson(JSON.stringify(data, null, 2)) }} />
       ) : (

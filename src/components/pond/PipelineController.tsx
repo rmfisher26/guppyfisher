@@ -219,15 +219,16 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
       <div className="pc-grid">
         <GuppyPanelReact code={prog.guppy} name={prog.name} description={prog.description} isActive={activeIdx === 0}/>
         <div style={{ opacity: reachedIdx >= 1 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
-          <HUGRPanel nodes={prog.hugr.nodes} edges={prog.hugr.edges} json={liveHugrJson ?? prog.hugr.json} isActive={activeIdx === 1}/>
+          <HUGRPanel nodes={prog.hugr.nodes} edges={prog.hugr.edges} json={liveHugrJson ?? prog.hugr.json} isActive={activeIdx === 1} loading={LIVE_BACKEND && running && liveHugrJson === null}/>
         </div>
         <div style={{ opacity: reachedIdx >= 2 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
-          <TKETPanel data={liveTketData ?? prog.tket} isActive={activeIdx === 2}/>
+          <TKETPanel data={liveTketData ?? prog.tket} isActive={activeIdx === 2} loading={LIVE_BACKEND && running && liveTketData === null}/>
         </div>
         <div style={{ opacity: reachedIdx >= 3 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
           <SelenePanel data={liveSeleneData ?? prog.selene} tket={liveTketData ?? prog.tket} stateStep={stateStep}
             running={seleneRun && !seleneDone} done={seleneDone} isActive={activeIdx === 3}
-            shots={shots} onShotsChange={setShots} pipelineRunning={running}/>
+            shots={shots} onShotsChange={setShots} pipelineRunning={running}
+            loading={LIVE_BACKEND && running && liveSeleneData === null}/>
         </div>
       </div>
 

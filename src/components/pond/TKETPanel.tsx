@@ -8,6 +8,50 @@ type TKETData = Program['tket'];
 interface Props {
   data: TKETData;
   isActive?: boolean;
+  loading?: boolean;
+}
+
+function TKETSkeleton() {
+  // Simulate a circuit with wires + gate blobs
+  const nWires = 3;
+  const ROW = 44, PAD_T = 20, PAD_L = 52, COL = 62;
+  const W = PAD_L + 5 * COL + 32;
+  const H = PAD_T + nWires * ROW + 28;
+  const qy = (i: number) => PAD_T + i * ROW + ROW / 2;
+  const gx = (c: number) => PAD_L + c * COL + COL / 2;
+  // gate positions to sketch
+  const gates = [
+    { col: 0, q: 0 }, { col: 0, q: 2 },
+    { col: 1, q: 0 }, { col: 1, q: 1 },
+    { col: 2, q: 1 }, { col: 2, q: 2 },
+    { col: 3, q: 0 }, { col: 3, q: 1 }, { col: 3, q: 2 },
+  ];
+  return (
+    <div className="tket-skeleton">
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxHeight: 200 }}>
+        {Array.from({ length: nWires }, (_, i) => (
+          <g key={i}>
+            <line x1={PAD_L - 6} y1={qy(i)} x2={W - 12} y2={qy(i)}
+              stroke="var(--border)" strokeWidth="1.5" strokeOpacity="0.6" />
+            <rect x={4} y={qy(i) - 7} width={38} height={14} rx="3"
+              fill="var(--bg3)" className="tket-skel-pulse" style={{ animationDelay: `${i * 60}ms` }} />
+          </g>
+        ))}
+        {gates.map((g, gi) => (
+          <rect key={gi}
+            x={gx(g.col) - 13} y={qy(g.q) - 11} width={26} height={22} rx="4"
+            fill="var(--bg3)" className="tket-skel-pulse"
+            style={{ animationDelay: `${gi * 50}ms` }} />
+        ))}
+      </svg>
+      <div className="tket-skel-stats">
+        {[50, 40, 34].map((w, i) => (
+          <div key={i} className="tket-skel-stat tket-skel-pulse"
+            style={{ width: w, animationDelay: `${i * 70}ms` }} />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 const GATE_STYLES: Record<string, { fill: string; label: string }> = {
@@ -150,7 +194,7 @@ function CircuitSVG({ data, optimised }: { data: TKETData; optimised: boolean })
   );
 }
 
-export default function TKETPanel({ data, isActive }: Props) {
+export default function TKETPanel({ data, isActive, loading }: Props) {
   const [optimised, setOptimised] = useState(false);
   const [showJson,  setShowJson]  = useState(false);
   const stats = optimised ? data.optimised.stats : data.stats;
@@ -163,22 +207,26 @@ export default function TKETPanel({ data, isActive }: Props) {
       <div className="panel-header">
         <span className="badge badge-red">◻ TKET</span>
         <span className="panel-name">pytket Circuit</span>
-        {!showJson && (
+        {!loading && !showJson && (
           <label className={`opt-toggle ${optimised ? 'opt-toggle--on' : ''}`}>
             <input type="checkbox" checked={optimised}
               onChange={e => setOptimised(e.target.checked)} />
             H2-native optimisation
           </label>
         )}
-        <div className="panel-actions">
-          <button className={`action-btn ${!showJson ? 'action-btn--on' : ''}`}
-            onClick={() => setShowJson(false)}>circuit</button>
-          <button className={`action-btn ${showJson ? 'action-btn--on' : ''}`}
-            onClick={() => setShowJson(true)}>json</button>
-        </div>
+        {!loading && (
+          <div className="panel-actions">
+            <button className={`action-btn ${!showJson ? 'action-btn--on' : ''}`}
+              onClick={() => setShowJson(false)}>circuit</button>
+            <button className={`action-btn ${showJson ? 'action-btn--on' : ''}`}
+              onClick={() => setShowJson(true)}>json</button>
+          </div>
+        )}
       </div>
 
-      {showJson ? (
+      {loading ? (
+        <TKETSkeleton />
+      ) : showJson ? (
         <pre className="tket-json-pre"
           dangerouslySetInnerHTML={{ __html: highlightJson(JSON.stringify(jsonData, null, 2)) }} />
       ) : (
@@ -199,6 +247,18 @@ export default function TKETPanel({ data, isActive }: Props) {
       )}
 
       <style>{`
+        .tket-skeleton { padding: 8px; }
+        .tket-skel-stats {
+          display:flex; gap:14px; padding:8px 16px;
+          border-top:1px solid var(--border);
+        }
+        .tket-skel-stat { height:10px; border-radius:4px; background:var(--bg3); }
+        @keyframes tketPulse {
+          0%,100% { opacity:0.5; }
+          50%      { opacity:1; }
+        }
+        .tket-skel-pulse { animation: tketPulse 1.4s ease-in-out infinite; }
+
         .opt-toggle {
           display: flex; align-items: center; gap: 7px;
           font-family: var(--font-mono); font-size: 11px;

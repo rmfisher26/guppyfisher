@@ -8,6 +8,41 @@ interface Props {
   edges: HUGREdge[];
   json: string;
   isActive?: boolean;
+  loading?: boolean;
+}
+
+function HUGRSkeleton() {
+  return (
+    <div className="hugr-skeleton">
+      {/* Simulated graph nodes */}
+      <svg viewBox="0 0 320 280" style={{ width: '100%', maxHeight: 280 }}>
+        {/* Connector lines */}
+        {[
+          [160, 30, 80,  100], [160, 30, 240, 100],
+          [80,  100, 80,  180], [240, 100, 240, 180],
+          [80,  180, 160, 250], [240, 180, 160, 250],
+          [80,  100, 160, 180],
+        ].map(([x1,y1,x2,y2], i) => (
+          <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+            stroke="var(--border)" strokeWidth="1.5" strokeOpacity="0.6" />
+        ))}
+        {/* Node blobs */}
+        {[
+          [160, 30], [80, 100], [240, 100], [160, 180], [80, 180], [240, 180], [160, 250],
+        ].map(([cx, cy], i) => (
+          <rect key={i} x={cx - 28} y={cy - 11} width={56} height={18} rx="5"
+            fill="var(--bg3)" className="hugr-skel-pulse" style={{ animationDelay: `${i * 80}ms` }} />
+        ))}
+      </svg>
+      {/* Legend skeleton */}
+      <div className="hugr-skel-legend">
+        {[90, 70, 80, 60].map((w, i) => (
+          <div key={i} className="hugr-skel-legend-item hugr-skel-pulse"
+            style={{ width: w, animationDelay: `${i * 60}ms` }} />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 const EDGE_COLORS: Record<string, string> = {
@@ -100,7 +135,7 @@ function HUGRGraph({ nodes, edges, hovNode, setHovNode }: {
   );
 }
 
-export default function HUGRPanel({ nodes, edges, json, isActive }: Props) {
+export default function HUGRPanel({ nodes, edges, json, isActive, loading }: Props) {
   const [view, setView]     = useState<'graph' | 'json'>('graph');
   const [hovNode, setHovNode] = useState<number | null>(null);
 
@@ -109,21 +144,25 @@ export default function HUGRPanel({ nodes, edges, json, isActive }: Props) {
       <div className="panel-header">
         <span className="badge badge-blue">◈ HUGR IR</span>
         <span className="panel-name">module.compile()</span>
-        <div className="panel-actions">
-          <button
-            className={`action-btn ${view === 'graph' ? 'action-btn--on' : ''}`}
-            onClick={() => setView('graph')}>
-            graph
-          </button>
-          <button
-            className={`action-btn ${view === 'json' ? 'action-btn--on' : ''}`}
-            onClick={() => setView('json')}>
-            json
-          </button>
-        </div>
+        {!loading && (
+          <div className="panel-actions">
+            <button
+              className={`action-btn ${view === 'graph' ? 'action-btn--on' : ''}`}
+              onClick={() => setView('graph')}>
+              graph
+            </button>
+            <button
+              className={`action-btn ${view === 'json' ? 'action-btn--on' : ''}`}
+              onClick={() => setView('json')}>
+              json
+            </button>
+          </div>
+        )}
       </div>
 
-      {view === 'graph' ? (
+      {loading ? (
+        <HUGRSkeleton />
+      ) : view === 'graph' ? (
         <>
           <div style={{ padding: '8px', minHeight: 240 }}>
             <HUGRGraph nodes={nodes} edges={edges}
@@ -144,6 +183,15 @@ export default function HUGRPanel({ nodes, edges, json, isActive }: Props) {
       )}
 
       <style>{`
+        .hugr-skeleton { padding: 8px; }
+        .hugr-skel-legend { display:flex; gap:12px; flex-wrap:wrap; padding:8px 14px; border-top:1px solid var(--border); }
+        .hugr-skel-legend-item { height:10px; border-radius:4px; background:var(--bg3); }
+        @keyframes hugrPulse {
+          0%,100% { opacity: 0.5; }
+          50%      { opacity: 1; }
+        }
+        .hugr-skel-pulse { animation: hugrPulse 1.4s ease-in-out infinite; }
+
         .hugr-legend {
           display: flex; gap: 12px; flex-wrap: wrap;
           padding: 8px 14px; border-top: 1px solid var(--border);
