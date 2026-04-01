@@ -333,6 +333,17 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         }
         .pv-panel--green.pv-panel--active  { border-color:var(--green);  box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--green), 0 8px 36px color-mix(in srgb,var(--green) 16%,transparent); }
         .pv-panel--fullscreen { min-height:70vh; overflow:auto; transform:none !important; }
+        .pv-panel--fullscreen .panel-header { padding:16px 22px; }
+        .pv-panel--fullscreen .guppy-code-pre { font-size:14px !important; line-height:1.85 !important; padding:20px !important; }
+        .pv-panel--fullscreen .json-pre { font-size:13px !important; padding:20px !important; }
+        .pv-panel--fullscreen .tket-json-pre { font-size:13px !important; padding:20px !important; }
+        .pv-panel--fullscreen .selene-json-pre { font-size:13px !important; padding:20px !important; }
+        .pv-panel--fullscreen .panel-body { padding:18px 22px !important; }
+        .pv-panel--fullscreen .hugr-desc,
+        .pv-panel--fullscreen .guppy-desc,
+        .pv-panel--fullscreen .tket-desc,
+        .pv-panel--fullscreen .selene-desc { font-size:12px; padding:10px 18px; }
+        .pv-panel--fullscreen svg:not([width="13"]) { max-height:55vh !important; }
         .panel-fs-btn { background:none; border:none; cursor:pointer; color:var(--muted); padding:3px 5px; border-radius:5px; line-height:1; display:flex; align-items:center; transition:color 0.12s, background 0.12s; }
         .panel-fs-btn:hover { color:var(--text); background:rgba(0,0,0,0.06); }
         .pv-panel--blue.pv-panel--active   { border-color:var(--blue);   box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--blue),  0 8px 36px color-mix(in srgb,var(--blue)  16%,transparent); }
