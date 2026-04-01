@@ -187,7 +187,7 @@ export default function TKETPanel({ data, isActive, loading, empty, isFullscreen
     <>
       <div className={`pv-panel ${isActive ? 'pv-panel--active pv-panel--red' : ''} ${isFullscreen ? 'pv-panel--fullscreen' : ''}`}>
       <div className="panel-header">
-        <span className="badge badge-red">◻ TKET</span>
+        <span className="badge badge-red">TKET</span>
         <span className="panel-name">pytket Circuit</span>
         {!loading && (
           <div className="panel-actions">
@@ -207,7 +207,7 @@ export default function TKETPanel({ data, isActive, loading, empty, isFullscreen
         <TKETSkeleton />
       ) : empty ? (
         <div className="panel-empty">
-          <span className="panel-empty-icon" style={{ color: 'var(--red)' }}>◻</span>
+          <span className="panel-empty-icon" style={{ color: 'var(--red)' }}></span>
           <p>Run the pipeline to compile the TKET circuit</p>
         </div>
       ) : showJson ? (

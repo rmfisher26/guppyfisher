@@ -28,7 +28,7 @@ export default function GuppyPanelReact({ code, name, description, isActive, isF
 
   const header = (
     <div className="panel-header">
-      <span className="badge badge-green">⬡ Guppy</span>
+      <span className="badge badge-green">Guppy</span>
       <span className="panel-name">{name}</span>
       <span className="panel-desc">{description}</span>
       <button className="panel-fs-btn" onClick={onFullscreenToggle}

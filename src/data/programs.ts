@@ -80,17 +80,18 @@ export const PROGRAMS: Record<string, Program> = {
   bell: {
     name: 'Bell State',
     description: 'Maximally entangled 2-qubit state',
-    guppy: `from guppylang import guppy
-from guppylang.std.quantum import qubit, owned, h, cx, measure
+    guppy: `from guppylang import guppy, qubit
+from guppylang.std.quantum import h, cx, measure
+from selene_client import selene_sim
 
 @guppy
-def bell_pair(
-    q1: qubit @owned,
-    q2: qubit @owned,
-) -> tuple[bool, bool]:
-    h(q1)            # superposition (in-place)
-    cx(q1, q2)       # entangle (in-place)
-    return measure(q1), measure(q2)`,
+def bell_pair(q1: qubit, q2: qubit) -> tuple[bool, bool]:
+    h(q1)
+    cx(q1, q2)
+    return measure(q1), measure(q2)
+
+hugr = bell_pair.compile()
+results = selene_sim.run_shots(hugr, shots=200)`,
 
     hugr: {
       nodes: [
@@ -191,19 +192,19 @@ def bell_pair(
   ghz: {
     name: 'GHZ State',
     description: '3-qubit maximally entangled',
-    guppy: `from guppylang import guppy
-from guppylang.std.quantum import qubit, owned, h, cx, measure
+    guppy: `from guppylang import guppy, qubit
+from guppylang.std.quantum import h, cx, measure
+from selene_client import selene_sim
 
 @guppy
-def ghz3(
-    q1: qubit @owned,
-    q2: qubit @owned,
-    q3: qubit @owned,
-) -> tuple[bool, bool, bool]:
+def ghz3(q1: qubit, q2: qubit, q3: qubit) -> tuple[bool, bool, bool]:
     h(q1)
     cx(q1, q2)
     cx(q1, q3)
-    return measure(q1), measure(q2), measure(q3)`,
+    return measure(q1), measure(q2), measure(q3)
+
+hugr = ghz3.compile()
+results = selene_sim.run_shots(hugr, shots=200)`,
 
     hugr: {
       nodes: [
@@ -300,20 +301,20 @@ def ghz3(
   teleport: {
     name: 'Teleport',
     description: 'Quantum state teleportation protocol',
-    guppy: `from guppylang import guppy
-from guppylang.std.quantum import qubit, owned, h, cx, measure
+    guppy: `from guppylang import guppy, qubit
+from guppylang.std.quantum import h, cx, measure
+from selene_client import selene_sim
 
 @guppy
-def teleport(
-    msg: qubit @owned,
-    alice: qubit @owned,
-    bob: qubit @owned,
-) -> tuple[bool, bool, bool]:
+def teleport(msg: qubit, alice: qubit, bob: qubit) -> tuple[bool, bool, bool]:
     h(alice)        # prepare Bell pair
     cx(alice, bob)  # entangle alice & bob
     cx(msg, alice)  # entangle msg with pair
     h(msg)          # complete Bell measurement
-    return measure(msg), measure(alice), measure(bob)`,
+    return measure(msg), measure(alice), measure(bob)
+
+hugr = teleport.compile()
+results = selene_sim.run_shots(hugr, shots=200)`,
 
     hugr: {
       nodes: [

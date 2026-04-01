@@ -210,7 +210,7 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
     <>
       <div className={`pv-panel ${isActive ? 'pv-panel--active pv-panel--purple' : ''} ${isFullscreen ? 'pv-panel--fullscreen' : ''}`}>
       <div className="panel-header">
-        <span className="badge badge-purple">◉ Selene</span>
+        <span className="badge badge-purple">Selene</span>
         <span className="panel-name">selene_sim.run_shots()</span>
         {!loading && (
           <div className="panel-actions">
@@ -230,7 +230,7 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
         <SeleneSkeleton />
       ) : empty ? (
         <div className="panel-empty">
-          <span className="panel-empty-icon" style={{ color: 'var(--purple)' }}>◉</span>
+          <span className="panel-empty-icon" style={{ color: 'var(--purple)' }}></span>
           <p>Run the pipeline to simulate with Selene</p>
         </div>
       ) : showJson ? (

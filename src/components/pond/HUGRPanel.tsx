@@ -158,7 +158,7 @@ export default function HUGRPanel({ nodes, edges, json, isActive, loading, empty
     <>
       <div className={`pv-panel ${isActive ? 'pv-panel--active pv-panel--blue' : ''} ${isFullscreen ? 'pv-panel--fullscreen' : ''}`}>
       <div className="panel-header">
-        <span className="badge badge-blue">◈ HUGR IR</span>
+        <span className="badge badge-blue">HUGR IR</span>
         <span className="panel-name">module.compile()</span>
         {!loading && (
           <div className="panel-actions">
@@ -184,7 +184,7 @@ export default function HUGRPanel({ nodes, edges, json, isActive, loading, empty
         <HUGRSkeleton />
       ) : empty ? (
         <div className="panel-empty">
-          <span className="panel-empty-icon" style={{ color: 'var(--blue)' }}>◈</span>
+          <span className="panel-empty-icon" style={{ color: 'var(--blue)' }}></span>
           <p>Run the pipeline to generate the HUGR IR graph</p>
         </div>
       ) : view === 'graph' ? (

@@ -16,10 +16,10 @@ const STAGES = ['guppy', 'hugr', 'tket', 'selene'] as const;
 type Stage = typeof STAGES[number];
 
 const STAGE_META: Record<Stage, { label: string; icon: string; color: string }> = {
-  guppy:  { label: 'Guppy',   icon: '⬡', color: '#1a6b4a' },
-  hugr:   { label: 'HUGR IR', icon: '◈', color: '#4a80c8' },
-  tket:   { label: 'TKET',    icon: '◻', color: '#c84040' },
-  selene: { label: 'Selene',  icon: '◉', color: '#a040c8' },
+  guppy:  { label: 'Guppy',   icon: 'G', color: '#1a6b4a' },
+  hugr:   { label: 'HUGR IR', icon: 'H', color: '#4a80c8' },
+  tket:   { label: 'TKET',    icon: 'T', color: '#c84040' },
+  selene: { label: 'Selene',  icon: 'S', color: '#a040c8' },
 };
 
 const FLOW_LABELS = ['compile', 'lower', 'emulate'];
