@@ -13,6 +13,7 @@ const currentPath = Astro.url.pathname;
     <a href={`${base}notes`} class={currentPath.startsWith(`${base}notes`) ? 'active' : ''}>Notes</a>
     <a href={`${base}pull-requests`} class={currentPath.startsWith(`${base}pull-requests`) ? 'active' : ''}>Pull Requests</a>
     <a href={`${base}log`} class={currentPath.startsWith(`${base}log`) ? 'active' : ''}>Log</a>
+    <a href={`${base}pond`} class={currentPath.startsWith(`${base}pond`) ? 'active' : ''}>Pond</a>
     <a href={`${base}about`} class={currentPath === `${base}about` ? 'active' : ''}>About</a>
   </nav>
 
@@ -211,6 +212,7 @@ const currentPath = Astro.url.pathname;
     nav.open a:nth-child(3) { animation-delay: 0.18s; }
     nav.open a:nth-child(4) { animation-delay: 0.24s; }
     nav.open a:nth-child(5) { animation-delay: 0.30s; }
+    nav.open a:nth-child(6) { animation-delay: 0.36s; }
 
     @keyframes itemSlide {
       from { opacity: 0; transform: translateX(-8px); }
