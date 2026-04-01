@@ -80,18 +80,28 @@ export const PROGRAMS: Record<string, Program> = {
   bell: {
     name: 'Bell State',
     description: 'Maximally entangled 2-qubit state',
-    guppy: `from guppylang import guppy, qubit
-from guppylang.std.quantum import h, cx, measure
-from selene_client import selene_sim
+    guppy: `# Python host
+from guppylang import guppy
+
+# Quantum kernel
+@guppy
+def bell() -> tuple[qubit, qubit]:
+    q0, q1 = qubit(), qubit()
+    h(q0)
+    cx(q0, q1)
+    return q0, q1
 
 @guppy
-def bell_pair(q1: qubit, q2: qubit) -> tuple[bool, bool]:
-    h(q1)
-    cx(q1, q2)
-    return measure(q1), measure(q2)
+def main() -> None:
+    q0, q1 = bell()
+    c0 = measure(q0)
+    c1 = measure(q1)
 
-hugr = bell_pair.compile()
-results = selene_sim.run_shots(hugr, shots=200)`,
+# Compile
+hugr = main.compile()
+
+# Run
+main.emulator(n_qubits=2).run()`,
 
     hugr: {
       nodes: [
@@ -192,19 +202,30 @@ results = selene_sim.run_shots(hugr, shots=200)`,
   ghz: {
     name: 'GHZ State',
     description: '3-qubit maximally entangled',
-    guppy: `from guppylang import guppy, qubit
-from guppylang.std.quantum import h, cx, measure
-from selene_client import selene_sim
+    guppy: `# Python host
+from guppylang import guppy
+
+# Quantum kernel
+@guppy
+def ghz() -> tuple[qubit, qubit, qubit]:
+    q0, q1, q2 = qubit(), qubit(), qubit()
+    h(q0)
+    cx(q0, q1)
+    cx(q0, q2)
+    return q0, q1, q2
 
 @guppy
-def ghz3(q1: qubit, q2: qubit, q3: qubit) -> tuple[bool, bool, bool]:
-    h(q1)
-    cx(q1, q2)
-    cx(q1, q3)
-    return measure(q1), measure(q2), measure(q3)
+def main() -> None:
+    q0, q1, q2 = ghz()
+    c0 = measure(q0)
+    c1 = measure(q1)
+    c2 = measure(q2)
 
-hugr = ghz3.compile()
-results = selene_sim.run_shots(hugr, shots=200)`,
+# Compile
+hugr = main.compile()
+
+# Run
+main.emulator(n_qubits=3).run()`,
 
     hugr: {
       nodes: [
@@ -301,20 +322,30 @@ results = selene_sim.run_shots(hugr, shots=200)`,
   teleport: {
     name: 'Teleport',
     description: 'Quantum state teleportation protocol',
-    guppy: `from guppylang import guppy, qubit
-from guppylang.std.quantum import h, cx, measure
-from selene_client import selene_sim
+    guppy: `# Python host
+from guppylang import guppy
 
+# Quantum kernel
 @guppy
-def teleport(msg: qubit, alice: qubit, bob: qubit) -> tuple[bool, bool, bool]:
+def teleport(msg: qubit, alice: qubit, bob: qubit) -> None:
     h(alice)        # prepare Bell pair
     cx(alice, bob)  # entangle alice & bob
     cx(msg, alice)  # entangle msg with pair
     h(msg)          # complete Bell measurement
-    return measure(msg), measure(alice), measure(bob)
 
-hugr = teleport.compile()
-results = selene_sim.run_shots(hugr, shots=200)`,
+@guppy
+def main() -> None:
+    msg, alice, bob = qubit(), qubit(), qubit()
+    teleport(msg, alice, bob)
+    c0 = measure(msg)
+    c1 = measure(alice)
+    c2 = measure(bob)
+
+# Compile
+hugr = main.compile()
+
+# Run
+main.emulator(n_qubits=3).run()`,
 
     hugr: {
       nodes: [
