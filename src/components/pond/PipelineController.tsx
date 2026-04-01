@@ -114,9 +114,9 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (data.success && data.hugr_json) {
-          console.log('[HUGR response]', data.hugr_json);
-          console.log('[TKET response]', data.tket);
-          console.log('[Selene response]', data.selene);
+          //console.log('[HUGR response]', data.hugr_json);
+          //console.log('[TKET response]', data.tket);
+          //console.log('[Selene response]', data.selene);
           const key = programKey;
           setProgramResults(prev => ({
             ...prev,
@@ -266,13 +266,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         );
       })()}
 
-      {/* Footer */}
-      <div className="pc-footer">
-        {LIVE_BACKEND
-          ? <><span className="pc-live-dot" />Connected to {BACKEND_URL}</>
-          : <span>Live backend disabled — set PUBLIC_LIVE_BACKEND=true to connect</span>
-        }
-      </div>
+     
 
       <style>{`
         .pc-topbar { background:var(--paper); border-bottom:1px solid #dfdddb; padding:12px 20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }

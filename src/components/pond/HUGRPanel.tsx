@@ -159,7 +159,7 @@ export default function HUGRPanel({ nodes, edges, json, isActive, loading, empty
       <div className={`pv-panel ${isActive ? 'pv-panel--active pv-panel--blue' : ''} ${isFullscreen ? 'pv-panel--fullscreen' : ''}`}>
       <div className="panel-header">
         <span className="badge badge-blue">HUGR IR</span>
-        <span className="panel-name">module.compile()</span>
+        <span className="panel-name">main.compile()</span>
         {!loading && (
           <div className="panel-actions">
             <button
