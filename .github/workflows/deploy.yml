@@ -31,6 +31,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          PUBLIC_LIVE_BACKEND: ${{ secrets.PUBLIC_LIVE_BACKEND }}
+          PUBLIC_BACKEND_URL: ${{ secrets.PUBLIC_BACKEND_URL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
