@@ -7,14 +7,16 @@ type SeleneData = Program['selene'];
 type TKETData   = Program['tket'];
 
 interface Props {
-  data:             SeleneData;
-  tket:             TKETData;
-  stateStep:        number;
-  running:          boolean;
-  done:             boolean;
-  isActive?:        boolean;
-  loading?:         boolean;
-  empty?:           boolean;
+  data:                  SeleneData;
+  tket:                  TKETData;
+  stateStep:             number;
+  running:               boolean;
+  done:                  boolean;
+  isActive?:             boolean;
+  loading?:              boolean;
+  empty?:                boolean;
+  isFullscreen?:         boolean;
+  onFullscreenToggle?:   () => void;
 }
 
 function SeleneSkeleton() {
@@ -190,11 +192,23 @@ function ShotResults({ data, running, done }: {
   );
 }
 
-export default function SelenePanel({ data, tket, stateStep, running, done, isActive, loading, empty }: Props) {
+const ExpandIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+    <path d="M1 5V1h4M8 1h4v4M12 8v4H8M5 12H1V8"/>
+  </svg>
+);
+const CollapseIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+    <path d="M5 1v4H1M12 5H8V1M8 12V8h4M1 8h4v4"/>
+  </svg>
+);
+
+export default function SelenePanel({ data, tket, stateStep, running, done, isActive, loading, empty, isFullscreen, onFullscreenToggle }: Props) {
   const [showJson, setShowJson] = useState(false);
 
   return (
-    <div className={`pv-panel ${isActive ? 'pv-panel--active pv-panel--purple' : ''}`}>
+    <>
+      <div className={`pv-panel ${isActive ? 'pv-panel--active pv-panel--purple' : ''} ${isFullscreen ? 'pv-panel--fullscreen' : ''}`}>
       <div className="panel-header">
         <span className="badge badge-purple">◉ Selene</span>
         <span className="panel-name">selene_sim.run_shots()</span>
@@ -206,6 +220,10 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
               onClick={() => setShowJson(true)}>json</button>
           </div>
         )}
+        <button className="panel-fs-btn" onClick={onFullscreenToggle}
+          title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}>
+          {isFullscreen ? <CollapseIcon /> : <ExpandIcon />}
+        </button>
       </div>
 
       {loading ? (
@@ -340,5 +358,6 @@ export default function SelenePanel({ data, tket, stateStep, running, done, isAc
         }
       `}</style>
     </div>
+    </>
   );
 }

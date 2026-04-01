@@ -44,6 +44,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
   const [seleneDone,  setSeleneDone]  = useState(false);
   const [shots,          setShots]          = useState(200);
   const [fetching,       setFetching]       = useState(false);
+  const [fullscreenPanel, setFullscreenPanel] = useState<string | null>(null);
   const [compileError,   setCompileError]   = useState<string | null>(null);
   const [programResults, setProgramResults] = useState<Record<string, {
     hugrJson:   string;
@@ -63,6 +64,7 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
 
 
   const clearTimer = () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  const toggleFullscreen = (key: string) => setFullscreenPanel(prev => prev === key ? null : key);
 
   const resetPipeline = useCallback(() => {
     clearTimer();
@@ -234,22 +236,31 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
       {/* Four-panel grid */}
       {(() => {
         const r = programResults[programKey] ?? null;
+        const cellCls = (key: string) =>
+          `pc-grid-cell${fullscreenPanel === key ? ' pc-grid-cell--fs' : fullscreenPanel !== null ? ' pc-grid-cell--hidden' : ''}`;
         return (
           <div className="pc-grid">
-            <GuppyPanelReact code={prog.guppy} name={prog.name} description={prog.description} isActive={activeIdx === 0}/>
-            <div style={{ opacity: reachedIdx >= 1 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
+            <div className={cellCls('guppy')}>
+              <GuppyPanelReact code={prog.guppy} name={prog.name} description={prog.description}
+                isActive={activeIdx === 0}
+                isFullscreen={fullscreenPanel === 'guppy'} onFullscreenToggle={() => toggleFullscreen('guppy')}/>
+            </div>
+            <div className={cellCls('hugr')} style={{ opacity: reachedIdx >= 1 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
               <HUGRPanel nodes={prog.hugr.nodes} edges={prog.hugr.edges}
                 json={r?.hugrJson ?? prog.hugr.json} isActive={activeIdx === 1}
-                loading={fetching || (running && reachedIdx < 1)} empty={!r && !running}/>
+                loading={fetching || (running && reachedIdx < 1)} empty={!r && !running}
+                isFullscreen={fullscreenPanel === 'hugr'} onFullscreenToggle={() => toggleFullscreen('hugr')}/>
             </div>
-            <div style={{ opacity: reachedIdx >= 2 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
+            <div className={cellCls('tket')} style={{ opacity: reachedIdx >= 2 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
               <TKETPanel data={r?.tketData ?? prog.tket} isActive={activeIdx === 2}
-                loading={fetching || (running && reachedIdx < 2)} empty={!r && !running}/>
+                loading={fetching || (running && reachedIdx < 2)} empty={!r && !running}
+                isFullscreen={fullscreenPanel === 'tket'} onFullscreenToggle={() => toggleFullscreen('tket')}/>
             </div>
-            <div style={{ opacity: reachedIdx >= 3 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
+            <div className={cellCls('selene')} style={{ opacity: reachedIdx >= 3 ? 1 : 0.35, transition: 'opacity 0.5s' }}>
               <SelenePanel data={r?.seleneData ?? prog.selene} tket={r?.tketData ?? prog.tket}
                 stateStep={stateStep} running={seleneRun && !seleneDone} done={seleneDone}
-                isActive={activeIdx === 3} loading={fetching || (running && reachedIdx < 3)} empty={!r && !running}/>
+                isActive={activeIdx === 3} loading={fetching || (running && reachedIdx < 3)} empty={!r && !running}
+                isFullscreen={fullscreenPanel === 'selene'} onFullscreenToggle={() => toggleFullscreen('selene')}/>
             </div>
           </div>
         );
@@ -304,7 +315,9 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
 
 
 .pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:18px 20px 0; }
-        .pc-grid > * { min-width: 0; }
+        .pc-grid-cell { min-width:0; }
+        .pc-grid-cell--fs { grid-column:1/-1; grid-row:1/-1; z-index:2; }
+        .pc-grid-cell--hidden { display:none; }
 
         .pv-panel {
           background:#fff;
@@ -319,6 +332,9 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
           transform: translateY(-1px);
         }
         .pv-panel--green.pv-panel--active  { border-color:var(--green);  box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--green), 0 8px 36px color-mix(in srgb,var(--green) 16%,transparent); }
+        .pv-panel--fullscreen { min-height:70vh; overflow:auto; transform:none !important; }
+        .panel-fs-btn { background:none; border:none; cursor:pointer; color:var(--muted); padding:3px 5px; border-radius:5px; line-height:1; display:flex; align-items:center; transition:color 0.12s, background 0.12s; }
+        .panel-fs-btn:hover { color:var(--text); background:rgba(0,0,0,0.06); }
         .pv-panel--blue.pv-panel--active   { border-color:var(--blue);   box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--blue),  0 8px 36px color-mix(in srgb,var(--blue)  16%,transparent); }
         .pv-panel--red.pv-panel--active    { border-color:var(--red);    box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--red),   0 8px 36px color-mix(in srgb,var(--red)   16%,transparent); }
         .pv-panel--purple.pv-panel--active { border-color:var(--purple); box-shadow:0 4px 12px rgba(0,0,0,0.07), 0 0 0 1px var(--purple),0 8px 36px color-mix(in srgb,var(--purple) 16%,transparent); }
