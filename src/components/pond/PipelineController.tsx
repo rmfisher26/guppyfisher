@@ -383,7 +383,21 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         @keyframes superpos { from{ box-shadow:0 0 0 0 #c8a04020; } to{ box-shadow:0 0 12px 4px #c8a04040; } }
         @keyframes entangle { 0%,100%{ box-shadow:0 0 0 0 #4a80c820; } 50%{ box-shadow:0 0 14px 4px #4a80c840; } }
 
-        @media(max-width:720px) { .pc-grid{grid-template-columns:1fr;} .pc-kbd-hint{display:none;} }
+        @media(max-width:720px) {
+        .pc-grid{grid-template-columns:1fr;}
+        .pc-stages{overflow-x:auto;min-width:0;padding:10px 6px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+        .pc-stages::-webkit-scrollbar{display:none;}
+        .pc-stage-group{flex:1;min-width:60px;}
+        .pc-stage-group:last-child{min-width:0;}
+        .pc-node{padding:4px 2px;min-width:0;}
+        .pc-node-ring{width:28px;height:28px;}
+        .pc-node-icon{font-size:12px;}
+        .pc-node-label{font-size:8px;white-space:normal;text-align:center;line-height:1.2;max-width:60px;overflow:hidden;}
+        .pc-node-status{display:none;}
+        .pc-track{margin-bottom:16px;padding:0 2px;min-width:20px;}
+        .pc-track-label{display:none;}
+        .pc-kbd-hint{display:none;}
+      }
       `}</style>
     </>
   );
