@@ -9,21 +9,16 @@ prRef: "PR #1551"
 prType: fix
 ---
 
-Today I want to share a fix I contributed to <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a>'s Guppy that went deeper into the compiler than anything I'd touched before.
+Continuing my work on Quantinuum's Guppy: I fixed a bug where the compiler silently accepted invalid quantum programs.
 
-**The problem:** Guppy's `with` modifier blocks — used to apply quantum operations like `dagger`, `control`, and `power` — would silently ignore outer modifier constraints when nested. Code that should have raised unitary violation errors compiled without complaint. This was a genuine correctness bug: programs that were semantically invalid were passing through the compiler as if they were fine.
+Guppy lets developers apply modifiers to blocks of quantum code — like making an operation conditional, reversing a circuit, or repeating it. Functions declare which modifiers they support, and the compiler should reject anything that violates those rules.
 
-**The root cause:** `CFGBuilder.visit_With` was creating inner CFGs without passing accumulated modifier flags from outer blocks. Each nested scope started fresh, with no awareness of the modifiers already in effect above it. There was an existing FIXME patch attempting to address this, but it was applied too late in the compilation pipeline and didn't handle recursive nesting at all.
+The bug: when modifier blocks were nested inside each other, the compiler only checked the innermost block's rules and forgot about everything outside it. As a result, invalid code compiled without any error or warning.
 
-**The fix:** PR #1551 involved three architectural changes:
+In PR #1551, I fixed this by ensuring the compiler carries the full set of active rules into every nested block — so constraints are never lost, no matter how deep the nesting goes. 
 
-- **A new `Modifiers` class** in `nodes.py` — a dedicated structure that collects dagger, control, and power modifiers together, with a `flags()` method that derives the corresponding `UnitaryFlags`, handles dagger cancellation, and exposes consistent `has_<modifier>()` methods for querying modifier state.
-- **Refactored `visit_With`** in `cfg/builder.py` — now processes modifier objects before constructing inner CFGs and properly accumulates flags via `self.cfg.unitary_flags | modifiers.flags()`, so outer context is always propagated into nested scopes.
-- **Removal of the old workaround** — with the new approach in place, the incomplete FIXME patch was removed entirely rather than patched further.
- 
+Fixes like this are what I find most rewarding — making the tools developers rely on more trustworthy. It's my hope that this contribution helps Guppy programmers accelerate their work.
 
-The PR closes Issue #1324 and adds 14 integration tests covering nested combinations of dagger, control, and power modifiers, including triple-nesting and scenarios that previously compiled silently.
-
-Thanks to the maintainers at <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> for the patient and thorough review process.
+Thanks to the Guppy contributors at <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> for their collaboration and thoughtful reviews.
 
 For more technical details, refer to <a href="https://github.com/Quantinuum/guppylang/pull/1551" target="_blank" rel="noopener">PR #1551</a>.
