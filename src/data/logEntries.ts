@@ -25,6 +25,7 @@ export const entries: LogWeek[] = [
         date: 'Wed Apr 15',
         items: [
           { type: 'video', label: 'Video', title: 'A visit to Quantinuum\'s Reimei quantum computer at Riken\'s facility in Wako, Japan', body: null, link: 'https://www.youtube.com/watch?v=FSMe1RtnA1Y', linkLabel: 'watch' },
+          { type: 'pr', label: 'PR', title: 'PR #1651 perf: std.collections.Queue.pop constant time instead of linear time', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1651', linkLabel: 'view PR' },
         ],
       },{
         date: 'Tue Apr 14',
