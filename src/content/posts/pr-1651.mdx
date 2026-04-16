@@ -1,0 +1,26 @@
+---
+title: "PR #1651: Optimizing Queue Pop Performance"
+description: "Replaced the linear-time std.collections.Queue.pop with a circular-buffer implementation that provides constant-time push, pop, and peek operations."
+series: pull-requests
+seriesNumber: 13
+pubDate: 2026-04-14
+readingTime: "3 min"
+prRef: "PR #1651"
+prType: performance
+---
+
+Continuing my work on Quantinuum's Guppy: I improved the performance of the standard library's Queue data structure.
+
+Guppy's `std.collections.Queue` provides a fixed-capacity queue for quantum and classical programs. The original implementation used a linear-time algorithm for `pop` operations — meaning performance degraded as the queue grew larger.
+
+In PR #1651, I replaced this with a circular-buffer implementation that delivers constant-time performance for `push`, `pop`, and `peek` operations. The key insight: track the start and end positions in the buffer using modular arithmetic, so elements wrap around when reaching the end.
+
+The implementation required careful handling of edge cases. A circular buffer with only two pointers can't distinguish between completely full and completely empty states. After exploring this approach with reviewer feedback, the final solution uses a dedicated `size` property to track the queue length — ensuring the queue can store its full declared capacity while maintaining O(1) operations.
+
+The performance improvement is significant: benchmark tests showed the push-pop benchmark improved from ~623ms to ~426ms — roughly 32% faster.
+
+Performance optimizations like this matter because they let developers work with larger data structures without worrying about hidden performance costs. It's satisfying when a well-known algorithmic pattern solves a real-world bottleneck.
+
+Thanks to the Guppy contributors at <a href="https://www.quantinuum.com/" target="_blank" rel="noopener">Quantinuum</a> for their collaboration and thoughtful reviews.
+
+For more technical details, refer to <a href="https://github.com/Quantinuum/guppylang/pull/1651" target="_blank" rel="noopener">PR #1651</a>.
