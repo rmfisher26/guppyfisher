@@ -63,6 +63,7 @@ body::before {
 .pr-badge--feature       { background: rgba(0,200,150,0.15);  color: #30a08e; }
 .pr-badge--fix           { background: rgba(255,92,58,0.15);  color: #ff5c3a; }
 .pr-badge--documentation { background: rgba(96,165,250,0.15); color: #60a5fa; }
+.pr-badge--performance   { background: rgba(167,139,250,0.15); color: #a78bfa; }
 
 /* Eyebrow label — used on about, notes, pull-requests pages */
 .eyebrow {

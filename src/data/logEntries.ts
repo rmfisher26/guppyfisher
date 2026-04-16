@@ -19,6 +19,24 @@ export interface LogWeek {
 
 export const entries: LogWeek[] = [
   {
+    week: 'Week of Apr 13, 2026',
+    days: [
+       {
+        date: 'Wed Apr 15',
+        items: [
+          { type: 'video', label: 'Video', title: 'A visit to Quantinuum\'s Reimei quantum computer at Riken\'s facility in Wako, Japan', body: null, link: 'https://www.youtube.com/watch?v=FSMe1RtnA1Y', linkLabel: 'watch' },
+          { type: 'pr', label: 'PR', title: 'PR #1651 perf: std.collections.Queue.pop constant time instead of linear time', body: null, link: 'https://github.com/Quantinuum/guppylang/pull/1651', linkLabel: 'view PR' },
+        ],
+      },{
+        date: 'Tue Apr 14',
+        items: [
+          { type: 'webinar', label: 'Webinar', title: 'NVIDIA Quantum Day: AI for Applications: Unlocking Quantum Algorithms at Scale (Steve Clark, Head of AI, Quantinuum)', body: null, link: "https://www.nvidia.com/en-us/events/quantum-day/", linkLabel: null },
+        ],
+      },
+     
+    ],
+  },
+  {
     week: 'Week of Mar 23, 2026',
     days: [
       {
