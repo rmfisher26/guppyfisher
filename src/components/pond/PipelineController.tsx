@@ -114,9 +114,9 @@ export default function PipelineController({ initialProgram = 'bell' }: Props) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (data.success && data.hugr_json) {
-          //console.log('[HUGR response]', data.hugr_json);
-          //console.log('[TKET response]', data.tket);
-          //console.log('[Selene response]', data.selene);
+          console.log('[HUGR response]', data.hugr_json);
+          console.log('[TKET response]', data.tket);
+          console.log('[Selene response]', data.selene);
           const key = programKey;
           setProgramResults(prev => ({
             ...prev,

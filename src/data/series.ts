@@ -3,4 +3,5 @@ export const seriesLabel: Record<string, string> = {
   compiler:        'Series 2 · Compiler Internals',
   'deep-dives':    'Series 3 · Source Deep Dives',
   'pull-requests': 'Pull Requests',
+  pond:            'Series 4 · Guppyfisher Pond',
 };

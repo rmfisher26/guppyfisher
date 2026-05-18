@@ -5,7 +5,7 @@ const posts = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    series: z.enum(['concepts', 'compiler', 'deep-dives', 'pull-requests']),
+    series: z.enum(['concepts', 'compiler', 'deep-dives', 'pull-requests', 'pond']),
     seriesNumber: z.number(),           // position within the series
     pubDate: z.coerce.date(),
     readingTime: z.string(),            // e.g. "12 min"

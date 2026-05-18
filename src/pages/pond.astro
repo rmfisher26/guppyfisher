@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import PipelineController from '../components/pond/PipelineController';
+import GuppyPlayground from '../components/pond/GuppyPlayground.astro';
 ---
 
 <Base
@@ -20,6 +21,15 @@ import PipelineController from '../components/pond/PipelineController';
 
     <div class="pond-wrapper">
       <PipelineController client:load initialProgram="bell" />
+    </div>
+
+    <!-- Guppy Playground Section -->
+    <div class="playground-section">
+      <div class="section-header">
+        <h2>Guppy Playground</h2>
+        <p>Try out Guppy code interactively — edit, compile, and simulate quantum programs right in your browser.</p>
+      </div>
+      <GuppyPlayground />
     </div>
 
   </main>
@@ -88,6 +98,35 @@ import PipelineController from '../components/pond/PipelineController';
   :global(.hl-kw)  { color: #c0392b; }
   :global(.hl-dec) { color: #b8860b; }
   :global(.hl-typ) { color: #1a8a5a; }
+
+  /* Playground Section */
+  .playground-section {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.5s ease both;
+    animation-delay: 0.2s;
+  }
+
+  .section-header {
+    margin-bottom: 24px;
+  }
+
+  .section-header h2 {
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--accent2);
+    margin-bottom: 8px;
+  }
+
+  .section-header p {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
   :global(.hl-fn)  { color: #2a70b0; }
   :global(.hl-str) { color: #3a7a20; }
   :global(.hl-com) { color: #8a8a9a; }

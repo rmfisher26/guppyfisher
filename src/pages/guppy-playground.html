@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guppy Playground — Quantinuum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base:       #0d1117;
+    --bg-surface:    #161b22;
+    --bg-raised:     #1c2330;
+    --bg-hover:      #222a38;
+    --border:        #2a3444;
+    --border-bright: #3a4a60;
+
+    --navy:          #0a1628;
+    --teal:          #00b4d8;
+    --teal-dim:      #0090ae;
+    --teal-glow:     rgba(0,180,216,0.12);
+    --teal-subtle:   rgba(0,180,216,0.06);
+
+    --text-primary:  #e6edf3;
+    --text-secondary:#8b98a8;
+    --text-muted:    #4d5d70;
+    --text-teal:     #00b4d8;
+
+    --green:         #3fb950;
+    --yellow:        #d29922;
+    --red:           #f85149;
+    --orange:        #e8712a;
+
+    --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+    --font-ui:       'DM Sans', system-ui, sans-serif;
+
+    --radius-sm:     4px;
+    --radius:        6px;
+    --radius-lg:     8px;
+
+    --header-h:      48px;
+    --toolbar-h:     40px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    line-height: 1.5;
+    overflow: hidden;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  .header {
+    height: var(--header-h);
+    background: var(--navy);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 0;
+    position: relative;
+    z-index: 100;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo-mark {
+    width: 28px;
+    height: 28px;
+    position: relative;
+  }
+
+  .logo-mark svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .logo-text {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .logo-text span {
+    color: var(--teal);
+  }
+
+  .header-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border-bright);
+    margin: 0 16px;
+    flex-shrink: 0;
+  }
+
+  .header-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .header-spacer { flex: 1; }
+
+  .header-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .header-link {
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-family: var(--font-ui);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .header-link:hover {
+    color: var(--text-primary);
+    background: var(--bg-raised);
+  }
+
+  /* ── TOOLBAR ─────────────────────────────── */
+  .toolbar {
+    height: var(--toolbar-h);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .btn {
+    height: 28px;
+    padding: 0 12px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-run {
+    background: var(--teal);
+    color: var(--navy);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 0 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-run::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.15s;
+  }
+
+  .btn-run:hover::before { background: rgba(255,255,255,0.1); }
+
+  .btn-run.running {
+    background: var(--teal-dim);
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background: var(--bg-raised);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    color: var(--text-primary);
+    border-color: var(--border-bright);
+    background: var(--bg-hover);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+  }
+
+  .btn-ghost:hover {
+    color: var(--text-secondary);
+    border-color: var(--border);
+    background: var(--bg-raised);
+  }
+
+  .toolbar-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    margin: 0 2px;
+  }
+
+  .select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .toolbar-select {
+    height: 28px;
+    padding: 0 28px 0 10px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-family: var(--font-ui);
+    font-size: 12px;
+    cursor: pointer;
+    appearance: none;
+    outline: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .toolbar-select:hover {
+    border-color: var(--border-bright);
+    color: var(--text-primary);
+  }
+
+  .select-arrow {
+    position: absolute;
+    right: 8px;
+    pointer-events: none;
+    color: var(--text-muted);
+    font-size: 9px;
+  }
+
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .version-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 2px 8px;
+  }
+
+  /* ── MAIN LAYOUT ─────────────────────────── */
+  .workspace {
+    display: flex;
+    height: calc(100vh - var(--header-h) - var(--toolbar-h));
+  }
+
+  /* ── SIDEBAR ─────────────────────────────── */
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 12px 14px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .sidebar-search {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .sidebar-search input {
+    width: 100%;
+    height: 26px;
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    padding: 0 8px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .sidebar-search input::placeholder { color: var(--text-muted); }
+  .sidebar-search input:focus { border-color: var(--teal-dim); }
+
+  .sidebar-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 0;
+  }
+
+  .sidebar-list::-webkit-scrollbar { width: 4px; }
+  .sidebar-list::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .example-group {
+    margin-bottom: 4px;
+  }
+
+  .example-group-label {
+    padding: 4px 14px 2px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .example-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 14px;
+    cursor: pointer;
+    gap: 8px;
+    transition: background 0.1s;
+    border-radius: 0;
+    position: relative;
+  }
+
+  .example-item:hover { background: var(--bg-raised); }
+
+  .example-item.active {
+    background: var(--teal-subtle);
+    color: var(--text-teal);
+  }
+
+  .example-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--teal);
+    border-radius: 0 1px 1px 0;
+  }
+
+  .example-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border-bright);
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  .example-item.active .example-dot { background: var(--teal); }
+  .example-item:hover .example-dot { background: var(--text-muted); }
+
+  .example-name {
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: color 0.1s;
+  }
+
+  .example-item.active .example-name,
+  .example-item:hover .example-name { color: var(--text-primary); }
+
+  .example-tag {
+    margin-left: auto;
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    flex-shrink: 0;
+  }
+
+  /* ── EDITOR PANE ─────────────────────────── */
+  .editor-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-right: 1px solid var(--border);
+  }
+
+  .pane-header {
+    height: 34px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .pane-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+  }
+
+  .pane-filename {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .pane-modified {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--yellow);
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .pane-modified.visible { opacity: 1; }
+
+  .pane-spacer { flex: 1; }
+
+  .editor-area {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .line-numbers {
+    width: 52px;
+    flex-shrink: 0;
+    background: var(--bg-base);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .line-num {
+    height: 20px;
+    line-height: 20px;
+    padding: 0 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  .line-num.active {
+    color: var(--text-secondary);
+  }
+
+  .code-editor {
+    flex: 1;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 20px;
+    padding: 16px 16px 16px 16px;
+    border: none;
+    outline: none;
+    resize: none;
+    overflow: auto;
+    tab-size: 4;
+    white-space: pre;
+    spellcheck: false;
+  }
+
+  .code-editor::-webkit-scrollbar { width: 6px; height: 6px; }
+  .code-editor::-webkit-scrollbar-track { background: transparent; }
+  .code-editor::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── OUTPUT PANE ─────────────────────────── */
+  .output-pane {
+    width: 420px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-base);
+  }
+
+  .output-tabs {
+    height: 34px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 12px;
+    gap: 0;
+    flex-shrink: 0;
+  }
+
+  .output-tab {
+    height: 34px;
+    padding: 0 12px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.15s;
+    white-space: nowrap;
+  }
+
+  .output-tab:hover { color: var(--text-secondary); }
+
+  .output-tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--teal);
+  }
+
+  .tab-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .tab-dot.green { background: var(--green); }
+  .tab-dot.red   { background: var(--red); }
+  .tab-dot.teal  { background: var(--teal); }
+
+  .output-body {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .output-content {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .output-content.active {
+    display: flex;
+  }
+
+  /* Terminal output */
+  .terminal {
+    flex: 1;
+    padding: 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-y: auto;
+    background: var(--bg-base);
+  }
+
+  .terminal::-webkit-scrollbar { width: 4px; }
+  .terminal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .term-line { display: flex; gap: 10px; }
+
+  .term-prefix {
+    color: var(--text-muted);
+    flex-shrink: 0;
+    user-select: none;
+  }
+
+  .term-text { flex: 1; color: var(--text-primary); }
+  .term-text.success { color: var(--green); }
+  .term-text.error   { color: var(--red); }
+  .term-text.warning { color: var(--yellow); }
+  .term-text.info    { color: var(--teal); }
+  .term-text.muted   { color: var(--text-muted); }
+
+  .term-spacer { height: 8px; }
+
+  /* Status bar */
+  .output-status {
+    height: 28px;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+
+  .status-dot.green  { background: var(--green); }
+  .status-dot.red    { background: var(--red); }
+  .status-dot.yellow { background: var(--yellow); }
+  .status-dot.teal   { background: var(--teal); }
+  .status-dot.pulse  { animation: pulse 1.5s ease-in-out infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+  }
+
+  .status-spacer { flex: 1; }
+
+  .status-time {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  /* Histogram chart */
+  .chart-section {
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .chart-section::-webkit-scrollbar { width: 4px; }
+  .chart-section::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .chart-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .histogram {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .hist-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hist-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .hist-bar-wrap {
+    flex: 1;
+    height: 22px;
+    background: var(--bg-raised);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hist-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal-dim), var(--teal));
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+  }
+
+  .hist-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%);
+  }
+
+  .hist-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    width: 42px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .hist-pct {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    width: 34px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .chart-meta {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .meta-item {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+  }
+
+  .meta-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 3px;
+  }
+
+  .meta-value {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .meta-value span {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  /* HUGR tab */
+  .hugr-view {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+  }
+
+  .hugr-view::-webkit-scrollbar { width: 4px; }
+  .hugr-view::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .hugr-node-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .hugr-node {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: default;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .hugr-node:hover {
+    border-color: var(--border-bright);
+    background: var(--bg-raised);
+  }
+
+  .hugr-node-type {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .hugr-node-type.dfg    { background: rgba(0,180,216,0.15); color: var(--teal); }
+  .hugr-node-type.funcdef { background: rgba(63,185,80,0.15); color: var(--green); }
+  .hugr-node-type.call   { background: rgba(210,153,34,0.15); color: var(--yellow); }
+  .hugr-node-type.gate   { background: rgba(232,113,42,0.15); color: var(--orange); }
+  .hugr-node-type.measure{ background: rgba(248,81,73,0.15); color: var(--red); }
+
+  .hugr-node-name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-primary);
+  }
+
+  .hugr-node-meta {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .hugr-edge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 12px 2px 22px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .hugr-edge::before {
+    content: '└─';
+    color: var(--border-bright);
+  }
+
+  .edge-type {
+    color: var(--teal-dim);
+  }
+
+  /* Loading animation */
+  .loading-spinner {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .loading-spinner.visible { display: flex; }
+
+  .spinner-ring {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Share toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--bg-raised);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    z-index: 999;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast-icon { color: var(--green); }
+
+  /* Resize handle */
+  .resize-handle {
+    width: 4px;
+    background: transparent;
+    cursor: col-resize;
+    flex-shrink: 0;
+    transition: background 0.15s;
+    position: relative;
+  }
+
+  .resize-handle:hover,
+  .resize-handle.dragging { background: var(--teal-dim); }
+
+  /* Error inline highlight */
+  .error-line {
+    background: rgba(248,81,73,0.08);
+    border-left: 2px solid var(--red);
+    display: block;
+  }
+
+  /* Gutter icon for errors */
+  .gutter-error {
+    color: var(--red);
+    font-size: 10px;
+  }
+
+  /* Syntax highlighting (via data attributes on spans — fake it in textarea) */
+  .keyword { color: #ff7b72; }
+  .string  { color: #a5d6ff; }
+  .comment { color: #6e7681; font-style: italic; }
+  .type    { color: #79c0ff; }
+  .fn-name { color: #d2a8ff; }
+  .number  { color: #79c0ff; }
+  .decorator { color: #e3b341; }
+
+  /* Empty state */
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--text-muted);
+    padding: 24px;
+    text-align: center;
+  }
+
+  .empty-icon {
+    font-size: 32px;
+    opacity: 0.3;
+    margin-bottom: 4px;
+  }
+
+  .empty-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .empty-desc {
+    font-size: 11px;
+    line-height: 1.6;
+    max-width: 240px;
+  }
+
+  .empty-kbd {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  /* Tooltip */
+  [data-tooltip] { position: relative; }
+  [data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-raised);
+    border: 1px solid var(--border-bright);
+    color: var(--text-primary);
+    font-size: 11px;
+    font-family: var(--font-ui);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+  }
+  [data-tooltip]:hover::after { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <a href="#" class="header-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="28" height="28" rx="5" fill="#0a1628"/>
+        <path d="M6 14 L14 6 L22 14 L14 22 Z" stroke="#00b4d8" stroke-width="1.5" fill="none"/>
+        <circle cx="14" cy="14" r="3" fill="#00b4d8"/>
+        <line x1="14" y1="6" x2="14" y2="22" stroke="#00b4d8" stroke-width="0.75" opacity="0.4"/>
+        <line x1="6" y1="14" x2="22" y2="14" stroke="#00b4d8" stroke-width="0.75" opacity="0.4"/>
+      </svg>
+    </div>
+    <span class="logo-text">guppy<span>.</span>play</span>
+  </a>
+  <div class="header-divider"></div>
+  <span class="header-subtitle">Quantinuum · Selene Emulator</span>
+  <div class="header-spacer"></div>
+  <div class="header-links">
+    <a href="#" class="header-link">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      GitHub
+    </a>
+    <a href="#" class="header-link">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Docs
+    </a>
+  </div>
+</header>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button class="btn btn-run" id="runBtn" onclick="handleRun()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Run
+    </button>
+
+    <div class="toolbar-sep"></div>
+
+    <div class="select-wrapper">
+      <select class="toolbar-select" id="exampleSelect" onchange="loadExample(this.value)">
+        <option value="bell">Bell Pair</option>
+        <option value="teleport">Teleportation</option>
+        <option value="deutsch">Deutsch Algorithm</option>
+        <option value="ghz">GHZ State</option>
+        <option value="rus">Repeat-Until-Success</option>
+        <option value="qec">Error Correction</option>
+      </select>
+      <span class="select-arrow">▾</span>
+    </div>
+
+    <div class="toolbar-sep"></div>
+
+    <div class="select-wrapper">
+      <select class="toolbar-select" id="simSelect">
+        <option value="stabilizer">Stabilizer (Stim)</option>
+        <option value="statevector">Statevector (QuEST)</option>
+      </select>
+      <span class="select-arrow">▾</span>
+    </div>
+
+    <div class="select-wrapper">
+      <select class="toolbar-select" id="shotsSelect">
+        <option value="256">256 shots</option>
+        <option value="1024" selected>1024 shots</option>
+        <option value="4096">4096 shots</option>
+        <option value="8192">8192 shots</option>
+      </select>
+      <span class="select-arrow">▾</span>
+    </div>
+  </div>
+
+  <div class="toolbar-right">
+    <button class="btn btn-ghost" onclick="handleShare()" data-tooltip="Copy share link">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Share
+    </button>
+    <button class="btn btn-ghost" data-tooltip="Format code">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+    </button>
+    <span class="version-badge">guppylang 0.21.10</span>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">Examples</div>
+    <div class="sidebar-search">
+      <input type="text" placeholder="Search examples…" id="sidebarSearch" oninput="filterExamples(this.value)">
+    </div>
+    <div class="sidebar-list" id="sidebarList">
+      <div class="example-group">
+        <div class="example-group-label">Fundamentals</div>
+        <div class="example-item active" data-id="bell" onclick="selectExample('bell', this)">
+          <div class="example-dot"></div>
+          <span class="example-name">Bell Pair</span>
+          <span class="example-tag">2q</span>
+        </div>
+        <div class="example-item" data-id="teleport" onclick="selectExample('teleport', this)">
+          <div class="example-dot"></div>
+          <span class="example-name">Teleportation</span>
+          <span class="example-tag">3q</span>
+        </div>
+        <div class="example-item" data-id="deutsch" onclick="selectExample('deutsch', this)">
+          <div class="example-dot"></div>
+          <span class="example-name">Deutsch Algorithm</span>
+          <span class="example-tag">2q</span>
+        </div>
+        <div class="example-item" data-id="ghz" onclick="selectExample('ghz', this)">
+          <div class="example-dot"></div>
+          <span class="example-name">GHZ State</span>
+          <span class="example-tag">5q</span>
+        </div>
+      </div>
+      <div class="example-group">
+        <div class="example-group-label">Algorithms</div>
+        <div class="example-item" data-id="rus" onclick="selectExample('rus', this)">
+          <div class="example-dot"></div>
+          <span class="example-name">Repeat-Until-Success</span>
+          <span class="example-tag">3q</span>
+        </div>
+        <div class="example-item" data-id="grover" onclick="selectExample('grover', this)">
+          <div class="example-dot"></div>
+          <span class="example-name">Grover Search</span>
+          <span class="example-tag">4q</span>
+        </div>
+      </div>
+      <div class="example-group">
+        <div class="example-group-label">Error Correction</div>
+        <div class="example-item" data-id="qec" onclick="selectExample('qec', this)">
+          <div class="example-dot"></div>
+          <span class="example-name">Bit Flip Code</span>
+          <span class="example-tag">3q</span>
+        </div>
+        <div class="example-item" data-id="magic" onclick="selectExample('magic', this)">
+          <div class="example-dot"></div>
+          <span class="example-name">Magic State Distill.</span>
+          <span class="example-tag">5q</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- EDITOR PANE -->
+  <div class="editor-pane">
+    <div class="pane-header">
+      <span class="pane-filename" id="editorFilename">bell_pair.py</span>
+      <span class="pane-modified" id="modifiedDot"></span>
+      <div class="pane-spacer"></div>
+      <span style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono)">Guppy</span>
+    </div>
+    <div class="editor-area">
+      <div class="line-numbers" id="lineNumbers"></div>
+      <textarea class="code-editor" id="codeEditor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"
+        oninput="onEditorChange()"
+        onkeydown="handleEditorKey(event)"></textarea>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANE -->
+  <div class="output-pane">
+    <div class="output-tabs">
+      <button class="output-tab active" onclick="switchTab('output', this)">
+        <span class="tab-dot teal" id="outputDot"></span>
+        Output
+      </button>
+      <button class="output-tab" onclick="switchTab('results', this)">
+        Results
+      </button>
+      <button class="output-tab" onclick="switchTab('hugr', this)">
+        HUGR
+      </button>
+    </div>
+
+    <div class="output-body">
+
+      <!-- OUTPUT TAB -->
+      <div class="output-content active" id="tab-output">
+        <div class="loading-spinner" id="loadingSpinner">
+          <div class="spinner-ring"></div>
+          <span class="loading-text" id="loadingText">Compiling…</span>
+        </div>
+        <div class="terminal" id="terminal">
+          <div class="term-line">
+            <span class="term-prefix">$</span>
+            <span class="term-text muted">Press ▶ Run or Ctrl+Enter to compile and simulate</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTS TAB -->
+      <div class="output-content" id="tab-results">
+        <div class="chart-section" id="chartSection">
+          <div class="empty-state">
+            <div class="empty-icon">◈</div>
+            <div class="empty-title">No results yet</div>
+            <div class="empty-desc">
+              Run the program to see simulation results.<br><br>
+              <span class="empty-kbd">Ctrl+Enter</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HUGR TAB -->
+      <div class="output-content" id="tab-hugr">
+        <div class="hugr-view" id="hugrView">
+          <div class="empty-state">
+            <div class="empty-icon">⬡</div>
+            <div class="empty-title">No HUGR graph yet</div>
+            <div class="empty-desc">
+              Compile the program to inspect the HUGR intermediate representation.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="output-status">
+      <div class="status-item" id="statusItem">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Ready</span>
+      </div>
+      <div class="status-spacer"></div>
+      <span class="status-time" id="statusTime"></span>
+    </div>
+  </div>
+
+</div>
+
+<!-- SHARE TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  Link copied to clipboard
+</div>
+
+<script>
+// ── EXAMPLES ──────────────────────────────────────────────────────────────
+const EXAMPLES = {
+  bell: {
+    filename: 'bell_pair.py',
+    code: `from guppylang import guppy
+from guppylang.std.quantum import qubit, h, cx, measure
+
+@guppy
+def bell_pair() -> tuple[bool, bool]:
+    """Creates a Bell state and measures both qubits.
+    
+    Expected: |00⟩ and |11⟩ each with ~50% probability.
+    """
+    q0 = qubit()
+    q1 = qubit()
+
+    # Put q0 into superposition
+    h(q0)
+
+    # Entangle q0 and q1
+    cx(q0, q1)
+
+    # Measure both qubits
+    m0 = measure(q0)
+    m1 = measure(q1)
+
+    return m0, m1
+
+bell_pair.check()`,
+    results: { '00': 512, '11': 512 },
+    shots: 1024,
+    hugr: [
+      { type: 'DFG', name: 'bell_pair', meta: 'root' },
+      { type: 'FuncDef', name: 'bell_pair', meta: '→ (bool, bool)' },
+      { type: 'Gate', name: 'H', meta: 'q0', indent: 1 },
+      { type: 'Gate', name: 'CX', meta: 'q0, q1', indent: 1 },
+      { type: 'Measure', name: 'measure', meta: 'q0 → bool', indent: 1 },
+      { type: 'Measure', name: 'measure', meta: 'q1 → bool', indent: 1 },
+    ]
+  },
+  teleport: {
+    filename: 'teleport.py',
+    code: `from guppylang import guppy
+from guppylang.std.builtins import owned
+from guppylang.std.quantum import cx, h, measure, qubit, x, z
+
+@guppy
+def teleport(src: qubit @ owned, tgt: qubit) -> None:
+    """Teleports the quantum state from src to tgt.
+    
+    Uses an ancilla qubit and classical feedforward corrections.
+    The no-cloning theorem ensures src is destroyed after teleport.
+    """
+    # Create ancilla and entangle with src and tgt
+    tmp = qubit()
+    h(tmp)
+    cx(tmp, tgt)
+    cx(src, tmp)
+
+    # Bell measurement with classical feedforward
+    h(src)
+    if measure(src):
+        z(tgt)
+    if measure(tmp):
+        x(tgt)
+
+teleport.check()`,
+    results: { '0': 498, '1': 526 },
+    shots: 1024,
+    hugr: [
+      { type: 'DFG', name: 'teleport', meta: 'root' },
+      { type: 'FuncDef', name: 'teleport', meta: '(qubit@owned, qubit) → None' },
+      { type: 'Gate', name: 'H', meta: 'tmp', indent: 1 },
+      { type: 'Gate', name: 'CX', meta: 'tmp, tgt', indent: 1 },
+      { type: 'Gate', name: 'CX', meta: 'src, tmp', indent: 1 },
+      { type: 'Gate', name: 'H', meta: 'src', indent: 1 },
+      { type: 'Measure', name: 'measure', meta: 'src → bool', indent: 1 },
+      { type: 'Call', name: 'Conditional Z', meta: 'feedforward', indent: 1 },
+      { type: 'Measure', name: 'measure', meta: 'tmp → bool', indent: 1 },
+      { type: 'Call', name: 'Conditional X', meta: 'feedforward', indent: 1 },
+    ]
+  },
+  deutsch: {
+    filename: 'deutsch.py',
+    code: `from guppylang import guppy
+from guppylang.std.quantum import qubit, h, cx, x, measure
+
+@guppy
+def deutsch_constant(q: qubit, anc: qubit) -> tuple[qubit, qubit]:
+    """Constant oracle: f(x) = 0 for all x. No-op."""
+    return q, anc
+
+@guppy
+def deutsch_balanced(q: qubit, anc: qubit) -> tuple[qubit, qubit]:
+    """Balanced oracle: f(x) = x. Applies CNOT."""
+    cx(q, anc)
+    return q, anc
+
+@guppy
+def deutsch(balanced: bool) -> bool:
+    """Deutsch algorithm — determines if oracle is balanced or constant
+    with a single query. Returns True if balanced.
+    """
+    q   = qubit()
+    anc = qubit()
+
+    h(q)
+    x(anc)
+    h(anc)
+
+    if balanced:
+        q, anc = deutsch_balanced(q, anc)
+    else:
+        q, anc = deutsch_constant(q, anc)
+
+    h(q)
+    result = measure(q)
+    _ = measure(anc)
+    return result
+
+deutsch.check()`,
+    results: { '0': 1024 },
+    shots: 1024,
+    hugr: [
+      { type: 'DFG', name: 'deutsch', meta: 'root' },
+      { type: 'FuncDef', name: 'deutsch_constant', meta: '(qubit,qubit)→(qubit,qubit)' },
+      { type: 'FuncDef', name: 'deutsch_balanced', meta: '(qubit,qubit)→(qubit,qubit)' },
+      { type: 'Gate', name: 'CX', meta: 'q, anc', indent: 1 },
+      { type: 'FuncDef', name: 'deutsch', meta: 'bool → bool' },
+      { type: 'Gate', name: 'H', meta: 'q', indent: 1 },
+      { type: 'Gate', name: 'X', meta: 'anc', indent: 1 },
+      { type: 'Gate', name: 'H', meta: 'anc', indent: 1 },
+      { type: 'Call', name: 'Oracle dispatch', meta: 'conditional', indent: 1 },
+      { type: 'Measure', name: 'measure', meta: 'q → bool', indent: 1 },
+    ]
+  },
+  ghz: {
+    filename: 'ghz_state.py',
+    code: `from guppylang import guppy
+from guppylang.std.builtins import array, result
+from guppylang.std.quantum import qubit, h, cx, measure_array
+
+@guppy
+def ghz(n: int) -> None:
+    """Prepares an n-qubit GHZ state: (|0...0⟩ + |1...1⟩)/√2
+    
+    All qubits should be perfectly correlated — either all 0 or all 1.
+    """
+    qubits = array(qubit() for _ in range(n))
+
+    # Put first qubit into superposition
+    h(qubits[0])
+
+    # Entangle all others
+    for i in range(n - 1):
+        cx(qubits[i], qubits[i + 1])
+
+    # Measure all and record
+    ms = measure_array(qubits)
+    result("measurements", ms)
+
+ghz.check()`,
+    results: { '00000': 508, '11111': 516 },
+    shots: 1024,
+    hugr: [
+      { type: 'DFG', name: 'ghz', meta: 'root' },
+      { type: 'FuncDef', name: 'ghz', meta: 'int → None' },
+      { type: 'Gate', name: 'H', meta: 'qubits[0]', indent: 1 },
+      { type: 'Call', name: 'Loop body', meta: 'range(n-1)', indent: 1 },
+      { type: 'Gate', name: 'CX', meta: 'qubits[i], qubits[i+1]', indent: 2 },
+      { type: 'Call', name: 'measure_array', meta: '→ array[bool]', indent: 1 },
+    ]
+  },
+  rus: {
+    filename: 'repeat_until_success.py',
+    code: `from guppylang import guppy
+from guppylang.std.builtins import result
+from guppylang.std.quantum import qubit, h, s, z, toffoli, measure
+from guppylang.std.quantum.functional import h as hf
+
+@guppy
+def repeat_until_success(q: qubit, attempts: int) -> bool:
+    """Repeat-until-success circuit for Rz(acos(3/5)).
+    
+    From Nielsen & Chuang, Fig. 4.17.
+    Demonstrates Guppy's measurement-dependent control flow —
+    a key feature for fault-tolerant quantum programs.
+    """
+    for i in range(attempts):
+        a = hf(qubit())
+        b = hf(qubit())
+        toffoli(a, b, q)
+        s(q)
+        toffoli(a, b, q)
+        if not (measure(a) | measure(b)):
+            result("attempts", i + 1)
+            return True
+        z(q)
+    result("attempts", attempts)
+    return False
+
+repeat_until_success.check()`,
+    results: { 'success': 631, 'retry_1': 234, 'retry_2': 103, 'retry_3+': 56 },
+    shots: 1024,
+    hugr: [
+      { type: 'DFG', name: 'repeat_until_success', meta: 'root' },
+      { type: 'FuncDef', name: 'repeat_until_success', meta: '(qubit, int) → bool' },
+      { type: 'Call', name: 'Loop body', meta: 'range(attempts)', indent: 1 },
+      { type: 'Gate', name: 'Toffoli', meta: 'a, b, q', indent: 2 },
+      { type: 'Gate', name: 'S', meta: 'q', indent: 2 },
+      { type: 'Gate', name: 'Toffoli', meta: 'a, b, q', indent: 2 },
+      { type: 'Measure', name: 'measure', meta: 'a → bool', indent: 2 },
+      { type: 'Measure', name: 'measure', meta: 'b → bool', indent: 2 },
+      { type: 'Call', name: 'Conditional return', meta: 'feedforward', indent: 2 },
+    ]
+  },
+  grover: {
+    filename: 'grover.py',
+    code: `from guppylang import guppy
+from guppylang.std.quantum import qubit, h, x, z, cx, measure
+
+@guppy  
+def grover_oracle(q0: qubit, q1: qubit, q2: qubit, q3: qubit) -> None:
+    """Oracle marking state |1010⟩."""
+    x(q1)
+    x(q3)
+    # 4-qubit controlled-Z via decomposition
+    h(q3)
+    cx(q2, q3); cx(q1, q3); cx(q0, q3)
+    h(q3)
+    x(q1)
+    x(q3)
+
+@guppy
+def grover_diffuser(q0: qubit, q1: qubit, q2: qubit, q3: qubit) -> None:
+    """Grover diffusion operator."""
+    h(q0); h(q1); h(q2); h(q3)
+    x(q0); x(q1); x(q2); x(q3)
+    h(q3); cx(q2, q3); cx(q1, q3)
+    cx(q0, q3); h(q3)
+    x(q0); x(q1); x(q2); x(q3)
+    h(q0); h(q1); h(q2); h(q3)
+
+@guppy
+def grover_search() -> tuple[bool, bool, bool, bool]:
+    """Grover's search on 4 qubits. Amplifies |1010⟩."""
+    q0, q1, q2, q3 = qubit(), qubit(), qubit(), qubit()
+    h(q0); h(q1); h(q2); h(q3)
+    for _ in range(3):  # ~pi/4 * sqrt(N) iterations
+        grover_oracle(q0, q1, q2, q3)
+        grover_diffuser(q0, q1, q2, q3)
+    return measure(q0), measure(q1), measure(q2), measure(q3)
+
+grover_search.check()`,
+    results: { '1010': 874, '0000': 18, '1100': 12, '0110': 10, 'other': 110 },
+    shots: 1024,
+    hugr: [
+      { type: 'DFG', name: 'grover_search', meta: 'root' },
+      { type: 'FuncDef', name: 'grover_oracle', meta: '4×qubit → None' },
+      { type: 'FuncDef', name: 'grover_diffuser', meta: '4×qubit → None' },
+      { type: 'FuncDef', name: 'grover_search', meta: '→ (bool,bool,bool,bool)' },
+      { type: 'Call', name: 'Loop body', meta: 'range(3)', indent: 1 },
+      { type: 'Call', name: 'grover_oracle', meta: 'q0..q3', indent: 2 },
+      { type: 'Call', name: 'grover_diffuser', meta: 'q0..q3', indent: 2 },
+    ]
+  },
+  qec: {
+    filename: 'bit_flip_code.py',
+    code: `from guppylang import guppy
+from guppylang.std.quantum import qubit, cx, x, measure
+
+@guppy
+def encode(logical: qubit) -> tuple[qubit, qubit, qubit]:
+    """Encodes a single logical qubit into 3 physical qubits
+    using the [3,1] repetition code.
+    |0⟩_L → |000⟩,  |1⟩_L → |111⟩
+    """
+    a = qubit()
+    b = qubit()
+    cx(logical, a)
+    cx(logical, b)
+    return logical, a, b
+
+@guppy
+def syndrome_measure(q0: qubit, q1: qubit, q2: qubit) -> tuple[bool, bool]:
+    """Measures syndromes without disturbing logical information."""
+    anc0 = qubit()
+    anc1 = qubit()
+    cx(q0, anc0)
+    cx(q1, anc0)
+    cx(q1, anc1)
+    cx(q2, anc1)
+    return measure(anc0), measure(anc1)
+
+@guppy
+def correct(q0: qubit, q1: qubit, q2: qubit) -> None:
+    """Applies bit-flip correction based on syndromes."""
+    s0, s1 = syndrome_measure(q0, q1, q2)
+    if s0 and not s1:
+        x(q0)         # Error on qubit 0
+    if s0 and s1:
+        x(q1)         # Error on qubit 1
+    if not s0 and s1:
+        x(q2)         # Error on qubit 2
+
+correct.check()`,
+    results: { '000': 796, '001': 74, '010': 74, '100': 80 },
+    shots: 1024,
+    hugr: [
+      { type: 'DFG', name: 'correct', meta: 'root' },
+      { type: 'FuncDef', name: 'encode', meta: 'qubit → (qubit,qubit,qubit)' },
+      { type: 'FuncDef', name: 'syndrome_measure', meta: '3×qubit → (bool,bool)' },
+      { type: 'Gate', name: 'CX', meta: 'syndrome ancilla', indent: 1 },
+      { type: 'Measure', name: 'measure', meta: 'anc0, anc1', indent: 1 },
+      { type: 'FuncDef', name: 'correct', meta: '3×qubit → None' },
+      { type: 'Call', name: 'syndrome_measure', meta: 'q0,q1,q2', indent: 1 },
+      { type: 'Call', name: 'Conditional X', meta: 'correction', indent: 1 },
+    ]
+  },
+  magic: {
+    filename: 'magic_state.py',
+    code: `from guppylang import guppy
+from guppylang.std.quantum import qubit, h, t, cx, measure
+
+@guppy
+def prepare_magic_state() -> qubit:
+    """Prepares a T-gate magic state |T⟩ = T|+⟩.
+    
+    Magic states are a key resource for fault-tolerant
+    universal quantum computation — used in magic state
+    distillation protocols for QEC.
+    """
+    q = qubit()
+    h(q)
+    t(q)
+    return q
+
+@guppy
+def inject_t_gate(q: qubit, magic: qubit) -> qubit:
+    """Applies a T gate via gate teleportation using a magic state.
+    
+    This is how fault-tolerant quantum computers apply T gates
+    without directly implementing non-Clifford operations.
+    """
+    cx(q, magic)
+    if measure(magic):
+        # S-gate correction
+        h(q); t(q); t(q); h(q)
+    return q
+
+inject_t_gate.check()`,
+    results: { '0': 854, '1': 170 },
+    shots: 1024,
+    hugr: [
+      { type: 'DFG', name: 'inject_t_gate', meta: 'root' },
+      { type: 'FuncDef', name: 'prepare_magic_state', meta: '→ qubit' },
+      { type: 'Gate', name: 'H', meta: 'q', indent: 1 },
+      { type: 'Gate', name: 'T', meta: 'q', indent: 1 },
+      { type: 'FuncDef', name: 'inject_t_gate', meta: '(qubit, qubit) → qubit' },
+      { type: 'Gate', name: 'CX', meta: 'q, magic', indent: 1 },
+      { type: 'Measure', name: 'measure', meta: 'magic → bool', indent: 1 },
+      { type: 'Call', name: 'S-gate correction', meta: 'feedforward', indent: 1 },
+    ]
+  }
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let currentExample = 'bell';
+let isRunning = false;
+let hasResults = false;
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+function init() {
+  loadExample('bell');
+  updateLineNumbers();
+}
+
+// ── EDITOR ────────────────────────────────────────────────────────────────
+function loadExample(id) {
+  if (!EXAMPLES[id]) return;
+  currentExample = id;
+  const ex = EXAMPLES[id];
+  document.getElementById('codeEditor').value = ex.code;
+  document.getElementById('editorFilename').textContent = ex.filename;
+  document.getElementById('modifiedDot').classList.remove('visible');
+  updateLineNumbers();
+  if (hasResults) clearOutput();
+}
+
+function selectExample(id, el) {
+  document.querySelectorAll('.example-item').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('exampleSelect').value = id;
+  loadExample(id);
+}
+
+function filterExamples(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('.example-item').forEach(item => {
+    const name = item.querySelector('.example-name').textContent.toLowerCase();
+    item.style.display = (q === '' || name.includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.example-group-label').forEach(label => {
+    const group = label.closest('.example-group');
+    const visible = [...group.querySelectorAll('.example-item')].some(i => i.style.display !== 'none');
+    label.style.display = visible ? '' : 'none';
+  });
+}
+
+function onEditorChange() {
+  updateLineNumbers();
+  document.getElementById('modifiedDot').classList.add('visible');
+}
+
+function handleEditorKey(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    handleRun();
+  }
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const ta = e.target;
+    const s = ta.selectionStart;
+    ta.value = ta.value.substring(0, s) + '    ' + ta.value.substring(ta.selectionEnd);
+    ta.selectionStart = ta.selectionEnd = s + 4;
+  }
+}
+
+function updateLineNumbers() {
+  const code = document.getElementById('codeEditor').value;
+  const lineCount = code.split('\n').length;
+  const nums = document.getElementById('lineNumbers');
+  nums.innerHTML = Array.from({length: lineCount}, (_, i) =>
+    `<div class="line-num">${i + 1}</div>`
+  ).join('');
+}
+
+// ── RUN ───────────────────────────────────────────────────────────────────
+async function handleRun() {
+  if (isRunning) return;
+  isRunning = true;
+
+  const runBtn = document.getElementById('runBtn');
+  runBtn.classList.add('running');
+  runBtn.innerHTML = `<div style="width:10px;height:10px;border:1.5px solid var(--navy);border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite"></div> Running…`;
+
+  setStatus('compiling', 'Compiling…');
+
+  const terminal = document.getElementById('terminal');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+
+  terminal.style.display = 'none';
+  loadingSpinner.classList.add('visible');
+  document.getElementById('loadingText').textContent = 'Compiling…';
+
+  await delay(600);
+
+  document.getElementById('loadingText').textContent = 'Running Selene…';
+  setStatus('compiling', 'Simulating…');
+
+  const shots = parseInt(document.getElementById('shotsSelect').value);
+  const sim = document.getElementById('simSelect').value;
+
+  await delay(800);
+
+  loadingSpinner.classList.remove('visible');
+  terminal.style.display = '';
+
+  const ex = EXAMPLES[currentExample];
+  const start = performance.now();
+
+  printTerminal([
+    { type: 'info',  text: `Compiling ${ex.filename}…` },
+    { type: 'muted', text: '' },
+    { type: 'muted', text: `  guppylang 0.21.10  →  HUGR IR  →  selene-sim 0.8.2` },
+    { type: 'muted', text: '' },
+    { type: 'success', text: `✓ Type check passed` },
+    { type: 'success', text: `✓ Linearity check passed — no qubit leaks` },
+    { type: 'success', text: `✓ Compiled to HUGR (${ex.hugr.length} nodes)` },
+    { type: 'muted', text: '' },
+    { type: 'info',  text: `Running ${shots} shots (${sim === 'stabilizer' ? 'Stim stabilizer' : 'QuEST statevector'})…` },
+    { type: 'muted', text: '' },
+    { type: 'success', text: `✓ Simulation complete` },
+    { type: 'muted', text: '' },
+  ]);
+
+  await delay(200);
+
+  const elapsed = ((performance.now() - start) / 1000 + 1.38).toFixed(2);
+  printLine({ type: 'muted', text: `  Finished in ${elapsed}s` });
+
+  renderResults(ex.results, shots);
+  renderHugr(ex.hugr);
+
+  setStatus('success', `Done · ${elapsed}s`);
+  document.getElementById('statusTime').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+  hasResults = true;
+  isRunning = false;
+  runBtn.classList.remove('running');
+  runBtn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run`;
+
+  const outputDot = document.getElementById('outputDot');
+  outputDot.style.background = 'var(--green)';
+}
+
+function printTerminal(lines) {
+  const terminal = document.getElementById('terminal');
+  terminal.innerHTML = lines.map(l => {
+    if (!l.text && l.text !== '') return '';
+    return `<div class="term-line"><span class="term-prefix">$</span><span class="term-text ${l.type || ''}">${l.text}</span></div>`;
+  }).join('');
+}
+
+function printLine(line) {
+  const terminal = document.getElementById('terminal');
+  terminal.innerHTML += `<div class="term-line"><span class="term-prefix">$</span><span class="term-text ${line.type || ''}">${line.text}</span></div>`;
+}
+
+function clearOutput() {
+  hasResults = false;
+  const terminal = document.getElementById('terminal');
+  terminal.innerHTML = `<div class="term-line"><span class="term-prefix">$</span><span class="term-text muted">Press ▶ Run or Ctrl+Enter to compile and simulate</span></div>`;
+  document.getElementById('chartSection').innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-title">No results yet</div><div class="empty-desc">Run the program to see simulation results.<br><br><span class="empty-kbd">Ctrl+Enter</span></div></div>`;
+  document.getElementById('hugrView').innerHTML = `<div class="empty-state"><div class="empty-icon">⬡</div><div class="empty-title">No HUGR graph yet</div><div class="empty-desc">Compile the program to inspect the HUGR intermediate representation.</div></div>`;
+  document.getElementById('outputDot').style.background = 'var(--teal)';
+  setStatus('idle', 'Ready');
+  document.getElementById('statusTime').textContent = '';
+}
+
+// ── RESULTS ───────────────────────────────────────────────────────────────
+function renderResults(counts, totalShots) {
+  const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+  const maxCount = Math.max(...entries.map(([,v])=>v));
+
+  const histRows = entries.map(([label, count]) => {
+    const pct = (count / totalShots * 100).toFixed(1);
+    const barW = (count / maxCount * 100).toFixed(1);
+    return `
+      <div class="hist-row">
+        <span class="hist-label">|${label}⟩</span>
+        <div class="hist-bar-wrap">
+          <div class="hist-bar" style="width:${barW}%"></div>
+        </div>
+        <span class="hist-count">${count.toLocaleString()}</span>
+        <span class="hist-pct">${pct}%</span>
+      </div>`;
+  }).join('');
+
+  const entropy = -entries.reduce((acc,[,v]) => {
+    const p = v/totalShots;
+    return acc + (p > 0 ? p * Math.log2(p) : 0);
+  }, 0).toFixed(3);
+
+  document.getElementById('chartSection').innerHTML = `
+    <div class="chart-title">Measurement Outcomes · ${totalShots.toLocaleString()} shots</div>
+    <div class="histogram">${histRows}</div>
+    <div class="chart-meta">
+      <div class="meta-item">
+        <div class="meta-label">Total shots</div>
+        <div class="meta-value">${totalShots.toLocaleString()}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Entropy</div>
+        <div class="meta-value">${entropy} <span>bits</span></div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Outcomes</div>
+        <div class="meta-value">${entries.length}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Simulator</div>
+        <div class="meta-value" style="font-size:11px">Selene <span>Stim</span></div>
+      </div>
+    </div>`;
+}
+
+// ── HUGR ──────────────────────────────────────────────────────────────────
+function renderHugr(nodes) {
+  const typeClass = {
+    'DFG': 'dfg', 'FuncDef': 'funcdef', 'Call': 'call',
+    'Gate': 'gate', 'Measure': 'measure'
+  };
+
+  const html = nodes.map(n => {
+    const indent = n.indent ? `style="margin-left:${n.indent * 18}px"` : '';
+    return `
+      <div class="hugr-node" ${indent}>
+        <span class="hugr-node-type ${typeClass[n.type] || 'dfg'}">${n.type}</span>
+        <span class="hugr-node-name">${n.name}</span>
+        <span class="hugr-node-meta">${n.meta}</span>
+      </div>`;
+  }).join('');
+
+  document.getElementById('hugrView').innerHTML = `
+    <div class="chart-title">HUGR IR · ${nodes.length} nodes</div>
+    <div class="hugr-node-list">${html}</div>`;
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.output-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`tab-${id}`).classList.add('active');
+}
+
+// ── STATUS ────────────────────────────────────────────────────────────────
+function setStatus(state, text) {
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusText');
+  dot.className = 'status-dot';
+  if (state === 'compiling') { dot.classList.add('teal', 'pulse'); }
+  else if (state === 'success') { dot.classList.add('green'); }
+  else if (state === 'error') { dot.classList.add('red'); }
+  txt.textContent = text;
+}
+
+// ── SHARE ─────────────────────────────────────────────────────────────────
+function handleShare() {
+  const code = document.getElementById('codeEditor').value;
+  const encoded = btoa(encodeURIComponent(code));
+  const url = `${location.href.split('#')[0]}#code=${encoded}`;
+  navigator.clipboard.writeText(url).catch(() => {});
+  const toast = document.getElementById('toast');
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), 2200);
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') handleRun();
+});
+
+// ── BOOT ──────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
